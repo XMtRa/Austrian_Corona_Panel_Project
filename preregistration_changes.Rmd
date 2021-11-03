@@ -1,0 +1,28 @@
+---
+title: "Items: English"
+output:
+  html_document:
+    toc: TRUE
+    toc_float:
+      collapsed: FALSE
+      toc_depth: 3
+---
+  
+The following changes were introduced after the preregistration.
+
+## Covariates
+
+When reading the documentation of the data, I thought the following variables were varying, when in fact they were assessed only at one wave, namely the first wave:
+
+- Employment status
+
+## To-Do
+
+- Analyses
+	- Missingness
+		- Impute missing values
+		- Determine amount of missingness
+		- Replace values where I know they're 0
+	- Add factor scores
+	- CFA
+		- Add results
