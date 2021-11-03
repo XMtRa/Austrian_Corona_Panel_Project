@@ -9,7 +9,13 @@ navbar:
     - text: "Analyses"
       href: analyses.html
     - text: "Items"
-      href: items.html
+      href: items_english.html
+    - text: "Items German"
+      href: items_german.html
+    - text: "Preregistration"
+      href: preregistration.html
+    - text: "Preregistration Changes"
+      href: preregistration_changes.html
   right:
     - text: "PDF"
       icon: fa-file

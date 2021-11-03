@@ -16,7 +16,7 @@ bibliography      :
 
 ```{r knitr-setup, include=F}
 set.seed(170819)
-knitr::opts_chunk$set(warning=F, echo=F, error=F, message=F, cache = T, 
+knitr::opts_chunk$set(warning=F, echo=T, error=F, message=F, cache = T, 
                       tidy=T, dev = 'pdf', cache.extra = knitr::rand_seed)
 options(digits = 3, width = 120)
 ```
@@ -25,7 +25,7 @@ options(digits = 3, width = 120)
 
 Load packages, and make repo replicable.
 
-```{r r-setup}
+```{r r-setup, results='hide'}
 # install packages
 # devtools::install_github("https://github.com/tdienlin/td")
 
@@ -403,11 +403,11 @@ d_long %<>%
   )
 ```
 
-Order dataset. First waves, then id.
+Order dataset. First id, then wave.
 
 ```{r}
 d_long %<>%
-  arrange(wave, id)
+  arrange(id, wave)
 ```
 
 Create mean values for each person, and unique changes per wave
@@ -497,6 +497,7 @@ fig_soc_med_like_share
 
 ```{r}
 model_soc_med_post <- lmer(soc_med_post ~ (1 | id) + (1 | wave), d_long)
+summary(model_soc_med_post)
 fig_soc_med_post <- make_graph(model_soc_med_post, "Social Media Posting", ll = 1, ul = 5)
 fig_soc_med_post
 ```
@@ -519,7 +520,7 @@ ggsave("figures/fig_descriptives.pdf",
 ## life satisfaction
 
 ```{r}
-model_1 <- lmer(life_sat ~ (1 | id) + soc_med_fb + soc_med_ig + soc_med_wa + soc_med_yt + soc_med_tw,
+model_1 <- lmerTest::lmer(life_sat ~ (1 | id) + soc_med_read + soc_med_like_share + soc_med_post + soc_med_fb + soc_med_ig + soc_med_wa + soc_med_yt + soc_med_tw,
                 data = d_long)
 summary(model_1)
 ```
@@ -527,7 +528,7 @@ summary(model_1)
 Now with diff. between within and between effects.
 
 ```{r}
-model_2 <- lmer(life_sat ~ (1 | id) + (1 | wave) + soc_med_read_b + soc_med_read_w + soc_med_like_share_b + soc_med_like_share_w + soc_med_post_b + soc_med_post_w + soc_med_fb_b + soc_med_fb_w + soc_med_ig_b + soc_med_ig_w + soc_med_wa_b + soc_med_wa_w + soc_med_yt_b + soc_med_yt_w + soc_med_tw_b + soc_med_tw_w,
+model_2 <- lmerTest::lmer(life_sat ~ (1 | id) + (1 | wave) + soc_med_read_b + soc_med_read_w + soc_med_like_share_b + soc_med_like_share_w + soc_med_post_b + soc_med_post_w + soc_med_fb_b + soc_med_fb_w + soc_med_ig_b + soc_med_ig_w + soc_med_wa_b + soc_med_wa_w + soc_med_yt_b + soc_med_yt_w + soc_med_tw_b + soc_med_tw_w,
                 data = d_long)
 summary(model_2)
 ```

@@ -42,33 +42,27 @@ Here you can find a quick overview of all items that were measured.
 
 (never [1]; on some days [2]; several times per week [3]; almost every day [4]; daily [5])
 
-## Social media use: Reading 
+## Social media use
 
-"Wie oft haben Sie letzte Woche die folgenden Aktivitäten in Sozialen Netzwerken gesetzt?" 
+"How often during the last week have you engaged in the following activities on social media?" 
 
- - "Postings anderer lesen, in denen es um Inhalte zum Coronavirus geht"
+(1 = several times per day; 2 = daily; 3 = several times per week; 4 = weekly; 5 = never)
 
-(1 = Mehrmals täglich; 2 = Einmal täglich; 3 = Mehrmals in der Woche; 4 = Einmal in der Woche; 5 = Gar nicht/nie)
+### Reading 
 
-## Social media use: Liking & Sharing
+ - "Reading the posts of others with content on the Coronavirus."
 
-"Wie oft haben Sie letzte Woche die folgenden Aktivitäten in Sozialen Netzwerken gesetzt?" 
+### Liking & Sharing
 
- - "Bei Postings anderer zum Coronavirus auf den „Gefällt mir“ Button drücken, „teilen“ oder „retweeten“"
+ - "When seeing Posts on the Coronavirus, I clicked "like", "share" or "retweet".
 
-(nie [1]; an manchen Tagen [2]; mehrmals die Woche [3]; beinahe jeden Tag [4]; täglich [5])
+### Active Postings
 
-## Social media use: Active Postings
+ - "I myself wrote posts on the Coronavirus on Social Media."
 
-"Wie oft haben Sie letzte Woche die folgenden Aktivitäten in Sozialen Netzwerken gesetzt?" 
+### Specific platforms
 
- - "Selbst Postings zum Coronavirus in Sozialen Netzwerken verfasst"
-
-(nie [1]; an manchen Tagen [2]; mehrmals die Woche [3]; beinahe jeden Tag [4]; täglich [5])
-
-## Social media use: Specific platforms
-
-"Wie oft in der letzten Woche haben Sie Informationen zur Corona-Krise in den folgenden Sozialen Medien verfolgt?"
+"How often in the last week have you followed information related to the Corona-crisis in the following social media?"
 
  - Facebook 
  - Twitter
@@ -76,7 +70,7 @@ Here you can find a quick overview of all items that were measured.
  - Youtube
  - WhatsApp
 		
-(1 = Mehrmals täglich; 2 = Einmal täglich; 3 = Mehrmals in der Woche; 4 = Einmal in der Woche; 5 = Gar nicht/nie)
+(1 = several times per day; 2 = daily; 3 = several times per week; 4 = weekly; 5 = never)
 
 ## Gender
 
