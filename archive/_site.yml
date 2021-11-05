@@ -22,12 +22,7 @@ navbar:
       href: manuscript.pdf
     - text: "Source Code"
       icon: fa-lg fa-github
-      href: https://github.com/tdienlin/Austrian_Corona_panel
-authors:
-  Tobias Dienlin:
-    href: https://tdienlin.github.io
-      
-
+      href: https://github.com/XMtRa/Austrian_Corona_Panel_Project
 output:
   html_document:
     theme: cosmo

@@ -6,7 +6,7 @@ output:
     toc_float:
       collapsed: FALSE
     toc_depth: 2
-    code_folding: hide
+    # code_folding: hide
 bibliography      : 
   - "bibliography/r-references.bib"
   - "bibliography/references.bib"
@@ -18,7 +18,7 @@ bibliography      :
 set.seed(170819)
 knitr::opts_chunk$set(warning=F, echo=T, error=F, message=F, cache = T, 
                       tidy=T, dev = 'pdf', cache.extra = knitr::rand_seed)
-options(digits = 3, width = 120)
+options(digits = 3, width = 140, scipen=999)
 ```
 
 # Set-up
@@ -30,8 +30,10 @@ Load packages, and make repo replicable.
 # devtools::install_github("https://github.com/tdienlin/td")
 
 # define packages
-packages <- c("corrplot", "devtools", "GGally", "ggplot2", "gridExtra", "haven", "kableExtra", "knitr", 
-              "lavaan", "lme4", "magrittr", "mice", "MVN", "PerFit", "psych", "quanteda.textstats",
+packages <- c("brms", "corrplot", "devtools", "GGally", "ggplot2", 
+              "gridExtra", "haven", "kableExtra", "knitr", 
+              "lavaan", "lme4", "magrittr", "mice", "MVN", "PerFit", 
+              "psych", "quanteda.textstats",
               "pwr", "semPlot", "semTools", "tidyverse")
 
 # renv::install(packages)
@@ -57,32 +59,60 @@ find_var <- function(name, data = doc)(
 )
 ```
 
+Extract characteristics from fitted lmer models.
+
+```{r}
+get_specs <- function(model){
+    # Get mean, max, and min values
+
+    dat <- coefficients(model)$wave
+    specs <- data.frame(
+    sd = attr(VarCorr(model), "sc"),
+    min = min(dat),
+    max = max(dat),
+    mean = mean(dat$`(Intercept)`)
+  )
+}
+```
+
+Get data from fitted lmer objects
+
+```{r}
+get_dat <- function(model){
+  coefficients(model)$wave %>% 
+  tibble::rownames_to_column("wave") %>% 
+  rename(value = "(Intercept)") %>% 
+  mutate(wave = as.integer(.$wave),
+         value = as.numeric(.$value)) 
+} 
+```
+
 Make graph of variables' development.
 
 ```{r}
-make_graph <- function(model, title, ll, ul, line = FALSE, labels = FALSE){
-  dat <- coefficients(model)$wave %>% 
-    tibble::rownames_to_column("wave") %>% 
-    rename(value = "(Intercept)") %>% 
-    mutate(wave = as.integer(.$wave),
-           value = as.numeric(.$value))
+make_graph <- function(model, title, ll, ul, line = FALSE, labels = FALSE, lmer=TRUE, legend=TRUE){
+
+    if(isTRUE(lmer)){
+      dat <- get_dat(model)
+    } else{
+    dat <- model
+  }
     
   graph <- 
-    ggplot(dat, aes(wave, value)) +
-    theme_bw() +
-    theme(text = element_text(size = 8)) + 
-    geom_bar(data = dat, aes(wave, value), stat = "identity") +
+    ggplot(dat, aes(wave, value, color = dimension)) +
+    {if(legend) theme(
+      legend.position = c(0.85, 0.8),
+      legend.title = element_blank()
+      )} + 
+    {if(!legend) theme(
+      legend.position = "none"
+    )} +
+    theme(axis.title.x=element_blank()) +
     coord_cartesian(ylim = c(ll, ul)) +
-    ggtitle(title)
-  
-  if(line) {graph <- graph + 
-    geom_smooth(se = FALSE, method = 'loess', size = 1.5)}
-  
-  if(labels) {graph <- graph +
-    geom_text(aes(label = round(value, 2)), hjust = 1.2, color = "white",
-              fontface = "bold", angle = 90)
-  }
-  
+    ggtitle(title) +
+    {if(line) geom_smooth(se = FALSE, method = 'loess')} +
+    # geom_point() +
+    scale_color_manual(values=c("dodgerblue3", "deepskyblue2", "magenta2", "green2", "red"))
   graph
 }
 ```
@@ -90,7 +120,7 @@ make_graph <- function(model, title, ll, ul, line = FALSE, labels = FALSE){
 Make graph of effects
 
 ```{r}
-make_graph_res <- function(data){
+make_graph_res <- function(data, sesoi = TRUE){
   ggplot(data, aes(x = estimate, y = iv)) + 
   scale_color_manual(values = c("grey40", "deepskyblue")) +
   geom_vline(xintercept = 0, lwd = .75, colour = "darkgrey") + 
@@ -101,10 +131,10 @@ make_graph_res <- function(data){
   geom_point(size = 2
              , position = position_dodge(.6)
              ) +
-  geom_vline(data=filter(data, dv=="Life satisfaction"), aes(xintercept=.3), colour="darkgrey", linetype = "dashed") + 
-    geom_vline(data=filter(data, dv=="Life satisfaction"), aes(xintercept=-.3), colour="darkgrey", linetype = "dashed") + 
-  geom_vline(data=filter(data, dv!="Life satisfaction"), aes(xintercept=.15), colour="darkgrey", linetype = "dashed") + 
-    geom_vline(data=filter(data, dv!="Life satisfaction"), aes(xintercept=-.15), colour="darkgrey", linetype = "dashed") + 
+  {if(sesoi) geom_vline(data=filter(data, dv=="Life satisfaction"), aes(xintercept=.3), colour="darkgrey", linetype = "dashed")} + 
+  {if(sesoi) geom_vline(data=filter(data, dv=="Life satisfaction"), aes(xintercept=-.3), colour="darkgrey", linetype = "dashed")} + 
+  {if(sesoi) geom_vline(data=filter(data, dv!="Life satisfaction"), aes(xintercept=.15), colour="darkgrey", linetype = "dashed")} + 
+  {if(sesoi) geom_vline(data=filter(data, dv!="Life satisfaction"), aes(xintercept=-.15), colour="darkgrey", linetype = "dashed")} +
   theme(
     axis.title.y = element_blank(),
     plot.title = element_text(hjust = .5),
@@ -114,7 +144,8 @@ make_graph_res <- function(data){
     ) +
   facet_grid(rows = vars(type),
              cols = vars(dv),
-             scales = "free") 
+             scales = "free",
+             space = "free_y") 
 }
 ```
 
@@ -122,7 +153,6 @@ make_graph_res <- function(data){
 
 ```{r}
 doc <- read_csv("documentation/10094_vi_de_v4_0.csv")
-# d_raw <- read_spss("data/10094_da_de_v4_0.zsav")
 d_raw <- read_csv("data/10094_da_de_v4_0.csv")
 ```
 
@@ -262,27 +292,49 @@ d_wide %<>%
     age = 2021 - .$year_birth,
     res_vienna = recode(.$county, `8` = 1L, .default = 0L,),
     born_aus = 2 - .$born_aus,
+    home_owner = 2 - .$home_owner,
     employment_fac = factor(.$employment, 
-                           labels = c("Unselbststaendig erwerbstaetig (auch Lehrling), Privatwirtschaft", 
-"Unselbststaendig erwerbstaetig (auch Lehrling), Oeffentlicher Dienst",
-"Selbststaendig erwerbstaetig",
-"Arbeitslos",
-"Pensionist*in",
-"Ausschliesslich haushaltsfuehrend",
-"Schueler/in, Student/in, Bildungskarenz",
-"Sonstiges (Dauerhaft arbeitsunfaehig oder Praesenz-/Zivildiener)",
-"In Elternkarenz")),
+                           # labels = c("Unselbststaendig erwerbstaetig (auch Lehrling), Privatwirtschaft",
+                           #            "Unselbststaendig erwerbstaetig (auch Lehrling), Oeffentlicher Dienst",
+                           #            "Selbststaendig erwerbstaetig",
+                           #            "Arbeitslos",
+                           #            "Pensionist*in",
+                           #            "Ausschliesslich haushaltsfuehrend",
+                           #            "Schueler/in, Student/in, Bildungskarenz",
+                           #            "Sonstiges (Dauerhaft arbeitsunfaehig oder Praesenz-/Zivildiener)",
+                           #            "In Elternkarenz")
+                           labels = c("Employed industrie",
+                                      "Employed public service",
+                                      "Self-employed",
+                                      "Unemployed",
+                                      "Retired",
+                                      "Housekeeping",
+                                      "Student",
+                                      "Incapacitated",
+                                      "Parental Leave")
+                           ),
     edu_fac = factor(.$edu,
-                     labels = c("Volksschule oder weniger", 
-                                "Hauptschule oder AHS Unterstufe",
-                                "Polytechnikum, BMS (Fachschule, z.B. HASCH)",
-                                "Lehre, Berufsschule",
-                                "AHS mit Matura",
-                                "BHS mit Matura (z.B. HTL, HAK, HBLA etc.)",
-                                "Hochschulverwandte Lehranstalt oder Kolleg",
+                     # labels = c("Volksschule oder weniger", 
+                     #            "Hauptschule oder AHS Unterstufe",
+                     #            "Polytechnikum, BMS (Fachschule, z.B. HASCH)",
+                     #            "Lehre, Berufsschule",
+                     #            "AHS mit Matura",
+                     #            "BHS mit Matura (z.B. HTL, HAK, HBLA etc.)",
+                     #            "Hochschulverwandte Lehranstalt oder Kolleg",
+                     #            "Bachelor",
+                     #            "Magister / Master / Diplomingenieur / Fachhochschule",
+                     #            "Doktor / PhD"),
+                     labels = c("No degree", 
+                                "Middle school",
+                                "Vocational school",
+                                "Technical school",
+                                "High school",
+                                "Applied high school",
+                                "State college",
                                 "Bachelor",
-                                "Magister / Master / Diplomingenieur / Fachhochschule",
-"Doktor / PhD")))
+                                "Master",
+                                "PhD")
+                     ))
 ```
 
 Make new documentation with selected variables.
@@ -381,9 +433,9 @@ d_long_test <- d_long %>%
 Recode values
 
 ```{r}
-# recode such that higher values imply more strenght / align with wording
+# recode such that higher values imply more strength / align with wording
 d_long %<>% 
-  mutate_at(vars(med_txt_kro:med_vid_pri, health, sat_dem), 
+  mutate_at(vars(med_txt_kro:med_vid_pri, health, sat_dem, soc_med_fb:soc_med_post), 
             funs(recode(., `1` = 5L, `2` = 4L, `3` = 3L, `4` = 2L, `5` = 1L))) %>% 
   mutate_at(vars(loc_cntrl_int_1:loc_cntrl_int_4), 
             funs(recode(., `1` = 4L, `2` = 3L, `3` = 2L, `4` = 1L))) %>% 
@@ -410,15 +462,6 @@ d_long %<>%
   arrange(id, wave)
 ```
 
-Create mean values for each person, and unique changes per wave
-
-```{r}
-d_long %<>% 
-  group_by(id) %>% 
-  mutate_at(vars(health:loc_cntrl_int_4), funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %>% 
-  ungroup()
-```
-
 Create means for scales
 
 ```{r}
@@ -426,6 +469,15 @@ d_long %<>%
   mutate(aff_pos_m = rowMeans(select(., aff_pos_1 : aff_pos_3)),
          aff_neg_m = rowMeans(select(., aff_neg_1 : aff_neg_6)),
          loc_cntrl_int_m = rowMeans(select(., loc_cntrl_int_1 : loc_cntrl_int_4)))
+```
+
+Create mean values for each person (between), and unique changes per wave (within).
+
+```{r}
+d_long %<>% 
+  group_by(id) %>% 
+  mutate_at(vars(health:loc_cntrl_int_4, loc_cntrl_int_m), funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %>% 
+  ungroup()
 ```
 
 Create vectors with names
@@ -453,119 +505,321 @@ d_raw_filtered <- d_raw %>% filter(is.na(.$RESPID))
 ```
 
 # measures
-## life satisfaction
+## well-being
+### life satisfaction
 
 ```{r}
 model_life_sat <- lmer(life_sat ~ (1 | id) + (1 | wave), d_long)
-fig_life_sat <- make_graph(model_life_sat, "Life satisfaction", ll = 0, ul = 10)
-fig_life_sat
+summary(model_life_sat)
 ```
 
-## positive affect
+### positive affect
 
 ```{r}
 model_aff_pos <- lmer(aff_pos_m ~ (1 | id) + (1 | wave), d_long)
-fig_aff_pos <- make_graph(model_aff_pos, "Positive affect", ll = 1, ul = 5)
-fig_aff_pos
+summary(model_aff_pos)
 ```
 
-## negative affect
+### negative affect
 
 ```{r}
 model_aff_neg <- lmer(aff_neg_m ~ (1 | id) + (1 | wave), d_long)
-fig_aff_neg <- make_graph(model_aff_neg, "Negative affect", ll = 1, ul = 5)
-fig_aff_neg
+summary(model_aff_neg)
 ```
 
-## Social media reading
+## Social media use
+### reading
 
 ```{r}
 model_soc_med_read <- lmer(soc_med_read ~ (1 | id) + (1 | wave), d_long)
-fig_soc_med_read <- make_graph(model_soc_med_read, "Social Media Reading", ll = 1, ul = 5)
-fig_soc_med_read
+summary(model_soc_med_read)
 ```
 
-## Social media liking & sharing
+### liking & sharing
 
 ```{r}
 model_soc_med_like_share <- lmer(soc_med_like_share ~ (1 | id) + (1 | wave), d_long)
-fig_soc_med_like_share <- make_graph(model_soc_med_like_share, "Soc. Media Like & Share", ll = 1, ul = 5)
-fig_soc_med_like_share
+summary(model_soc_med_like_share)
 ```
 
-## Social media posting
+### posting
 
 ```{r}
 model_soc_med_post <- lmer(soc_med_post ~ (1 | id) + (1 | wave), d_long)
 summary(model_soc_med_post)
-fig_soc_med_post <- make_graph(model_soc_med_post, "Social Media Posting", ll = 1, ul = 5)
-fig_soc_med_post
+```
+
+## Social media channels
+### Facebook
+
+```{r}
+model_soc_med_fb <- lmer(soc_med_fb ~ (1 | id) + (1 | wave), d_long)
+summary(model_soc_med_fb)
+```
+
+### Twitter
+
+```{r}
+model_soc_med_tw <- lmer(soc_med_tw ~ (1 | id) + (1 | wave), d_long)
+summary(model_soc_med_tw)
+
+# Bayesian Approach
+# model_soc_med_tw <- brm(soc_med_tw ~ (1 | id) + (1 | wave), d_long
+# Also throws a warning
+# model_soc_med_tw <- brm(soc_med_tw ~ (1 | id) + (1 | wave), d_long, control=list(adapt_delta=0.82))
+# Currently doesn't work, likely for lack of memory
+```
+
+Interestingly, lme4 throws a warning, likely because there is too little variance across waves, while little variation measure itself. Let's inspect the raw means.
+
+```{r}
+soc_med_tw_m <- d_long %>% group_by(wave) %>% summarise(value = mean(soc_med_tw, na.rm = T))
+soc_med_tw_m
+```
+
+Inspecting the means shows that the data are intact, only that the estimation didn't fully work.
+
+### Instagram
+
+```{r}
+model_soc_med_ig <- lmer(soc_med_ig ~ (1 | id) + (1 | wave), d_long)
+summary(model_soc_med_ig)
+```
+
+### WhatsApp
+
+```{r}
+model_soc_med_wa <- lmer(soc_med_wa ~ (1 | id) + (1 | wave), d_long)
+summary(model_soc_med_wa)
+```
+
+### YouTube
+
+```{r}
+model_soc_med_yt <- lmer(soc_med_yt ~ (1 | id) + (1 | wave), d_long)
+summary(model_soc_med_yt)
 ```
 
 ## figure
 
-Save everything as a figure
+Display the results in a combined figure.
 
 ```{r}
-fig_desc <- grid.arrange(fig_life_sat, fig_aff_pos, fig_aff_neg, 
-                         fig_soc_med_read, fig_soc_med_like_share, fig_soc_med_post,
-                         nrow = 2)
+fig_desc_dat <- data.frame(
+  rbind(
+    data.frame(type = "Life satisfaction", dimension = "Life satisfaction", get_dat(model_life_sat)),
+    data.frame(type = "Affect", dimension = "Positive", get_dat(model_aff_pos)),
+    data.frame(type = "Affect", dimension = "Negative", get_dat(model_aff_neg)),
+    data.frame(type = "Social media use", dimension = "Reading", get_dat(model_soc_med_read)),
+    data.frame(type = "Social media use", dimension = "Liking & Sharing", get_dat(model_soc_med_like_share)),
+    data.frame(type = "Social media use", dimension = "Posting", get_dat(model_soc_med_post)),
+    data.frame(type = "Social media channel", dimension = "Facebook", get_dat(model_soc_med_fb)),
+    data.frame(type = "Social media channel", dimension = "Twitter", get_dat(model_soc_med_tw)),
+    data.frame(type = "Social media channel", dimension = "Instagram", get_dat(model_soc_med_ig)),
+    data.frame(type = "Social media channel", dimension = "WhatsApp", get_dat(model_soc_med_wa)),
+    data.frame(type = "Social media channel", dimension = "YouTube", get_dat(model_soc_med_yt))
+  ) %>% 
+    mutate(
+      type = factor(.$type, levels = c("Life satisfaction", "Affect", "Social media use", "Social media channel")),
+      dimension = factor(.$dimension, levels = c("Life satisfaction", "Positive", "Negative", "Reading", "Liking & Sharing", "Posting", "Facebook", "Twitter", "Instagram", "WhatsApp", "YouTube"))
+      )
+)
+
+fig_desc_life_sat <- make_graph(
+  fig_desc_dat %>% filter(type == "Life satisfaction"), 
+  title = "Life satisfaction", 
+  ll = 0, ul = 10, 
+  lmer = FALSE, 
+  line = TRUE,
+  legend = FALSE
+  )
+
+fig_desc_aff <- make_graph(
+  fig_desc_dat %>% filter(type == "Affect"), 
+  title = "Affect", 
+  ll = 1, ul = 5, 
+  lmer = FALSE, 
+  line = TRUE
+  )
+
+fig_desc_soc_med_use <- make_graph(
+  fig_desc_dat %>% filter(type == "Social media use"), 
+  title = "Social media use", 
+  ll = 1, ul = 5, 
+  lmer = FALSE, 
+  line = TRUE
+  )
+
+fig_desc_soc_med_channel <- make_graph(
+  fig_desc_dat %>% filter(type == "Social media channel"), 
+  title = "Social media channel", 
+  ll = 1, ul = 5, 
+  lmer = FALSE, 
+  line = TRUE
+  )
+
+fig_desc <- grid.arrange(fig_desc_life_sat, fig_desc_aff, 
+                         fig_desc_soc_med_use, fig_desc_soc_med_channel,
+                         nrow = 2, ncol = 2)
+
 ggsave("figures/fig_descriptives.pdf", 
-       width = 7, height = 5,
+       width = 10, height = 6,
        plot = fig_desc)
+```
+
+## table
+
+```{r}
+tab_desc_dat <- rbind(
+    "Life satisfaction" = get_specs(model_life_sat),
+    "Positive affect" = get_specs(model_aff_pos),
+    "Negative affect" = get_specs(model_aff_neg),
+    "Read" = get_specs(model_soc_med_read),
+    "Like & share" = get_specs(model_soc_med_like_share),
+    "Posting" = get_specs(model_soc_med_post),
+    "Facebook" = get_specs(model_soc_med_fb),
+    "Twitter" = c(sd = get_specs(model_soc_med_tw)$sd,
+                  min = min(soc_med_tw_m$value, na.rm = TRUE),
+                  max = max(soc_med_tw_m$value, na.rm = TRUE),
+                  mean = mean(soc_med_tw_m$value, na.rm = TRUE)
+                  ),
+    "Instagram" = get_specs(model_soc_med_ig),
+    "WhatsApp" = get_specs(model_soc_med_wa),
+    "YouTube" = get_specs(model_soc_med_yt)
+    )
 ```
 
 
 # analyses
 ## life satisfaction
 
+First, without control variables.
+
 ```{r}
-model_1 <- lmerTest::lmer(life_sat ~ (1 | id) + soc_med_read + soc_med_like_share + soc_med_post + soc_med_fb + soc_med_ig + soc_med_wa + soc_med_yt + soc_med_tw,
+model_life_sat_lmer_nco <- lmerTest::lmer(life_sat ~ 
+                            (1 | id) + (1 | wave) + 
+                            soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                            soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+                            soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+                            soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b,
                 data = d_long)
-summary(model_1)
+summary(model_life_sat_lmer_nco)
 ```
 
-Now with diff. between within and between effects.
+Now with control variables.
 
 ```{r}
-model_2 <- lmerTest::lmer(life_sat ~ (1 | id) + (1 | wave) + soc_med_read_b + soc_med_read_w + soc_med_like_share_b + soc_med_like_share_w + soc_med_post_b + soc_med_post_w + soc_med_fb_b + soc_med_fb_w + soc_med_ig_b + soc_med_ig_w + soc_med_wa_b + soc_med_wa_w + soc_med_yt_b + soc_med_yt_w + soc_med_tw_b + soc_med_tw_w,
-                data = d_long)
-summary(model_2)
-```
-
-Now with control variables
-
-```{r}
-model_life_sat_lmer <- lmerTest::lmer(life_sat ~ (1 | id) + (1 | wave) + soc_med_read_b + soc_med_read_w + soc_med_like_share_b + soc_med_like_share_w + soc_med_post_b + soc_med_post_w + soc_med_fb_b + soc_med_fb_w + soc_med_ig_b + soc_med_ig_w + soc_med_wa_b + soc_med_wa_w + soc_med_yt_b + soc_med_yt_w + soc_med_tw_b + soc_med_tw_w + age + male + edu + born_aus + born_aus_prnts + res_vienna + edu + acc_bal + acc_gar + employment_fac
-# + health_b + act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b + sat_dem_b + hh_income_b + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_1_b + loc_cntrl_int_2_b + loc_cntrl_int_3_b + loc_cntrl_int_4_b + health_w + act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + sat_dem_w + hh_income_w + med_txt_kro_w + med_txt_sta_w + med_txt_pre_w + med_txt_oes_w + med_txt_kur_w + med_txt_slz_w + med_txt_son_w + med_vid_orf_w + med_vid_pri_w + risk_prop_w + loc_cntrl_int_1_w + loc_cntrl_int_2_w + loc_cntrl_int_3_w + loc_cntrl_int_4_w
-,
-                data = d_long)
+model_life_sat_lmer <- lmerTest::lmer(life_sat ~
+                                        (1 | id) + (1 | wave) + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
+                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
+                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac + health_b + 
+                                        res_vienna + acc_bal + acc_gar + home_sqm + 
+                                        # hh_income_b + # large dropout (900 obs)
+                                        # hh_adults + # too much dropout
+                                        # hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + hh_oldfam + hh_outfam + hh_partner + 
+                                        # home_owner + # too much dropout
+                                        med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
+                                        med_vid_orf_b + med_vid_pri_b + 
+                                        risk_prop_b + loc_cntrl_int_m_b + 
+                                        act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
+                                        act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
+                                        sat_dem_w + sat_dem_b 
+                                      , data = d_long)
 summary(model_life_sat_lmer)
 ```
 
+```{r}
+# + health_b + act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b + sat_dem_b + hh_income_b + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_1_b + loc_cntrl_int_2_b + loc_cntrl_int_3_b + loc_cntrl_int_4_b + health_w + act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + sat_dem_w + hh_income_w + med_txt_kro_w + med_txt_sta_w + med_txt_pre_w + med_txt_oes_w + med_txt_kur_w + med_txt_slz_w + med_txt_son_w + med_vid_orf_w + med_vid_pri_w + risk_prop_w + loc_cntrl_int_1_w + loc_cntrl_int_2_w + loc_cntrl_int_3_w + loc_cntrl_int_4_w
+```
+
+
 ## Positive Affect
 
+First, without control variables.
+
 ```{r}
-model_aff_pos_lmer <- lmerTest::lmer(aff_pos_m ~ (1 | id) + (1 | wave) + soc_med_read_b + soc_med_read_w  + soc_med_like_share_b + soc_med_like_share_w + soc_med_post_b + soc_med_post_w + soc_med_fb_b + soc_med_fb_w + soc_med_ig_b + soc_med_ig_w + soc_med_wa_b + soc_med_wa_w + soc_med_yt_b + soc_med_yt_w + soc_med_tw_b + soc_med_tw_w + age + male + edu + born_aus + born_aus_prnts + res_vienna + edu + acc_bal + acc_gar + employment_fac
-# + health_b + act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b + sat_dem_b + hh_income_b + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_1_b + loc_cntrl_int_2_b + loc_cntrl_int_3_b + loc_cntrl_int_4_b + health_w + act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + sat_dem_w + hh_income_w + med_txt_kro_w + med_txt_sta_w + med_txt_pre_w + med_txt_oes_w + med_txt_kur_w + med_txt_slz_w + med_txt_son_w + med_vid_orf_w + med_vid_pri_w + risk_prop_w + loc_cntrl_int_1_w + loc_cntrl_int_2_w + loc_cntrl_int_3_w + loc_cntrl_int_4_w
-,
-                data = d_long)
+model_aff_pos_lmer_nco <- lmerTest::lmer(aff_pos_m ~ 
+                                        (1 | id) + (1 | wave) + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b
+                                      , data = d_long)
+summary(model_aff_pos_lmer_nco)
+```
+
+
+Now with control variables. 
+
+```{r}
+model_aff_pos_lmer <- lmerTest::lmer(aff_pos_m ~ 
+                                        (1 | id) + (1 | wave) + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
+                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac + health_b + 
+                                        res_vienna + acc_bal + acc_gar + home_sqm + 
+                                        # hh_income_b + # large dropout (900 obs)
+                                        # hh_adults + # too much dropout
+                                        # hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + hh_oldfam + hh_outfam + hh_partner + 
+                                        # home_owner + # too much dropout
+                                        med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
+                                        med_vid_orf_b + med_vid_pri_b + 
+                                        risk_prop_b + loc_cntrl_int_m_b + 
+                                        act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
+                                        act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
+                                        sat_dem_w + sat_dem_b 
+                                      , data = d_long)
 summary(model_aff_pos_lmer)
 ```
 
 ## Negative Affect
 
+First, without control variables. 
+
 ```{r}
-model_aff_neg_lmer <- lmerTest::lmer(aff_neg_m ~ (1 | id) + (1 | wave) + soc_med_read_b + soc_med_read_w + soc_med_like_share_b + soc_med_like_share_w + soc_med_post_b + soc_med_post_w + soc_med_fb_b + soc_med_fb_w + soc_med_ig_b + soc_med_ig_w + soc_med_wa_b + soc_med_wa_w + soc_med_yt_b + soc_med_yt_w + soc_med_tw_b + soc_med_tw_w + age + male + edu + born_aus + born_aus_prnts + res_vienna + edu + acc_bal + acc_gar + employment_fac
-# + health_b + act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b + sat_dem_b + hh_income_b + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_1_b + loc_cntrl_int_2_b + loc_cntrl_int_3_b + loc_cntrl_int_4_b + health_w + act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + sat_dem_w + hh_income_w + med_txt_kro_w + med_txt_sta_w + med_txt_pre_w + med_txt_oes_w + med_txt_kur_w + med_txt_slz_w + med_txt_son_w + med_vid_orf_w + med_vid_pri_w + risk_prop_w + loc_cntrl_int_1_w + loc_cntrl_int_2_w + loc_cntrl_int_3_w + loc_cntrl_int_4_w
-,
-                data = d_long)
+model_aff_neg_lmer_nco <- lmerTest::lmer(aff_neg_m ~ 
+                                        (1 | id) + (1 | wave) + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b
+                                      , data = d_long)
+summary(model_aff_neg_lmer_nco)
+```
+
+Then, with control variables. 
+
+```{r}
+model_aff_neg_lmer <- lmerTest::lmer(aff_neg_m ~ 
+                                        (1 | id) + (1 | wave) + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
+                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac + health_b + 
+                                        res_vienna + acc_bal + acc_gar + home_sqm + 
+                                        # hh_income_b + # large dropout (900 obs)
+                                        # hh_adults + # too much dropout
+                                        # hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + hh_oldfam + hh_outfam + hh_partner + 
+                                        # home_owner + # too much dropout
+                                        med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
+                                        med_vid_orf_b + med_vid_pri_b + 
+                                        risk_prop_b + loc_cntrl_int_m_b + 
+                                        act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
+                                        act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
+                                        sat_dem_w + sat_dem_b 
+                                      , data = d_long)
 summary(model_aff_neg_lmer)
 ```
 
 ## figure
 
-Active vs. Passive
+First, extract data.
 
 ```{r}
 # get data
@@ -581,21 +835,29 @@ dat_fig_results <-
     mutate(dv = "life_sat")
   ) %>% 
   mutate(
-    type = ifelse(grepl(".*_b.*", .$term), "between", "within"),
+    type = ifelse(grepl(".*_w.*", .$term), "within", "between"),
     iv = gsub("_(w|b)\\>", "", .$term)
          ) %>%
   mutate(
-    type = factor(.$type, levels = c("within", "between")),
-    dv = factor(.$dv, levels = c("life_sat", "aff_pos", "aff_neg"),
+    type = factor(.$type, 
+                  levels = c("within", "between")),
+    dv = factor(.$dv, 
+                levels = c("life_sat", "aff_pos", "aff_neg"),
                 labels = c("Life satisfaction", "Positive affect", "Negative affect"))
   ) %>% 
   select(dv, iv, type, estimate, conf.low, conf.high, p.value)
+```
 
+Select social media types of activity, and make graph.
+
+```{r}
 # select Social Media type of activity
 dat_fig_results_activity <- dat_fig_results %>%
   filter(iv %in% c("soc_med_read", "soc_med_like_share", "soc_med_post")) %>% 
   mutate(
-    iv = factor(.$iv, levels = c("soc_med_post", "soc_med_like_share", "soc_med_read"), labels = c("Posting", "Liking & Sharing", "Reading"))
+    iv = factor(.$iv, 
+                levels = c("soc_med_post", "soc_med_like_share", "soc_med_read"), 
+                labels = c("Posting", "Liking & Sharing", "Reading"))
   )
 
 # make figure
@@ -605,7 +867,11 @@ fig_results_activity <- make_graph_res(dat_fig_results_activity)
 ggsave("figures/fig_results_activity.pdf", 
        width = 7, height = 4,
        plot = fig_results_activity)
+```
 
+Select social media channels and make figure.
+
+```{r}
 # select social media channel
 dat_fig_results_channel <- dat_fig_results %>%
   filter(iv %in% c("soc_med_fb", "soc_med_ig", "soc_med_wa", "soc_med_yt", "soc_med_tw")) %>% 
@@ -618,6 +884,24 @@ fig_results_channel <- make_graph_res(dat_fig_results_channel)
 ggsave("figures/fig_results_channel.pdf", 
        width = 7, height = 4,
        plot = fig_results_channel)
+```
+
+Select control variables and make graph.
+
+```{r}
+# select social media channel
+dat_fig_results_control <- dat_fig_results %>%
+  filter(iv %in% c("age", "male", "health", "home_sqm", "loc_cntrl_int_m", "employment_facUnemployed", "employment_facParental Leave", "act_spo", "sat_dem")) %>% 
+  mutate(iv = factor(.$iv, levels = c("age", "male", "health", "home_sqm", "loc_cntrl_int_m", "employment_facUnemployed", "employment_facParental Leave", "act_spo", "sat_dem"), 
+                     labels = c("Age", "Male", "Health", "Squaremeter home", "Internal locus of control", "Umemployed", "On parental leave", "Sport", "Satisfaction democracy")))
+
+# make figure
+fig_results_control <- make_graph_res(dat_fig_results_control, sesoi = FALSE)
+
+# save figure
+ggsave("figures/fig_results_control.pdf", 
+       width = 7, height = 4,
+       plot = fig_results_control)
 ```
 
 ```{r}

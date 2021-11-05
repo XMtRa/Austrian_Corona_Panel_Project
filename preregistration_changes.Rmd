@@ -12,17 +12,17 @@ The following changes were introduced after the preregistration.
 
 ## Covariates
 
-When reading the documentation of the data, I thought the following variables were varying, when in fact they were assessed only at one wave, namely the first wave:
+I originally planned to include the following variables as varying covariates. I thought they were measured at several/all waves. However, upon seeing the actual data I realized this wasn't the case. I hence included them as stable covariates.
 
-- Employment status
+This includes (a) text-based media news consumption, (b) video-based media news consumption, (c) residency is Vienna, (d) self-reported physical health, (e) living space (in squaremeter), (f) access to balcony, (g) access to garden, (h) employment status, (i) disposition to take risks, and (j) locus of control.
 
-## To-Do
+The following variables I originally planned to include as control variables. However, their inclusion led to the deletion of too many cases/observations. I hence decided against their inclusion. This includes (a) household size, (b) work hours per week, (c) home office, (d) household income.
 
-- Analyses
-	- Missingness
-		- Impute missing values
-		- Determine amount of missingness
-		- Replace values where I know they're 0
-	- Add factor scores
-	- CFA
-		- Add results
+## Analyses
+
+I planned to conduct also the following analyses. I the time of writing, I simply hadn't yet found the time to do so.
+
+	- Impute missing values
+	- Report CFAs for scales
+	- Run analyses using factor scores
+	
