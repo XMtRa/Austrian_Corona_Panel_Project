@@ -281,62 +281,6 @@ d_wide <- d_raw %>%
 # names(d_wide) <- sub("\\.\\.\\.", "§", names(d_wide)) # replace "..." with "_"
 ```
 
-Recode Variables
-
-```{r}
-d_wide %<>%
-  mutate_at(vars(everything(.)), funs(na_if(., 88))) %>%
-  mutate_at(vars(everything(.)), funs(na_if(., 99))) %>%
-  mutate(
-    male = 2 - .$gender,
-    age = 2021 - .$year_birth,
-    res_vienna = recode(.$county, `8` = 1L, .default = 0L,),
-    born_aus = 2 - .$born_aus,
-    home_owner = 2 - .$home_owner,
-    employment_fac = factor(.$employment, 
-                           # labels = c("Unselbststaendig erwerbstaetig (auch Lehrling), Privatwirtschaft",
-                           #            "Unselbststaendig erwerbstaetig (auch Lehrling), Oeffentlicher Dienst",
-                           #            "Selbststaendig erwerbstaetig",
-                           #            "Arbeitslos",
-                           #            "Pensionist*in",
-                           #            "Ausschliesslich haushaltsfuehrend",
-                           #            "Schueler/in, Student/in, Bildungskarenz",
-                           #            "Sonstiges (Dauerhaft arbeitsunfaehig oder Praesenz-/Zivildiener)",
-                           #            "In Elternkarenz")
-                           labels = c("Employed industrie",
-                                      "Employed public service",
-                                      "Self-employed",
-                                      "Unemployed",
-                                      "Retired",
-                                      "Housekeeping",
-                                      "Student",
-                                      "Incapacitated",
-                                      "Parental Leave")
-                           ),
-    edu_fac = factor(.$edu,
-                     # labels = c("Volksschule oder weniger", 
-                     #            "Hauptschule oder AHS Unterstufe",
-                     #            "Polytechnikum, BMS (Fachschule, z.B. HASCH)",
-                     #            "Lehre, Berufsschule",
-                     #            "AHS mit Matura",
-                     #            "BHS mit Matura (z.B. HTL, HAK, HBLA etc.)",
-                     #            "Hochschulverwandte Lehranstalt oder Kolleg",
-                     #            "Bachelor",
-                     #            "Magister / Master / Diplomingenieur / Fachhochschule",
-                     #            "Doktor / PhD"),
-                     labels = c("No degree", 
-                                "Middle school",
-                                "Vocational school",
-                                "Technical school",
-                                "High school",
-                                "Applied high school",
-                                "State college",
-                                "Bachelor",
-                                "Master",
-                                "PhD")
-                     ))
-```
-
 Make new documentation with selected variables.
 
 ```{r}
@@ -409,6 +353,62 @@ doc_selected <- filter(doc, variable %in% c(
   ))
 ```
 
+Recode Variables
+
+```{r}
+d_wide %<>%
+  mutate_at(vars(everything(.)), funs(na_if(., 88))) %>%
+  mutate_at(vars(everything(.)), funs(na_if(., 99))) %>%
+  mutate(
+    male = 2 - .$gender,
+    age = 2021 - .$year_birth,
+    res_vienna = recode(.$county, `8` = 1L, .default = 0L,),
+    born_aus = 2 - .$born_aus,
+    home_owner = 2 - .$home_owner,
+    employment_fac = factor(.$employment, 
+                           # labels = c("Unselbststaendig erwerbstaetig (auch Lehrling), Privatwirtschaft",
+                           #            "Unselbststaendig erwerbstaetig (auch Lehrling), Oeffentlicher Dienst",
+                           #            "Selbststaendig erwerbstaetig",
+                           #            "Arbeitslos",
+                           #            "Pensionist*in",
+                           #            "Ausschliesslich haushaltsfuehrend",
+                           #            "Schueler/in, Student/in, Bildungskarenz",
+                           #            "Sonstiges (Dauerhaft arbeitsunfaehig oder Praesenz-/Zivildiener)",
+                           #            "In Elternkarenz")
+                           labels = c("Employed industrie",
+                                      "Employed public service",
+                                      "Self-employed",
+                                      "Unemployed",
+                                      "Retired",
+                                      "Housekeeping",
+                                      "Student",
+                                      "Incapacitated",
+                                      "Parental Leave")
+                           ),
+    edu_fac = factor(.$edu,
+                     # labels = c("Volksschule oder weniger", 
+                     #            "Hauptschule oder AHS Unterstufe",
+                     #            "Polytechnikum, BMS (Fachschule, z.B. HASCH)",
+                     #            "Lehre, Berufsschule",
+                     #            "AHS mit Matura",
+                     #            "BHS mit Matura (z.B. HTL, HAK, HBLA etc.)",
+                     #            "Hochschulverwandte Lehranstalt oder Kolleg",
+                     #            "Bachelor",
+                     #            "Magister / Master / Diplomingenieur / Fachhochschule",
+                     #            "Doktor / PhD"),
+                     labels = c("No degree", 
+                                "Middle school",
+                                "Vocational school",
+                                "Technical school",
+                                "High school",
+                                "Applied high school",
+                                "State college",
+                                "Bachelor",
+                                "Master",
+                                "PhD")
+                     ))
+```
+
 Make data from wide to long.
 
 ```{r}
@@ -423,12 +423,12 @@ d_long <-
   pivot_wider(names_from = "item", values_from = "value")
 ```
 
-Filter waves without data
+<!-- Filter waves without data -->
 
-```{r eval=F}
-d_long_test <- d_long %>%
-  filter(!is.na(.[vars_varying]))
-```
+<!-- ```{r eval=F} -->
+<!-- d_long_test <- d_long %>% -->
+<!--   filter(!is.na(.[vars_varying])) -->
+<!-- ``` -->
 
 Recode values
 
@@ -480,17 +480,17 @@ d_long %<>%
   ungroup()
 ```
 
-Create vectors with names
+<!-- Create vectors with names -->
 
-```{r}
-# create vector of names
-vars_varying <- names(select(d_long, "health_b":"loc_cntrl_int_4_w"))
-predictors_varying <- select(d_long, "health_b":"loc_cntrl_int_4_w") %>% 
-  select(-starts_with("aff_"), -starts_with("life_")) %>% 
-  names()
-```
+<!-- ```{r} -->
+<!-- # create vector of names -->
+<!-- vars_varying <- names(select(d_long, "health_b":"loc_cntrl_int_4_w")) -->
+<!-- predictors_varying <- select(d_long, "health_b":"loc_cntrl_int_4_w") %>%  -->
+<!--   select(-starts_with("aff_"), -starts_with("life_")) %>%  -->
+<!--   names() -->
+<!-- ``` -->
 
-# inspect data
+# Inspect data
 
 ```{r}
 nas <- sapply(d_long, function(y) sum(length(which(is.na(y))))) %>% 
@@ -504,23 +504,23 @@ d_long_filtered <- d_long %>% filter(is.na(id))
 d_raw_filtered <- d_raw %>% filter(is.na(.$RESPID))
 ```
 
-# measures
-## well-being
-### life satisfaction
+# Measures
+## Well-being
+### Life satisfaction
 
 ```{r}
 model_life_sat <- lmer(life_sat ~ (1 | id) + (1 | wave), d_long)
 summary(model_life_sat)
 ```
 
-### positive affect
+### Positive affect
 
 ```{r}
 model_aff_pos <- lmer(aff_pos_m ~ (1 | id) + (1 | wave), d_long)
 summary(model_aff_pos)
 ```
 
-### negative affect
+### Negative affect
 
 ```{r}
 model_aff_neg <- lmer(aff_neg_m ~ (1 | id) + (1 | wave), d_long)
@@ -528,21 +528,21 @@ summary(model_aff_neg)
 ```
 
 ## Social media use
-### reading
+### Reading
 
 ```{r}
 model_soc_med_read <- lmer(soc_med_read ~ (1 | id) + (1 | wave), d_long)
 summary(model_soc_med_read)
 ```
 
-### liking & sharing
+### Liking & sharing
 
 ```{r}
 model_soc_med_like_share <- lmer(soc_med_like_share ~ (1 | id) + (1 | wave), d_long)
 summary(model_soc_med_like_share)
 ```
 
-### posting
+### Posting
 
 ```{r}
 model_soc_med_post <- lmer(soc_med_post ~ (1 | id) + (1 | wave), d_long)
@@ -600,7 +600,7 @@ model_soc_med_yt <- lmer(soc_med_yt ~ (1 | id) + (1 | wave), d_long)
 summary(model_soc_med_yt)
 ```
 
-## figure
+## Figure
 
 Display the results in a combined figure.
 
@@ -667,7 +667,7 @@ ggsave("figures/fig_descriptives.pdf",
        plot = fig_desc)
 ```
 
-## table
+## Table
 
 ```{r}
 tab_desc_dat <- rbind(
@@ -687,11 +687,12 @@ tab_desc_dat <- rbind(
     "WhatsApp" = get_specs(model_soc_med_wa),
     "YouTube" = get_specs(model_soc_med_yt)
     )
+kable(tab_desc_dat)
 ```
 
 
-# analyses
-## life satisfaction
+# Analyses
+## Life satisfaction
 
 First, without control variables.
 
@@ -730,11 +731,6 @@ model_life_sat_lmer <- lmerTest::lmer(life_sat ~
                                       , data = d_long)
 summary(model_life_sat_lmer)
 ```
-
-```{r}
-# + health_b + act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b + sat_dem_b + hh_income_b + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_1_b + loc_cntrl_int_2_b + loc_cntrl_int_3_b + loc_cntrl_int_4_b + health_w + act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + sat_dem_w + hh_income_w + med_txt_kro_w + med_txt_sta_w + med_txt_pre_w + med_txt_oes_w + med_txt_kur_w + med_txt_slz_w + med_txt_son_w + med_vid_orf_w + med_vid_pri_w + risk_prop_w + loc_cntrl_int_1_w + loc_cntrl_int_2_w + loc_cntrl_int_3_w + loc_cntrl_int_4_w
-```
-
 
 ## Positive Affect
 
@@ -817,7 +813,7 @@ model_aff_neg_lmer <- lmerTest::lmer(aff_neg_m ~
 summary(model_aff_neg_lmer)
 ```
 
-## figure
+## Figure
 
 First, extract data.
 
@@ -835,7 +831,7 @@ dat_fig_results <-
     mutate(dv = "life_sat")
   ) %>% 
   mutate(
-    type = ifelse(grepl(".*_w.*", .$term), "within", "between"),
+    type = ifelse(grepl(".*_w\\>", .$term), "within", "between"),
     iv = gsub("_(w|b)\\>", "", .$term)
          ) %>%
   mutate(
@@ -862,6 +858,7 @@ dat_fig_results_activity <- dat_fig_results %>%
 
 # make figure
 fig_results_activity <- make_graph_res(dat_fig_results_activity)
+fig_results_activity
 
 # safe figure
 ggsave("figures/fig_results_activity.pdf", 
@@ -879,6 +876,7 @@ dat_fig_results_channel <- dat_fig_results %>%
 
 # make figure
 fig_results_channel <- make_graph_res(dat_fig_results_channel)
+fig_results_channel
 
 # save figure
 ggsave("figures/fig_results_channel.pdf", 
@@ -897,6 +895,7 @@ dat_fig_results_control <- dat_fig_results %>%
 
 # make figure
 fig_results_control <- make_graph_res(dat_fig_results_control, sesoi = FALSE)
+fig_results_control
 
 # save figure
 ggsave("figures/fig_results_control.pdf", 
