@@ -33,7 +33,7 @@ draft             : no
 
 documentclass     : "apa6"
 classoption       : "man"
-# output            : papaja::apa6_pdf
+output            : papaja::apa6_pdf
 # output            : papaja::apa6_word
 header-includes:
   - \setlength{\parskip}{0em}
@@ -94,7 +94,7 @@ A new phenomenon termed "doomscrolling" emerged:
 People could not stop using social media to learn about COVID-19 related news.
 
 Several people reported that they were glued to their screens and could not pursue other relevant activities such as working, taking a break, or even child-care [@kleinDarklySoothingCompulsion2021].
-As doomscrolling increased it became doubtful whether such a surge in social media use could still be considered useful and adaptive, or whether it created an additional and new psychological danger for users' mental health [@sandstromDoomscrollingCOVIDNews2021].
+As doomscrolling increased it became doubtful whether such a surge in social media use could still be considered useful and adaptive, or whether it created an additional hazard for users' mental health [@sandstromDoomscrollingCOVIDNews2021].
 These concerns seem justified: A study with 6,233 people from Germany found that "[f]requency, duration and diversity of media exposure were positively associated with more symptoms of depression and unspecific and COVID-19 specific anxiety" [@bendauAssociationsCOVID19Related2021], which implies negative consequences for well-being.
 
 As a result, with this study I want to build on this research and investigate the question whether COVID-19 related social media use during the pandemic affected well-being.
@@ -229,7 +229,7 @@ Hence, we now expect our effect to be at least as large as _b_ = .25 * `r 11/7` 
 For affect, which was measured on a 5-point scale, our SESOI would therefore be _b_ = 1/4 * 5/7 = `r 5 / 7 * .25`.
 Because we are agnostic as to whether the effects are positively or negatively nontrivial, the null region will include negative and positive effects (in Bayesian terms, this is called the region of practical equivalence [ROPE]).
 In order not to exaggerate precision, and to be a bit less conservative, these numbers will be reduced to nearby thresholds. 
-Note that other researchers also decreased or recommended decreasing thresholds for effect sizes when analyzing within-person or cumulative effects (@beyensSocialMediaUse2021; @funderEvaluatingEffectSize2019).
+Note that other researchers also decreased or recommended decreasing thresholds for effect sizes when analyzing within-person or cumulative effects [@beyensSocialMediaUse2021; @funderEvaluatingEffectSize2019].
 Together, this leads to an indifference region ranging from _b_ = -.30 to _b_ = .30 for life satisfaction, and _b_ = -.15 to _b_ = .15 for positive and negative affect.
 
 ## Causality
@@ -365,9 +365,13 @@ The response options ranged from 0 (_extremely unsatisfied_) to 10 (_extremely s
 
 To capture positive affect, respondents were asked how often in the last week they felt (a) calm and relaxed, (b) happy, and (c) full of energy.
 The response options were 1 (_never_), 2 (_on some days_), 3 (_several times per week_), 4 (_almost every day_), and 5 (_daily_).
+The scale showed good factorial fit, `r fit_txt(cfa_aff_pos)`.
+Reliability was also very high, omega = `r rel_aff_pos %>% my_round("std")`.
 
 For negative affect, respondents were asked how often in the last week they felt (a) lonely, (b) aggravated, (c) so depressed, that nothing could lift you up, (d) very nervous, (e) anxious, and (h) glum and sad.
 The response options were 1 (_never_), 2 (_on some days_), 3 (_several times per week_), 4 (_almost every day_), and 5 (_daily_).
+The scale showed good factorial fit, `r fit_txt(cfa_aff_neg)`.
+Reliability was also very high, omega = `r rel_aff_neg %>% my_round("std")`.
 
 All three variables were measured on each wave.
 

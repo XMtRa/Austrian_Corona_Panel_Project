@@ -18,7 +18,7 @@ bibliography      :
 set.seed(170819)
 knitr::opts_chunk$set(warning=F, echo=T, error=F, message=F, cache = T, 
                       tidy=T, dev = 'pdf', cache.extra = knitr::rand_seed)
-options(digits = 3, width = 140, scipen=999)
+options(digits = 3, width = 200, scipen=999)
 ```
 
 # Set-up
@@ -34,7 +34,7 @@ packages <- c("brms", "corrplot", "devtools", "GGally", "ggplot2",
               "gridExtra", "haven", "kableExtra", "knitr", 
               "lavaan", "lme4", "magrittr", "mice", "MVN", "PerFit", 
               "psych", "quanteda.textstats",
-              "pwr", "semPlot", "semTools", "tidyverse")
+              "pwr", "purrr", "semPlot", "semTools", "tidyverse")
 
 # renv::install(packages)
 # renv::install("tdienlin/td@v.0.0.2.5")  # uncomment to install
@@ -46,7 +46,7 @@ lapply(c(packages, "td"), library, character.only = TRUE)
 
 ## Custom functions
 
-Find Variables in dataset.
+Find variables in dataset.
 
 ```{r}
 find_var <- function(name, data = doc)(
@@ -85,6 +85,22 @@ get_dat <- function(model){
   mutate(wave = as.integer(.$wave),
          value = as.numeric(.$value)) 
 } 
+```
+
+Determine average reliability for measures across waves
+
+```{r}
+get_rel <- function(data, waves=24){
+  
+  # extract average reliability from lavaan fitted cfa with several groups
+  reliability(data) %>% 
+  unlist() %>% 
+  matrix(5, waves) %>% 
+  as.data.frame() %>% 
+  set_rownames(c("alpha", "omega", "omega2", "omega3", "avevar")) %>% 
+  summarise(omega = rowMeans(.["omega",])) %>% 
+  return()
+}
 ```
 
 Make graph of variables' development.
@@ -515,12 +531,55 @@ summary(model_life_sat)
 
 ### Positive affect
 
+Positive affect was measured as a scale. We hence first inspect factorial validty using CFA.
+
+```{r}
+model <- "
+aff_pos =~ a1*aff_pos_1 + a2*aff_pos_2 + a3*aff_pos_3
+"
+cfa_aff_pos <- cfa(model, d_long, group = "wave")
+summary(cfa_aff_pos, standardized = TRUE, fit = TRUE, estimates = FALSE)
+```
+
+The data fit the model very well, `td::fit_txt(cfa_aff_pos)`.
+Let's next inspect reliability
+
+```{r}
+rel_aff_pos <- get_rel(cfa_aff_pos)
+rel_aff_pos
+```
+
+The average reliability across all waves was omega = `r rel_aff_pos`, hence good.
+
+Let's next expect the development across waves.
+
 ```{r}
 model_aff_pos <- lmer(aff_pos_m ~ (1 | id) + (1 | wave), d_long)
 summary(model_aff_pos)
 ```
 
 ### Negative affect
+
+Negative affect was measured as a scale. We hence first inspect factorial validty using CFA.
+
+```{r}
+model <- "
+aff_neg =~ a1*aff_neg_1 + a2*aff_neg_2 + a3*aff_neg_3 + a4*aff_neg_4 + a5*aff_neg_5 + a6*aff_neg_6
+"
+cfa_aff_neg <- cfa(model, d_long, group = "wave")
+summary(cfa_aff_neg, standardized = TRUE, fit = TRUE, estimates = FALSE)
+```
+
+The data fit the model very well, `td::fit_txt(cfa_aff_neg)`.
+
+Let's next inspect reliability.
+
+```{r}
+rel_aff_neg <- get_rel(cfa_aff_neg)
+rel_aff_neg
+```
+
+The average reliability across all waves was omega = `r rel_aff_neg`, hence good.
 
 ```{r}
 model_aff_neg <- lmer(aff_neg_m ~ (1 | id) + (1 | wave), d_long)
@@ -599,6 +658,22 @@ summary(model_soc_med_wa)
 model_soc_med_yt <- lmer(soc_med_yt ~ (1 | id) + (1 | wave), d_long)
 summary(model_soc_med_yt)
 ```
+
+## Locus of control
+
+The only other variable that was measured as a scale was Locus of Control. Below I hence report the scale's factorial validity.
+
+```{r}
+model <- "
+loc_cntrl_int =~ a1*loc_cntrl_int_1 + a2*loc_cntrl_int_2 + a3*loc_cntrl_int_3 + a4*loc_cntrl_int_4
+# loc_cntrl_int_1 ~~ loc_cntrl_int_2
+loc_cntrl_int_3 ~~ loc_cntrl_int_4
+"
+cfa_loc_cntrl_int <- cfa(model, filter(d_long, wave != 20), group = "wave")
+summary(cfa_loc_cntrl_int, standardized = TRUE, fit = TRUE, estimates = FALSE)
+```
+
+The data fit the model very well, `td::fit_txt(cfa_loc_cntrl_int)`.
 
 ## Figure
 

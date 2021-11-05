@@ -74,9 +74,9 @@ Here you can find a quick overview of all items that were measured.
 
 ## Gender
 
-"Welches Geschlecht haben Sie?"
+"What is your biological sex?"
 
-(a: Männlich; b Weiblich; c: Divers)
+(a: Male; b Female; c: Diverse)
 
 ## Age
 

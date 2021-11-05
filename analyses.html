@@ -379,17 +379,16 @@ div.tocify {
 <pre class="r"><code># install packages devtools::install_github(&#39;https://github.com/tdienlin/td&#39;)
 
 # define packages
-packages &lt;- c(&quot;brms&quot;, &quot;corrplot&quot;, &quot;devtools&quot;, &quot;GGally&quot;, &quot;ggplot2&quot;, &quot;gridExtra&quot;, &quot;haven&quot;, &quot;kableExtra&quot;, &quot;knitr&quot;, &quot;lavaan&quot;, &quot;lme4&quot;, &quot;magrittr&quot;,
-    &quot;mice&quot;, &quot;MVN&quot;, &quot;PerFit&quot;, &quot;psych&quot;, &quot;quanteda.textstats&quot;, &quot;pwr&quot;, &quot;semPlot&quot;, &quot;semTools&quot;, &quot;tidyverse&quot;)
+packages &lt;- c(&quot;brms&quot;, &quot;corrplot&quot;, &quot;devtools&quot;, &quot;GGally&quot;, &quot;ggplot2&quot;, &quot;gridExtra&quot;, &quot;haven&quot;, &quot;kableExtra&quot;, &quot;knitr&quot;, &quot;lavaan&quot;, &quot;lme4&quot;, &quot;magrittr&quot;, &quot;mice&quot;, &quot;MVN&quot;, &quot;PerFit&quot;, &quot;psych&quot;, &quot;quanteda.textstats&quot;, &quot;pwr&quot;,
+    &quot;purrr&quot;, &quot;semPlot&quot;, &quot;semTools&quot;, &quot;tidyverse&quot;)
 
-# renv::install(packages) renv::install(&#39;tdienlin/td@v.0.0.2.5&#39;) # uncomment to install renv::install(&#39;crsh/papaja@v0.1.0.9997&#39;) #
-# uncomment to install
+# renv::install(packages) renv::install(&#39;tdienlin/td@v.0.0.2.5&#39;) # uncomment to install renv::install(&#39;crsh/papaja@v0.1.0.9997&#39;) # uncomment to install
 
 # load packages
 lapply(c(packages, &quot;td&quot;), library, character.only = TRUE)</code></pre>
 <div id="custom-functions" class="section level2">
 <h2>Custom functions</h2>
-<p>Find Variables in dataset.</p>
+<p>Find variables in dataset.</p>
 <pre class="r"><code>find_var &lt;- function(name, data = doc)(
   # finds the variables names for an item for each wave
     data %&gt;% 
@@ -411,6 +410,18 @@ lapply(c(packages, &quot;td&quot;), library, character.only = TRUE)</code></pre>
         tibble::rownames_to_column(&quot;wave&quot;) %&gt;%
         rename(value = &quot;(Intercept)&quot;) %&gt;%
         mutate(wave = as.integer(.$wave), value = as.numeric(.$value))
+}</code></pre>
+<p>Determine average reliability for measures across waves</p>
+<pre class="r"><code>get_rel &lt;- function(data, waves = 24) {
+
+    # extract average reliability from lavaan fitted cfa with several groups
+    reliability(data) %&gt;%
+        unlist() %&gt;%
+        matrix(5, waves) %&gt;%
+        as.data.frame() %&gt;%
+        set_rownames(c(&quot;alpha&quot;, &quot;omega&quot;, &quot;omega2&quot;, &quot;omega3&quot;, &quot;avevar&quot;)) %&gt;%
+        summarise(omega = rowMeans(.[&quot;omega&quot;, ])) %&gt;%
+        return()
 }</code></pre>
 <p>Make graph of variables’ development.</p>
 <pre class="r"><code>make_graph &lt;- function(model, title, ll, ul, line = FALSE, labels = FALSE, lmer = TRUE, legend = TRUE) {
@@ -436,9 +447,8 @@ lapply(c(packages, &quot;td&quot;), library, character.only = TRUE)</code></pre>
 }</code></pre>
 <p>Make graph of effects</p>
 <pre class="r"><code>make_graph_res &lt;- function(data, sesoi = TRUE) {
-    ggplot(data, aes(x = estimate, y = iv)) + scale_color_manual(values = c(&quot;grey40&quot;, &quot;deepskyblue&quot;)) + geom_vline(xintercept = 0, lwd = 0.75,
-        colour = &quot;darkgrey&quot;) + geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), lwd = 0.75, height = 0.2, position = position_dodge(0.6)) +
-        geom_point(size = 2, position = position_dodge(0.6)) + {
+    ggplot(data, aes(x = estimate, y = iv)) + scale_color_manual(values = c(&quot;grey40&quot;, &quot;deepskyblue&quot;)) + geom_vline(xintercept = 0, lwd = 0.75, colour = &quot;darkgrey&quot;) + geom_errorbarh(aes(xmin = conf.low,
+        xmax = conf.high), lwd = 0.75, height = 0.2, position = position_dodge(0.6)) + geom_point(size = 2, position = position_dodge(0.6)) + {
         if (sesoi)
             geom_vline(data = filter(data, dv == &quot;Life satisfaction&quot;), aes(xintercept = 0.3), colour = &quot;darkgrey&quot;, linetype = &quot;dashed&quot;)
     } + {
@@ -450,8 +460,8 @@ lapply(c(packages, &quot;td&quot;), library, character.only = TRUE)</code></pre>
     } + {
         if (sesoi)
             geom_vline(data = filter(data, dv != &quot;Life satisfaction&quot;), aes(xintercept = -0.15), colour = &quot;darkgrey&quot;, linetype = &quot;dashed&quot;)
-    } + theme(axis.title.y = element_blank(), plot.title = element_text(hjust = 0.5), panel.spacing = unit(0.9, &quot;lines&quot;), text = element_text(size = 12),
-        axis.text.y = element_text(hjust = 0)) + facet_grid(rows = vars(type), cols = vars(dv), scales = &quot;free&quot;, space = &quot;free_y&quot;)
+    } + theme(axis.title.y = element_blank(), plot.title = element_text(hjust = 0.5), panel.spacing = unit(0.9, &quot;lines&quot;), text = element_text(size = 12), axis.text.y = element_text(hjust = 0)) + facet_grid(rows = vars(type),
+        cols = vars(dv), scales = &quot;free&quot;, space = &quot;free_y&quot;)
 }</code></pre>
 </div>
 </div>
@@ -577,14 +587,12 @@ loc_cntrl_int_4 &lt;- find_var(&quot;Psychologie: Schicksal&quot;)</code></pre>
 # rename variables
 # names(d_wide) &lt;- sub(&quot;\\.\\.\\.&quot;, &quot;§&quot;, names(d_wide)) # replace &quot;...&quot; with &quot;_&quot;</code></pre>
 <p>Make new documentation with selected variables.</p>
-<pre class="r"><code>doc_selected &lt;- filter(doc, variable %in% c(&quot;RESPID&quot;, &quot;SD_GENDER&quot;, &quot;SD_ACCESS_BALCONY&quot;, &quot;SD_ACCESS_GARDEN&quot;, &quot;SD_BIRTHYEAR&quot;, &quot;SD_BORN_AUSTRIA&quot;,
-    &quot;SD_MIGR_BACKGR&quot;, &quot;SD_BULA&quot;, &quot;SD_EDU&quot;, &quot;SD_EMPLSTATUS_FEB2020&quot;, &quot;SD_HH_ADULTS&quot;, &quot;SD_HH_CHILD18&quot;, &quot;SD_HH_TEENS&quot;, &quot;SD_HH_CHILD14&quot;, &quot;SD_HH_CHILD5&quot;,
-    &quot;SD_HH_CHILD2&quot;, &quot;SD_HH_OLDERFAM&quot;, &quot;SD_HH_OUTERFAM&quot;, &quot;SD_HH_PARTNER&quot;, &quot;SD_HHINCOME_FEB2020&quot;, &quot;SD_HOME_SQM&quot;, &quot;SD_HOMEOWNER&quot;, &quot;SD_WORKHOURS_FEB2020&quot;,
-    health[1], life_sat[1], aff_neg_1[1], aff_neg_2[1], aff_neg_3[1], aff_neg_4[1], aff_neg_5[1], aff_neg_6[1], aff_pos_1[1], aff_pos_2[1], aff_pos_3[1],
-    act_wrk[1], act_spo[1], act_frn[1], act_sho[1], act_pet[1], sat_dem[1], work_h[1], work_homeoff[1], hh_income[1], med_txt_kro[1], med_txt_sta[1],
-    med_txt_pre[1], med_txt_oes[1], med_txt_kur[1], med_txt_slz[1], med_txt_son[1], med_vid_orf[1], med_vid_pri[1], soc_med_fb[1], soc_med_tw[1],
-    soc_med_ig[1], soc_med_yt[1], soc_med_wa[1], soc_med_like_share[1], soc_med_post[1], soc_med_read[1], risk_prop[1], loc_cntrl_int_1[1], loc_cntrl_int_2[1],
-    loc_cntrl_int_3[1], loc_cntrl_int_4[1]))</code></pre>
+<pre class="r"><code>doc_selected &lt;- filter(doc, variable %in% c(&quot;RESPID&quot;, &quot;SD_GENDER&quot;, &quot;SD_ACCESS_BALCONY&quot;, &quot;SD_ACCESS_GARDEN&quot;, &quot;SD_BIRTHYEAR&quot;, &quot;SD_BORN_AUSTRIA&quot;, &quot;SD_MIGR_BACKGR&quot;, &quot;SD_BULA&quot;, &quot;SD_EDU&quot;, &quot;SD_EMPLSTATUS_FEB2020&quot;,
+    &quot;SD_HH_ADULTS&quot;, &quot;SD_HH_CHILD18&quot;, &quot;SD_HH_TEENS&quot;, &quot;SD_HH_CHILD14&quot;, &quot;SD_HH_CHILD5&quot;, &quot;SD_HH_CHILD2&quot;, &quot;SD_HH_OLDERFAM&quot;, &quot;SD_HH_OUTERFAM&quot;, &quot;SD_HH_PARTNER&quot;, &quot;SD_HHINCOME_FEB2020&quot;, &quot;SD_HOME_SQM&quot;, &quot;SD_HOMEOWNER&quot;,
+    &quot;SD_WORKHOURS_FEB2020&quot;, health[1], life_sat[1], aff_neg_1[1], aff_neg_2[1], aff_neg_3[1], aff_neg_4[1], aff_neg_5[1], aff_neg_6[1], aff_pos_1[1], aff_pos_2[1], aff_pos_3[1], act_wrk[1], act_spo[1],
+    act_frn[1], act_sho[1], act_pet[1], sat_dem[1], work_h[1], work_homeoff[1], hh_income[1], med_txt_kro[1], med_txt_sta[1], med_txt_pre[1], med_txt_oes[1], med_txt_kur[1], med_txt_slz[1], med_txt_son[1],
+    med_vid_orf[1], med_vid_pri[1], soc_med_fb[1], soc_med_tw[1], soc_med_ig[1], soc_med_yt[1], soc_med_wa[1], soc_med_like_share[1], soc_med_post[1], soc_med_read[1], risk_prop[1], loc_cntrl_int_1[1],
+    loc_cntrl_int_2[1], loc_cntrl_int_3[1], loc_cntrl_int_4[1]))</code></pre>
 <p>Recode Variables</p>
 <pre class="r"><code>d_wide %&lt;&gt;%
   mutate_at(vars(everything(.)), funs(na_if(., 88))) %&gt;%
@@ -650,8 +658,7 @@ loc_cntrl_int_4 &lt;- find_var(&quot;Psychologie: Schicksal&quot;)</code></pre>
 <p>Recode values</p>
 <pre class="r"><code># recode such that higher values imply more strength / align with wording
 d_long %&lt;&gt;%
-    mutate_at(vars(med_txt_kro:med_vid_pri, health, sat_dem, soc_med_fb:soc_med_post), funs(recode(., `1` = 5L, `2` = 4L, `3` = 3L, `4` = 2L,
-        `5` = 1L))) %&gt;%
+    mutate_at(vars(med_txt_kro:med_vid_pri, health, sat_dem, soc_med_fb:soc_med_post), funs(recode(., `1` = 5L, `2` = 4L, `3` = 3L, `4` = 2L, `5` = 1L))) %&gt;%
     mutate_at(vars(loc_cntrl_int_1:loc_cntrl_int_4), funs(recode(., `1` = 4L, `2` = 3L, `3` = 2L, `4` = 1L))) %&gt;%
     mutate_at(vars(born_aus_prnts), funs(recode(., `3` = 0L, `2` = 2L, `1` = 1L)))
 
@@ -668,8 +675,7 @@ d_long %&lt;&gt;%
     arrange(id, wave)</code></pre>
 <p>Create means for scales</p>
 <pre class="r"><code>d_long %&lt;&gt;%
-    mutate(aff_pos_m = rowMeans(select(., aff_pos_1:aff_pos_3)), aff_neg_m = rowMeans(select(., aff_neg_1:aff_neg_6)), loc_cntrl_int_m = rowMeans(select(.,
-        loc_cntrl_int_1:loc_cntrl_int_4)))</code></pre>
+    mutate(aff_pos_m = rowMeans(select(., aff_pos_1:aff_pos_3)), aff_neg_m = rowMeans(select(., aff_neg_1:aff_neg_6)), loc_cntrl_int_m = rowMeans(select(., loc_cntrl_int_1:loc_cntrl_int_4)))</code></pre>
 <p>Create mean values for each person (between), and unique changes per wave (within).</p>
 <pre class="r"><code>d_long %&lt;&gt;%
     group_by(id) %&gt;%
@@ -725,6 +731,113 @@ summary(model_life_sat)</code></pre>
 </div>
 <div id="positive-affect" class="section level3">
 <h3>Positive affect</h3>
+<p>Positive affect was measured as a scale. We hence first inspect factorial validty using CFA.</p>
+<pre class="r"><code>model &lt;- &quot;
+aff_pos =~ a1*aff_pos_1 + a2*aff_pos_2 + a3*aff_pos_3
+&quot;
+cfa_aff_pos &lt;- cfa(model, d_long, group = &quot;wave&quot;)
+summary(cfa_aff_pos, standardized = TRUE, fit = TRUE, estimates = FALSE)</code></pre>
+<pre><code>## lavaan 0.6-9 ended normally after 82 iterations
+## 
+##   Estimator                                         ML
+##   Optimization method                           NLMINB
+##   Number of model parameters                       216
+##   Number of equality constraints                    46
+##                                                       
+##   Number of observations per group:               Used       Total
+##     1                                             1435        3018
+##     2                                             1477        3018
+##     3                                             1406        3018
+##     4                                             1433        3018
+##     5                                             1439        3018
+##     6                                             1467        3018
+##     7                                             1443        3018
+##     8                                             1416        3018
+##     9                                             1413        3018
+##     10                                            1418        3018
+##     11                                            1415        3018
+##     12                                            1433        3018
+##     13                                            1444        3018
+##     14                                            1457        3018
+##     15                                            1481        3018
+##     16                                            1556        3018
+##     17                                            1500        3018
+##     18                                            1479        3018
+##     19                                            1504        3018
+##     20                                            1476        3018
+##     21                                            1481        3018
+##     22                                            1444        3018
+##     23                                            1415        3018
+##     24                                            1417        3018
+##                                                                   
+## Model Test User Model:
+##                                                       
+##   Test statistic                                65.296
+##   Degrees of freedom                                46
+##   P-value (Chi-square)                           0.032
+##   Test statistic for each group:
+##     1                                            4.128
+##     2                                            0.853
+##     3                                            9.411
+##     4                                            2.476
+##     5                                            0.313
+##     6                                            1.821
+##     7                                           10.104
+##     8                                            0.842
+##     9                                            2.508
+##     10                                           0.996
+##     11                                           1.317
+##     12                                           0.643
+##     13                                           1.026
+##     14                                           4.135
+##     15                                           0.616
+##     16                                           1.462
+##     17                                           5.091
+##     18                                           1.342
+##     19                                           6.448
+##     20                                           1.608
+##     21                                           1.955
+##     22                                           2.802
+##     23                                           2.477
+##     24                                           0.923
+## 
+## Model Test Baseline Model:
+## 
+##   Test statistic                             44990.282
+##   Degrees of freedom                                72
+##   P-value                                        0.000
+## 
+## User Model versus Baseline Model:
+## 
+##   Comparative Fit Index (CFI)                    1.000
+##   Tucker-Lewis Index (TLI)                       0.999
+## 
+## Loglikelihood and Information Criteria:
+## 
+##   Loglikelihood user model (H0)            -145819.271
+##   Loglikelihood unrestricted model (H1)    -145786.623
+##                                                       
+##   Akaike (AIC)                              291978.543
+##   Bayesian (BIC)                            293416.535
+##   Sample-size adjusted Bayesian (BIC)       292876.276
+## 
+## Root Mean Square Error of Approximation:
+## 
+##   RMSEA                                          0.017
+##   90 Percent confidence interval - lower         0.005
+##   90 Percent confidence interval - upper         0.026
+##   P-value RMSEA &lt;= 0.05                          1.000
+## 
+## Standardized Root Mean Square Residual:
+## 
+##   SRMR                                           0.013</code></pre>
+<p>The data fit the model very well, <code>td::fit_txt(cfa_aff_pos)</code>. Let’s next inspect reliability</p>
+<pre class="r"><code>rel_aff_pos &lt;- get_rel(cfa_aff_pos)
+rel_aff_pos</code></pre>
+<pre><code>##   omega
+## 1 0.846</code></pre>
+<p>The average reliability across all waves was omega = 0.846, hence good.</p>
+<p>Let’s next expect the development across waves.</p>
 <pre class="r"><code>model_aff_pos &lt;- lmer(aff_pos_m ~ (1 | id) + (1 | wave), d_long)
 summary(model_aff_pos)</code></pre>
 <pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
@@ -750,6 +863,113 @@ summary(model_aff_pos)</code></pre>
 </div>
 <div id="negative-affect" class="section level3">
 <h3>Negative affect</h3>
+<p>Negative affect was measured as a scale. We hence first inspect factorial validty using CFA.</p>
+<pre class="r"><code>model &lt;- &quot;
+aff_neg =~ a1*aff_neg_1 + a2*aff_neg_2 + a3*aff_neg_3 + a4*aff_neg_4 + a5*aff_neg_5 + a6*aff_neg_6
+&quot;
+cfa_aff_neg &lt;- cfa(model, d_long, group = &quot;wave&quot;)
+summary(cfa_aff_neg, standardized = TRUE, fit = TRUE, estimates = FALSE)</code></pre>
+<pre><code>## lavaan 0.6-9 ended normally after 73 iterations
+## 
+##   Estimator                                         ML
+##   Optimization method                           NLMINB
+##   Number of model parameters                       432
+##   Number of equality constraints                   115
+##                                                       
+##   Number of observations per group:               Used       Total
+##     1                                             1418        3018
+##     2                                             1468        3018
+##     3                                             1375        3018
+##     4                                             1427        3018
+##     5                                             1401        3018
+##     6                                             1436        3018
+##     7                                             1423        3018
+##     8                                             1382        3018
+##     9                                             1387        3018
+##     10                                            1408        3018
+##     11                                            1401        3018
+##     12                                            1404        3018
+##     13                                            1420        3018
+##     14                                            1438        3018
+##     15                                            1446        3018
+##     16                                            1530        3018
+##     17                                            1472        3018
+##     18                                            1445        3018
+##     19                                            1516        3018
+##     20                                            1459        3018
+##     21                                            1471        3018
+##     22                                            1425        3018
+##     23                                            1388        3018
+##     24                                            1389        3018
+##                                                                   
+## Model Test User Model:
+##                                                       
+##   Test statistic                              3138.370
+##   Degrees of freedom                               331
+##   P-value (Chi-square)                           0.000
+##   Test statistic for each group:
+##     1                                          254.659
+##     2                                          257.285
+##     3                                          149.260
+##     4                                          141.020
+##     5                                          156.352
+##     6                                          126.761
+##     7                                           70.960
+##     8                                           80.681
+##     9                                          181.000
+##     10                                         118.959
+##     11                                         150.175
+##     12                                         118.402
+##     13                                         110.867
+##     14                                         135.821
+##     15                                          57.188
+##     16                                         129.567
+##     17                                         126.784
+##     18                                         125.076
+##     19                                         126.680
+##     20                                          85.465
+##     21                                         123.833
+##     22                                          83.787
+##     23                                         124.250
+##     24                                         103.539
+## 
+## Model Test Baseline Model:
+## 
+##   Test statistic                            110112.461
+##   Degrees of freedom                               360
+##   P-value                                        0.000
+## 
+## User Model versus Baseline Model:
+## 
+##   Comparative Fit Index (CFI)                    0.974
+##   Tucker-Lewis Index (TLI)                       0.972
+## 
+## Loglikelihood and Information Criteria:
+## 
+##   Loglikelihood user model (H0)            -220216.282
+##   Loglikelihood unrestricted model (H1)    -218647.097
+##                                                       
+##   Akaike (AIC)                              441066.565
+##   Bayesian (BIC)                            443743.232
+##   Sample-size adjusted Bayesian (BIC)       442735.808
+## 
+## Root Mean Square Error of Approximation:
+## 
+##   RMSEA                                          0.077
+##   90 Percent confidence interval - lower         0.075
+##   90 Percent confidence interval - upper         0.079
+##   P-value RMSEA &lt;= 0.05                          0.000
+## 
+## Standardized Root Mean Square Residual:
+## 
+##   SRMR                                           0.032</code></pre>
+<p>The data fit the model very well, <code>td::fit_txt(cfa_aff_neg)</code>.</p>
+<p>Let’s next inspect reliability.</p>
+<pre class="r"><code>rel_aff_neg &lt;- get_rel(cfa_aff_neg)
+rel_aff_neg</code></pre>
+<pre><code>##   omega
+## 1 0.887</code></pre>
+<p>The average reliability across all waves was omega = 0.887, hence good.</p>
 <pre class="r"><code>model_aff_neg &lt;- lmer(aff_neg_m ~ (1 | id) + (1 | wave), d_long)
 summary(model_aff_neg)</code></pre>
 <pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
@@ -905,8 +1125,8 @@ summary(model_soc_med_tw)</code></pre>
 ## (Intercept)   1.3022     0.0143    90.9
 ## optimizer (nloptwrap) convergence code: 0 (OK)
 ## boundary (singular) fit: see ?isSingular</code></pre>
-<pre class="r"><code># Bayesian Approach model_soc_med_tw &lt;- brm(soc_med_tw ~ (1 | id) + (1 | wave), d_long Also throws a warning model_soc_med_tw &lt;-
-# brm(soc_med_tw ~ (1 | id) + (1 | wave), d_long, control=list(adapt_delta=0.82)) Currently doesn&#39;t work, likely for lack of memory</code></pre>
+<pre class="r"><code># Bayesian Approach model_soc_med_tw &lt;- brm(soc_med_tw ~ (1 | id) + (1 | wave), d_long Also throws a warning model_soc_med_tw &lt;- brm(soc_med_tw ~ (1 | id) + (1 | wave), d_long,
+# control=list(adapt_delta=0.82)) Currently doesn&#39;t work, likely for lack of memory</code></pre>
 <p>Interestingly, lme4 throws a warning, likely because there is too little variance across waves, while little variation measure itself. Let’s inspect the raw means.</p>
 <pre class="r"><code>soc_med_tw_m &lt;- d_long %&gt;%
     group_by(wave) %&gt;%
@@ -1004,19 +1224,120 @@ summary(model_soc_med_yt)</code></pre>
 ## (Intercept)   2.0055     0.0508    39.5</code></pre>
 </div>
 </div>
+<div id="locus-of-control" class="section level2">
+<h2>Locus of control</h2>
+<p>The only other variable that was measured as a scale was Locus of Control. Below I hence report the scale’s factorial validity.</p>
+<pre class="r"><code>model &lt;- &quot;
+loc_cntrl_int =~ a1*loc_cntrl_int_1 + a2*loc_cntrl_int_2 + a3*loc_cntrl_int_3 + a4*loc_cntrl_int_4
+# loc_cntrl_int_1 ~~ loc_cntrl_int_2
+loc_cntrl_int_3 ~~ loc_cntrl_int_4
+&quot;
+cfa_loc_cntrl_int &lt;- cfa(model, filter(d_long, wave != 20), group = &quot;wave&quot;)
+summary(cfa_loc_cntrl_int, standardized = TRUE, fit = TRUE, estimates = FALSE)</code></pre>
+<pre><code>## lavaan 0.6-9 ended normally after 444 iterations
+## 
+##   Estimator                                         ML
+##   Optimization method                           NLMINB
+##   Number of model parameters                       299
+##   Number of equality constraints                    66
+##                                                       
+##   Number of observations per group:               Used       Total
+##     1                                             1420        3018
+##     2                                              198        3018
+##     3                                               56        3018
+##     4                                               91        3018
+##     5                                               86        3018
+##     6                                             1416        3018
+##     7                                               47        3018
+##     8                                               30        3018
+##     9                                               39        3018
+##     10                                              49        3018
+##     11                                            1017        3018
+##     12                                             108        3018
+##     13                                            1375        3018
+##     14                                             158        3018
+##     15                                            1433        3018
+##     16                                               5        3018
+##     17                                              16        3018
+##     18                                            1389        3018
+##     19                                              11        3018
+##     21                                            1443        3018
+##     22                                              27        3018
+##     23                                              29        3018
+##     24                                            1329        3018
+##                                                                   
+## Model Test User Model:
+##                                                       
+##   Test statistic                               192.459
+##   Degrees of freedom                                89
+##   P-value (Chi-square)                           0.000
+##   Test statistic for each group:
+##     1                                            6.713
+##     2                                            4.531
+##     3                                            2.769
+##     4                                            1.708
+##     5                                            8.690
+##     6                                           12.160
+##     7                                            1.766
+##     8                                            1.596
+##     9                                            0.840
+##     10                                           6.070
+##     11                                          22.183
+##     12                                          19.865
+##     13                                           3.135
+##     14                                          29.821
+##     15                                           0.704
+##     16                                          18.201
+##     17                                          15.405
+##     18                                           2.199
+##     19                                           5.280
+##     21                                           3.283
+##     22                                          12.907
+##     23                                           8.438
+##     24                                           4.196
+## 
+## Model Test Baseline Model:
+## 
+##   Test statistic                              7339.974
+##   Degrees of freedom                               138
+##   P-value                                        0.000
+## 
+## User Model versus Baseline Model:
+## 
+##   Comparative Fit Index (CFI)                    0.986
+##   Tucker-Lewis Index (TLI)                       0.978
+## 
+## Loglikelihood and Information Criteria:
+## 
+##   Loglikelihood user model (H0)             -54607.425
+##   Loglikelihood unrestricted model (H1)     -54511.195
+##                                                       
+##   Akaike (AIC)                              109680.849
+##   Bayesian (BIC)                            111398.870
+##   Sample-size adjusted Bayesian (BIC)       110658.423
+## 
+## Root Mean Square Error of Approximation:
+## 
+##   RMSEA                                          0.048
+##   90 Percent confidence interval - lower         0.038
+##   90 Percent confidence interval - upper         0.057
+##   P-value RMSEA &lt;= 0.05                          0.650
+## 
+## Standardized Root Mean Square Residual:
+## 
+##   SRMR                                           0.024</code></pre>
+<p>The data fit the model very well, <code>td::fit_txt(cfa_loc_cntrl_int)</code>.</p>
+</div>
 <div id="figure" class="section level2">
 <h2>Figure</h2>
 <p>Display the results in a combined figure.</p>
-<pre class="r"><code>fig_desc_dat &lt;- data.frame(rbind(data.frame(type = &quot;Life satisfaction&quot;, dimension = &quot;Life satisfaction&quot;, get_dat(model_life_sat)), data.frame(type = &quot;Affect&quot;,
-    dimension = &quot;Positive&quot;, get_dat(model_aff_pos)), data.frame(type = &quot;Affect&quot;, dimension = &quot;Negative&quot;, get_dat(model_aff_neg)), data.frame(type = &quot;Social media use&quot;,
-    dimension = &quot;Reading&quot;, get_dat(model_soc_med_read)), data.frame(type = &quot;Social media use&quot;, dimension = &quot;Liking &amp; Sharing&quot;, get_dat(model_soc_med_like_share)),
-    data.frame(type = &quot;Social media use&quot;, dimension = &quot;Posting&quot;, get_dat(model_soc_med_post)), data.frame(type = &quot;Social media channel&quot;, dimension = &quot;Facebook&quot;,
-        get_dat(model_soc_med_fb)), data.frame(type = &quot;Social media channel&quot;, dimension = &quot;Twitter&quot;, get_dat(model_soc_med_tw)), data.frame(type = &quot;Social media channel&quot;,
-        dimension = &quot;Instagram&quot;, get_dat(model_soc_med_ig)), data.frame(type = &quot;Social media channel&quot;, dimension = &quot;WhatsApp&quot;, get_dat(model_soc_med_wa)),
-    data.frame(type = &quot;Social media channel&quot;, dimension = &quot;YouTube&quot;, get_dat(model_soc_med_yt))) %&gt;%
-    mutate(type = factor(.$type, levels = c(&quot;Life satisfaction&quot;, &quot;Affect&quot;, &quot;Social media use&quot;, &quot;Social media channel&quot;)), dimension = factor(.$dimension,
-        levels = c(&quot;Life satisfaction&quot;, &quot;Positive&quot;, &quot;Negative&quot;, &quot;Reading&quot;, &quot;Liking &amp; Sharing&quot;, &quot;Posting&quot;, &quot;Facebook&quot;, &quot;Twitter&quot;, &quot;Instagram&quot;,
-            &quot;WhatsApp&quot;, &quot;YouTube&quot;))))
+<pre class="r"><code>fig_desc_dat &lt;- data.frame(rbind(data.frame(type = &quot;Life satisfaction&quot;, dimension = &quot;Life satisfaction&quot;, get_dat(model_life_sat)), data.frame(type = &quot;Affect&quot;, dimension = &quot;Positive&quot;, get_dat(model_aff_pos)),
+    data.frame(type = &quot;Affect&quot;, dimension = &quot;Negative&quot;, get_dat(model_aff_neg)), data.frame(type = &quot;Social media use&quot;, dimension = &quot;Reading&quot;, get_dat(model_soc_med_read)), data.frame(type = &quot;Social media use&quot;,
+        dimension = &quot;Liking &amp; Sharing&quot;, get_dat(model_soc_med_like_share)), data.frame(type = &quot;Social media use&quot;, dimension = &quot;Posting&quot;, get_dat(model_soc_med_post)), data.frame(type = &quot;Social media channel&quot;,
+        dimension = &quot;Facebook&quot;, get_dat(model_soc_med_fb)), data.frame(type = &quot;Social media channel&quot;, dimension = &quot;Twitter&quot;, get_dat(model_soc_med_tw)), data.frame(type = &quot;Social media channel&quot;, dimension = &quot;Instagram&quot;,
+        get_dat(model_soc_med_ig)), data.frame(type = &quot;Social media channel&quot;, dimension = &quot;WhatsApp&quot;, get_dat(model_soc_med_wa)), data.frame(type = &quot;Social media channel&quot;, dimension = &quot;YouTube&quot;, get_dat(model_soc_med_yt))) %&gt;%
+    mutate(type = factor(.$type, levels = c(&quot;Life satisfaction&quot;, &quot;Affect&quot;, &quot;Social media use&quot;, &quot;Social media channel&quot;)), dimension = factor(.$dimension, levels = c(&quot;Life satisfaction&quot;, &quot;Positive&quot;, &quot;Negative&quot;,
+        &quot;Reading&quot;, &quot;Liking &amp; Sharing&quot;, &quot;Posting&quot;, &quot;Facebook&quot;, &quot;Twitter&quot;, &quot;Instagram&quot;, &quot;WhatsApp&quot;, &quot;YouTube&quot;))))
 
 fig_desc_life_sat &lt;- make_graph(fig_desc_dat %&gt;%
     filter(type == &quot;Life satisfaction&quot;), title = &quot;Life satisfaction&quot;, ll = 0, ul = 10, lmer = FALSE, line = TRUE, legend = FALSE)
@@ -1031,15 +1352,14 @@ fig_desc_soc_med_channel &lt;- make_graph(fig_desc_dat %&gt;%
     filter(type == &quot;Social media channel&quot;), title = &quot;Social media channel&quot;, ll = 1, ul = 5, lmer = FALSE, line = TRUE)
 
 fig_desc &lt;- grid.arrange(fig_desc_life_sat, fig_desc_aff, fig_desc_soc_med_use, fig_desc_soc_med_channel, nrow = 2, ncol = 2)</code></pre>
-<embed src="analyses_files/figure-html/unnamed-chunk-30-1.pdf" width="672" type="application/pdf" />
+<embed src="analyses_files/figure-html/unnamed-chunk-36-1.pdf" width="672" type="application/pdf" />
 <pre class="r"><code>ggsave(&quot;figures/fig_descriptives.pdf&quot;, width = 10, height = 6, plot = fig_desc)</code></pre>
 </div>
 <div id="table" class="section level2">
 <h2>Table</h2>
-<pre class="r"><code>tab_desc_dat &lt;- rbind(`Life satisfaction` = get_specs(model_life_sat), `Positive affect` = get_specs(model_aff_pos), `Negative affect` = get_specs(model_aff_neg),
-    Read = get_specs(model_soc_med_read), `Like &amp; share` = get_specs(model_soc_med_like_share), Posting = get_specs(model_soc_med_post), Facebook = get_specs(model_soc_med_fb),
-    Twitter = c(sd = get_specs(model_soc_med_tw)$sd, min = min(soc_med_tw_m$value, na.rm = TRUE), max = max(soc_med_tw_m$value, na.rm = TRUE),
-        mean = mean(soc_med_tw_m$value, na.rm = TRUE)), Instagram = get_specs(model_soc_med_ig), WhatsApp = get_specs(model_soc_med_wa), YouTube = get_specs(model_soc_med_yt))
+<pre class="r"><code>tab_desc_dat &lt;- rbind(`Life satisfaction` = get_specs(model_life_sat), `Positive affect` = get_specs(model_aff_pos), `Negative affect` = get_specs(model_aff_neg), Read = get_specs(model_soc_med_read),
+    `Like &amp; share` = get_specs(model_soc_med_like_share), Posting = get_specs(model_soc_med_post), Facebook = get_specs(model_soc_med_fb), Twitter = c(sd = get_specs(model_soc_med_tw)$sd, min = min(soc_med_tw_m$value,
+        na.rm = TRUE), max = max(soc_med_tw_m$value, na.rm = TRUE), mean = mean(soc_med_tw_m$value, na.rm = TRUE)), Instagram = get_specs(model_soc_med_ig), WhatsApp = get_specs(model_soc_med_wa), YouTube = get_specs(model_soc_med_yt))
 kable(tab_desc_dat)</code></pre>
 <table>
 <thead>
@@ -1257,15 +1577,12 @@ YouTube
 <div id="life-satisfaction-1" class="section level2">
 <h2>Life satisfaction</h2>
 <p>First, without control variables.</p>
-<pre class="r"><code>model_life_sat_lmer_nco &lt;- lmerTest::lmer(life_sat ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w + soc_med_post_w + soc_med_fb_w +
-    soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b + soc_med_post_b + soc_med_fb_b + soc_med_ig_b +
-    soc_med_wa_b + soc_med_yt_b + soc_med_tw_b, data = d_long)
+<pre class="r"><code>model_life_sat_lmer_nco &lt;- lmerTest::lmer(life_sat ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w + soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+    soc_med_read_b + soc_med_like_share_b + soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b, data = d_long)
 summary(model_life_sat_lmer_nco)</code></pre>
 <pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
-## Formula: life_sat ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +  
-##     soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +  
-##     soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
-##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b
+## Formula: life_sat ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +  
+##     soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +      soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b
 ##    Data: d_long
 ## 
 ## REML criterion at convergence: 33790
@@ -1324,15 +1641,12 @@ summary(model_life_sat_lmer_nco)</code></pre>
                                       , data = d_long)
 summary(model_life_sat_lmer)</code></pre>
 <pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
-## Formula: life_sat ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +  
-##     soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +  
-##     soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
-##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +  
-##     soc_med_yt_b + soc_med_tw_b + age + male + born_aus + born_aus_prnts +  
-##     edu_fac + employment_fac + health_b + res_vienna + acc_bal +      acc_gar + home_sqm + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b +  
-##     med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b +      med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_m_b +  
-##     act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w +      act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +  
-##     sat_dem_w + sat_dem_b
+## Formula: life_sat ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +  
+##     soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +      soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +  
+##     soc_med_yt_b + soc_med_tw_b + age + male + born_aus + born_aus_prnts +      edu_fac + employment_fac + health_b + res_vienna + acc_bal +  
+##     acc_gar + home_sqm + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b +      med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b +  
+##     med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_m_b +      act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w +  
+##     act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +      sat_dem_w + sat_dem_b
 ##    Data: d_long
 ## 
 ## REML criterion at convergence: 29235
@@ -1422,15 +1736,12 @@ summary(model_life_sat_lmer)</code></pre>
 <div id="positive-affect-1" class="section level2">
 <h2>Positive Affect</h2>
 <p>First, without control variables.</p>
-<pre class="r"><code>model_aff_pos_lmer_nco &lt;- lmerTest::lmer(aff_pos_m ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w + soc_med_post_w + soc_med_fb_w +
-    soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b + soc_med_post_b + soc_med_fb_b + soc_med_ig_b +
-    soc_med_wa_b + soc_med_yt_b + soc_med_tw_b, data = d_long)
+<pre class="r"><code>model_aff_pos_lmer_nco &lt;- lmerTest::lmer(aff_pos_m ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w + soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+    soc_med_read_b + soc_med_like_share_b + soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b, data = d_long)
 summary(model_aff_pos_lmer_nco)</code></pre>
 <pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
-## Formula: aff_pos_m ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +  
-##     soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +  
-##     soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
-##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b
+## Formula: aff_pos_m ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +  
+##     soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +      soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b
 ##    Data: d_long
 ## 
 ## REML criterion at convergence: 18057
@@ -1489,15 +1800,12 @@ summary(model_aff_pos_lmer_nco)</code></pre>
                                       , data = d_long)
 summary(model_aff_pos_lmer)</code></pre>
 <pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
-## Formula: aff_pos_m ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +  
-##     soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +  
-##     soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
-##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +  
-##     soc_med_yt_b + soc_med_tw_b + age + male + born_aus + born_aus_prnts +  
-##     edu_fac + employment_fac + health_b + res_vienna + acc_bal +      acc_gar + home_sqm + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b +  
-##     med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b +      med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_m_b +  
-##     act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w +      act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +  
-##     sat_dem_w + sat_dem_b
+## Formula: aff_pos_m ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +  
+##     soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +      soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +  
+##     soc_med_yt_b + soc_med_tw_b + age + male + born_aus + born_aus_prnts +      edu_fac + employment_fac + health_b + res_vienna + acc_bal +  
+##     acc_gar + home_sqm + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b +      med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b +  
+##     med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_m_b +      act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w +  
+##     act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +      sat_dem_w + sat_dem_b
 ##    Data: d_long
 ## 
 ## REML criterion at convergence: 15389
@@ -1587,15 +1895,12 @@ summary(model_aff_pos_lmer)</code></pre>
 <div id="negative-affect-1" class="section level2">
 <h2>Negative Affect</h2>
 <p>First, without control variables.</p>
-<pre class="r"><code>model_aff_neg_lmer_nco &lt;- lmerTest::lmer(aff_neg_m ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w + soc_med_post_w + soc_med_fb_w +
-    soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b + soc_med_post_b + soc_med_fb_b + soc_med_ig_b +
-    soc_med_wa_b + soc_med_yt_b + soc_med_tw_b, data = d_long)
+<pre class="r"><code>model_aff_neg_lmer_nco &lt;- lmerTest::lmer(aff_neg_m ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w + soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+    soc_med_read_b + soc_med_like_share_b + soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b, data = d_long)
 summary(model_aff_neg_lmer_nco)</code></pre>
 <pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
-## Formula: aff_neg_m ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +  
-##     soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +  
-##     soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
-##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b
+## Formula: aff_neg_m ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +  
+##     soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +      soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b
 ##    Data: d_long
 ## 
 ## REML criterion at convergence: 12810
@@ -1654,15 +1959,12 @@ summary(model_aff_neg_lmer_nco)</code></pre>
                                       , data = d_long)
 summary(model_aff_neg_lmer)</code></pre>
 <pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
-## Formula: aff_neg_m ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +  
-##     soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +  
-##     soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
-##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +  
-##     soc_med_yt_b + soc_med_tw_b + age + male + born_aus + born_aus_prnts +  
-##     edu_fac + employment_fac + health_b + res_vienna + acc_bal +      acc_gar + home_sqm + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b +  
-##     med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b +      med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_m_b +  
-##     act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w +      act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +  
-##     sat_dem_w + sat_dem_b
+## Formula: aff_neg_m ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +  
+##     soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +      soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +  
+##     soc_med_yt_b + soc_med_tw_b + age + male + born_aus + born_aus_prnts +      edu_fac + employment_fac + health_b + res_vienna + acc_bal +  
+##     acc_gar + home_sqm + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b +      med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b +  
+##     med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_m_b +      act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w +  
+##     act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +      sat_dem_w + sat_dem_b
 ##    Data: d_long
 ## 
 ## REML criterion at convergence: 10591
@@ -1760,8 +2062,7 @@ dat_fig_results &lt;- broom.mixed::tidy(model_aff_neg_lmer, conf.int = T) %&gt;%
     rbind(broom.mixed::tidy(model_life_sat_lmer, conf.int = T) %&gt;%
         mutate(dv = &quot;life_sat&quot;)) %&gt;%
     mutate(type = ifelse(grepl(&quot;.*_w\\&gt;&quot;, .$term), &quot;within&quot;, &quot;between&quot;), iv = gsub(&quot;_(w|b)\\&gt;&quot;, &quot;&quot;, .$term)) %&gt;%
-    mutate(type = factor(.$type, levels = c(&quot;within&quot;, &quot;between&quot;)), dv = factor(.$dv, levels = c(&quot;life_sat&quot;, &quot;aff_pos&quot;, &quot;aff_neg&quot;), labels = c(&quot;Life satisfaction&quot;,
-        &quot;Positive affect&quot;, &quot;Negative affect&quot;))) %&gt;%
+    mutate(type = factor(.$type, levels = c(&quot;within&quot;, &quot;between&quot;)), dv = factor(.$dv, levels = c(&quot;life_sat&quot;, &quot;aff_pos&quot;, &quot;aff_neg&quot;), labels = c(&quot;Life satisfaction&quot;, &quot;Positive affect&quot;, &quot;Negative affect&quot;))) %&gt;%
     select(dv, iv, type, estimate, conf.low, conf.high, p.value)</code></pre>
 <p>Select social media types of activity, and make graph.</p>
 <pre class="r"><code># select Social Media type of activity
@@ -1772,35 +2073,32 @@ dat_fig_results_activity &lt;- dat_fig_results %&gt;%
 # make figure
 fig_results_activity &lt;- make_graph_res(dat_fig_results_activity)
 fig_results_activity</code></pre>
-<embed src="analyses_files/figure-html/unnamed-chunk-39-1.pdf" width="672" type="application/pdf" />
+<embed src="analyses_files/figure-html/unnamed-chunk-45-1.pdf" width="672" type="application/pdf" />
 <pre class="r"><code># safe figure
 ggsave(&quot;figures/fig_results_activity.pdf&quot;, width = 7, height = 4, plot = fig_results_activity)</code></pre>
 <p>Select social media channels and make figure.</p>
 <pre class="r"><code># select social media channel
 dat_fig_results_channel &lt;- dat_fig_results %&gt;%
     filter(iv %in% c(&quot;soc_med_fb&quot;, &quot;soc_med_ig&quot;, &quot;soc_med_wa&quot;, &quot;soc_med_yt&quot;, &quot;soc_med_tw&quot;)) %&gt;%
-    mutate(iv = factor(.$iv, levels = c(&quot;soc_med_yt&quot;, &quot;soc_med_wa&quot;, &quot;soc_med_ig&quot;, &quot;soc_med_tw&quot;, &quot;soc_med_fb&quot;), labels = c(&quot;YouTube&quot;, &quot;WhatsApp&quot;,
-        &quot;Instagram&quot;, &quot;Twitter&quot;, &quot;Facebook&quot;)))
+    mutate(iv = factor(.$iv, levels = c(&quot;soc_med_yt&quot;, &quot;soc_med_wa&quot;, &quot;soc_med_ig&quot;, &quot;soc_med_tw&quot;, &quot;soc_med_fb&quot;), labels = c(&quot;YouTube&quot;, &quot;WhatsApp&quot;, &quot;Instagram&quot;, &quot;Twitter&quot;, &quot;Facebook&quot;)))
 
 # make figure
 fig_results_channel &lt;- make_graph_res(dat_fig_results_channel)
 fig_results_channel</code></pre>
-<embed src="analyses_files/figure-html/unnamed-chunk-40-1.pdf" width="672" type="application/pdf" />
+<embed src="analyses_files/figure-html/unnamed-chunk-46-1.pdf" width="672" type="application/pdf" />
 <pre class="r"><code># save figure
 ggsave(&quot;figures/fig_results_channel.pdf&quot;, width = 7, height = 4, plot = fig_results_channel)</code></pre>
 <p>Select control variables and make graph.</p>
 <pre class="r"><code># select social media channel
 dat_fig_results_control &lt;- dat_fig_results %&gt;%
-    filter(iv %in% c(&quot;age&quot;, &quot;male&quot;, &quot;health&quot;, &quot;home_sqm&quot;, &quot;loc_cntrl_int_m&quot;, &quot;employment_facUnemployed&quot;, &quot;employment_facParental Leave&quot;, &quot;act_spo&quot;,
-        &quot;sat_dem&quot;)) %&gt;%
-    mutate(iv = factor(.$iv, levels = c(&quot;age&quot;, &quot;male&quot;, &quot;health&quot;, &quot;home_sqm&quot;, &quot;loc_cntrl_int_m&quot;, &quot;employment_facUnemployed&quot;, &quot;employment_facParental Leave&quot;,
-        &quot;act_spo&quot;, &quot;sat_dem&quot;), labels = c(&quot;Age&quot;, &quot;Male&quot;, &quot;Health&quot;, &quot;Squaremeter home&quot;, &quot;Internal locus of control&quot;, &quot;Umemployed&quot;, &quot;On parental leave&quot;,
-        &quot;Sport&quot;, &quot;Satisfaction democracy&quot;)))
+    filter(iv %in% c(&quot;age&quot;, &quot;male&quot;, &quot;health&quot;, &quot;home_sqm&quot;, &quot;loc_cntrl_int_m&quot;, &quot;employment_facUnemployed&quot;, &quot;employment_facParental Leave&quot;, &quot;act_spo&quot;, &quot;sat_dem&quot;)) %&gt;%
+    mutate(iv = factor(.$iv, levels = c(&quot;age&quot;, &quot;male&quot;, &quot;health&quot;, &quot;home_sqm&quot;, &quot;loc_cntrl_int_m&quot;, &quot;employment_facUnemployed&quot;, &quot;employment_facParental Leave&quot;, &quot;act_spo&quot;, &quot;sat_dem&quot;), labels = c(&quot;Age&quot;, &quot;Male&quot;,
+        &quot;Health&quot;, &quot;Squaremeter home&quot;, &quot;Internal locus of control&quot;, &quot;Umemployed&quot;, &quot;On parental leave&quot;, &quot;Sport&quot;, &quot;Satisfaction democracy&quot;)))
 
 # make figure
 fig_results_control &lt;- make_graph_res(dat_fig_results_control, sesoi = FALSE)
 fig_results_control</code></pre>
-<embed src="analyses_files/figure-html/unnamed-chunk-41-1.pdf" width="672" type="application/pdf" />
+<embed src="analyses_files/figure-html/unnamed-chunk-47-1.pdf" width="672" type="application/pdf" />
 <pre class="r"><code># save figure
 ggsave(&quot;figures/fig_results_control.pdf&quot;, width = 7, height = 4, plot = fig_results_control)</code></pre>
 <pre class="r"><code>save.image(&quot;data/workspace.RData&quot;)</code></pre>
