@@ -8,6 +8,8 @@ navbar:
       href: manuscript.html
     - text: "Analyses"
       href: analyses.html
+    - text: "Additional analyses"
+      href: analyses_additional.html
     - text: "Items"
       href: items_english.html
     - text: "Items German"

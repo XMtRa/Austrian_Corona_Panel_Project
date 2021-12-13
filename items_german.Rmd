@@ -8,7 +8,7 @@ output:
       toc_depth: 3
 ---
   
-Here you can find a quick overview of all items that were measures.
+Here you can find a quick overview of all items that were measured.
 
 ## Life Satisfaction
 

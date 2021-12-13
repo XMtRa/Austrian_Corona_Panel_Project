@@ -1,14 +1,15 @@
 ---
-title: "No meaningful effects of COVID-19 related social media use on well-being"
+title: "Analyzing the effects of COVID-19 related social media use on well-being"
 ---
 
 
-On this website, you can find the companion material for the paper _No meaningful effects of COVID-19 related social media use on well-being_. 
+On this website, you can find the companion material for the paper _Analyzing the effects of COVID-19 related social media use on well-being_. 
 
 You can find the following information here:
 
 - The paper, which you can read [in your browser](manuscript.html) or download as [pdf](manuscript.pdf). 
 - The detailed code and summaries of the [analyses](analyses.html)
+- [Additional analyses](analyses_additional.html).
 - A list of the [items translated into English](items_english.html)
 - A list of the [original items in German](items_german.html)
 - The [preregistration](preregistration.html) 

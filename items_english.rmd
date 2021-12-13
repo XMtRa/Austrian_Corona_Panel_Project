@@ -1,9 +1,6 @@
 ---
 title: "Items: English"
 output:
-  # pdf_document:
-  #   latex_engine: xelatex
-  #   toc: true
   html_document:
     toc: TRUE
     toc_float:
@@ -80,64 +77,64 @@ Here you can find a quick overview of all items that were measured.
 
 ## Age
 
-"In welchem Jahr wurden Sie geboren?"
+"In which year were you born?"
  
-(Jahr)
+(year)
 
 ## Education
 
-"Was ist der höchste Schul- oder Bildungsabschluss, den Sie erreicht haben?"
+"What is the highest educational degree you have earned?"
 
- - a. Volksschule oder weniger
- - b. Hauptschule oder AHS Unterstufe
- - c. Polytechnikum, BMS (Fachschule, z.B. HASCH)
- - d. Lehre, Berufsschule
- - e. AHS mit Matura
- - f. BHS mit Matura (z.B. HTL, HAK, HBLA etc.) 
- - g. Hochschulverwandte Lehranstalt oder Kolleg 
- - h. Bachelor
- - i. Magister / Master / Diplomingenieur / Fachhochschule 
- - j. Doktor / PhD
+ 1. No degree
+ 1. Middle school
+ 1. Vocational school
+ 1. Technical school
+ 1. High school
+ 1. Applied high school
+ 1. State college
+ 1. Bachelor
+ 1. Master
+ 1. PhD
 
 ## Austria country of birth
 
-"Ist Ihr Geburtsland Österreich?"
+"Is Austria you country of birth?"
 
-  - Ja
-  - Nein
+  - Yes
+  - NO
 
 ## Austria country of birth of parents
 
- "Wurde einer oder beide Ihrer Elternteile nicht in Österreich geboren?"
+ "Is Austria your parents' country of birth?"
  
- - a. Ja, einer
- - b. Ja, beide
- - c. Nein
+ - a. Yes, one parent.
+ - b. Yes, both parents.
+ - c. No.
 
 ## News consumption: Text-based
 
-"Nachstehend finden Sie eine Liste mit verschiedenen Tageszeitungen. Wie oft haben Sie sich letzte Woche über das politische Geschehen in der jeweiligen Zeitung (im Internet oder gedruckt) informiert?"
+"Below you can find a list of different newspapers. How often during the last week have you informed yourself politically using on the these outlets (both online and offline)?"
 
- - Kronen Zeitung oder www.krone.at
- - Der Standard oder derstandard.at
- - Die Presse oder diepresse.com
- - Österreich oder oe24.at
- - Kurier oder kurier.at
- - Salzburger Nachrichten oder salzburg.at
- - Sonstige österreichische Tageszeitungen
+ - Kronen Zeitung or www.krone.at
+ - Der Standard or derstandard.at
+ - Die Presse or diepresse.com
+ - Österreich or oe24.at
+ - Kurier or kurier.at
+ - Salzburger Nachrichten or salzburg.at
+ - Other Austrian papers
 
 ## News consumption: Video-based
 
-"Nachstehend finden Sie eine Liste mit verschiedenen Nachrichtensendungen im Fernsehen. Wie oft haben Sie sich letzte Woche über das politische Geschehen in den folgenden Nachrichtensendungen informiert?"
+"Below you can find a list of different news shows in television. How often during the last week have you informed yourself politically using on the these shows?"
 
- - "Nachrichtensendungen im ORF (z.B. Zeit im Bild um 19:30h oder ZiB 2 um 22:00h)"
- - "Nachrichtensendungen im Privatfernsehen (z.B. ATV aktuell, Puls 4/ Pro7/ Sat1 Austria)"
+ - "News shows on ORF (e.g., Zeit im Bild at 19:30h or ZiB 2 at 22:00h)"
+ - "News shows in private television (e.g., ATV aktuell, Puls 4/ Pro7/ Sat1 Austria)"
 
-(1 = Mehrmals täglich; 2 = Einmal täglich; 3 = Mehrmals in der Woche; 4 = Einmal in der Woche; 5 = Gar nicht/nie)
+(1 = several times per day; 2 = daily; 3 = several times per week; 4 = weekly; 5 = never)
 
 ## Residency Vienna
 
-"In welchem Bundesland leben Sie aktuell?"
+"In which county do you live currently?"
 
  - a. Vorarlberg
  - b. Tirol
@@ -149,23 +146,21 @@ Here you can find a quick overview of all items that were measured.
  - h. Wien
  - i. Burgenland
 
-(Will be transformed to Vienna: yes/no)
+(Was transformed to Vienna: yes/no)
 
 ## Household size
 
-"Bitte rechnen Sie hier sich selbst wieder mit ein. Wenn es eine Personengruppe nicht in Ihrem Haushalt gibt, tragen Sie bitte „0“ ein.
+"Please include yourself into the following calculation. If one groups not present in your household, indicate "0"."
 
- - a. ...Erwachsene über 18 Jahre:
- - b. ...Teenager von 15-17 Jahren:
- - c. ...Kinder von 6-14 Jahren:
- - d. ...Kinder von 3-5 Jahren:
- - e. ...Kinder von 0-2 Jahren:
-
-(Achtung, wenn Anzahl Erwachsene missing, 1 eintragen, da vorher Filterfrage)
+ - a. ...Adults older than 18 years:
+ - b. ...Teenager between 15-17 years:
+ - c. ...Kids between 6-14 years:
+ - d. ...Kids between 3-5 years:
+ - e. ...Kids between 0-2 years:
 
 ## Health
 
-"Kommen wir jetzt zu ein paar Fragen zu Ihrer Gesundheit. Wie schätzen Sie Ihren allgemeinen Gesundheitszustand ein? Würden Sie sagen, er ist..."
+"Let's next turn to some questions concerning health. How would you describe your overall health conditionas? Would you say your healt is ..."
 
  - a. 1 = Sehr gut
  - b. 2 = Gut
@@ -175,95 +170,96 @@ Here you can find a quick overview of all items that were measured.
 
 ## Living space
 
-"Wie viele Quadratmeter hat Ihre Wohnung?"
+"How many square meteres does your appartment have?"
 
-(Einfach-Nennung, Zahleneingabe, min. 0 – max. 600, freiwillig)
+(Number, min. 0 – max. 600, voluntary.)
 
 ## Access garden
 
-"Haben Sie Zugang zu einer privaten Freifläche (Balkon, Garten)? 
+"Have you got access to a private area outside?"
 
- - (Ja, Garten)
+ - (Yes, garden)
 
 ## Access balcony
 
-"Haben Sie Zugang zu einer privaten Freifläche (Balkon, Garten)?" 
+"Have you got access to a private area outside?"
 
- - (Ja, Balkon)
+ - (Yes, balcony)
 
 ## Employment
 
-Wenn Sie sich selbst zuordnen: Im Februar 2020, welcher der folgenden Gruppen gehören Sie vorwiegend an? (Einfach-Nennung)
+In Februrary 2020, what was your job situation?
 
- - a. Unselbstständig erwerbstätig (auch Lehrling), Privatwirtschaft
- - b. Unselbstständig erwerbstätig (auch Lehrling), Öffentlicher Dienst
- - c. Selbstständig erwerbstätig
- - d. Arbeitslos
- - e. Pensionist*in
- - f. Ausschließlich haushaltsführend
- - g. Schüler/in, Student/in, Bildungskarenz
- - h. Dauerhaft arbeitsunfähig
- - i. Präsenz-/Zivildiener
- - j. In Elternkarenz
-		
+ 1. Unemployed
+ 1. Industrie
+ 1. Public service
+ 1. Self-employed
+ 1. Retired
+ 1. Housekeeping
+ 1. Student
+ 1. Incapacitated
+ 1. Parental Leave
+
 ## Work hours per week
 
-"Wie viele Stunden (inklusive Überstunden) arbeiten Sie in Ihrer Haupttätigkeit jetzt pro Woche? Wenn Sie es nicht genau wissen, genügt Ihre beste Schätzung."
+"How many hours per week (including extra hours) do you currently work in your main job? If you don't know, please guess.
+
+(hours)
 
 ## Home-Office Yes/No
 
-"Hat sich in Ihrer beruflichen Situation aufgrund der Corona-Krise etwas geändert? Bitte wählen Sie alles Zutreffende aus."
+"Has your current job situation changed due to the Corona crisis? Please select the appropriate answer."
 
- - a. Ich bin im Home-Office
+ - a. I'm in home-office
 
 ## Household income
 
-"Wie viel Geld steht Ihrem Haushalt aktuell zur Verfügung (Netto-Haushaltseinkommen inklusive Sozialleistungen, Rente usw.)? Bitte rechnen Sie Überstunden mit ein, nicht aber den 13./14. Bezug."
+"How much income does your household currently have per month?"
 
- - a. weniger als 1.100 Euro
- - b. 1.100 bis unter 1.500 Euro 
- - c. 1.500 bis unter 1.800 Euro 
- - d. 1.800 bis unter 2.200 Euro 
- - e. 2.200 bis unter 2.700 Euro 
- - f. 2.700 bis unter 3.100 Euro 
- - g. 3.100 bis unter 3.700 Euro 
- - h. 3.700 bis unter 4.300 Euro 
- - i. 4.300 bis unter 5.500 Euro 
- - j. 5.500 Euro und mehr
+ - a. less than 1.100 Euro
+ - b. between 1.100 and 1.500 Euro 
+ - c. between 1.500 and 1.800 Euro 
+ - d. between 1.800 and 2.200 Euro 
+ - e. between 2.200 and 2.700 Euro 
+ - f. between 2.700 and 3.100 Euro 
+ - g. between 3.100 and 3.700 Euro 
+ - h. between 3.700 and 4.300 Euro 
+ - i. between 4.300 and 5.500 Euro 
+ - j. 5.500 Euro and more
 
 ## Outdoor activities
 
-"Haben Sie wegen folgenden Gründen in der vergangenen Woche Ihr Zuhause verlassen?"
+"Have you left your home during the last week for the following activity?"
 
- - a: Arbeit
+ - a: Work
  - b: Sport
- - c: Freunde oder Verwandte treffen
- - e: Essen einkaufen
- - f: Haustiere ausführen
+ - c: Meeting friends or relatives
+ - e: Shopping
+ - f: Pets
 	
 (nie [1]; an manchen Tagen [2]; mehrmals die Woche [3]; beinahe jeden Tag [4]; täglich [5])
 
 ## Satisfaction Democracy
 
-"Wie zufrieden oder unzufrieden sind Sie alles in allem mit der Demokratie, so wie sie derzeit in Österreich funktioniert?"
+"How satisfied or dissatisfied are you all in all with the democracy how it's currently working in Austria?"
 
- - a. 1 = Sehr zufrieden
- - b. 2 = Eher zufrieden
- - c. 3 = Teils-teils
- - d. 4 = Eher unzufrieden 
- - e. 5 = Sehr unzufrieden
+ - a. 1 = very satisfied
+ - b. 2 = rather satisfied
+ - c. 3 = neither nor
+ - d. 4 = rather dissatisfied 
+ - e. 5 = very dissatisfied
 
 ## Risk-taking
 
-"Wie sehr sind Sie im Allgemeinen dazu bereit, Risiken einzugehen?"
+"How willing are you, in general, to take risks?"
 
-(0: gar nicht bereit; 10: sehr bereit)
+(0: not at all willing; 10: very willing)
 
 ## Locus of Control 
 
- - "Ich habe mein Leben selbst in der Hand."
- - "Wenn ich mich anstrenge, werde ich auch Erfolg haben."
- - "Egal ob privat oder im Beruf: Mein Leben wird zum großen Teil von anderen bestimmt."
- - "Meine Pläne werden oft vom Schicksal durchkreuzt."
+ - "I'm in control of my own life."
+ - "If I try hard, I'll have success."
+ - "Bei it in my private or professional life: My life is primarily determined by others."
+ - "My plans for life are determined by fate."
 	
-(1 = Trifft voll und ganz zu; 2 = Trifft etwas zu; 3 = Trifft wenig zu; 4 = Trifft nicht zu)
+(1 = Agree completely; 2 = Agree somewhat; 3 = Disgagree somewhat; 4 = Disagree completely)
