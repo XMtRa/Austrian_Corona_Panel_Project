@@ -40,6 +40,14 @@ packages <- c("broom.mixed", "brms", "devtools", "GGally", "ggplot2",
 lapply(c(packages, "td"), library, character.only = TRUE)
 ```
 
+## Session info
+
+Provide session info to make results reproducible.
+
+```{r}
+sessionInfo()
+```
+
 ## Custom functions
 
 ### find_var
@@ -178,9 +186,9 @@ get_dat_res <- function(data_aff_neg, data_aff_pos, data_life_sat, type, analysi
     dv = factor(.$dv, 
                 levels = c("life_sat", "aff_pos", "aff_neg"),
                 labels = c("Life satisfaction", "Positive affect", "Negative affect")),
-    analysis = analysis
+    Analysis = analysis
   ) %>% 
-  select(dv, iv, type, analysis, estimate, conf.low, conf.high, p.value)
+  select(dv, iv, type, Analysis, estimate, conf.low, conf.high, p.value)
 
   # select Social Media type of activity
   if(type == "activity") {
@@ -213,11 +221,11 @@ Make graph of effects
 ```{r}
 make_graph_res <- function(data, sesoi = NULL, legend = TRUE){
   ggplot(data, aes(x = estimate, y = iv)) + 
-  scale_color_manual(values = c("grey40", "deepskyblue", "darkcyan", "cornflowerblue", "aquamarine")) +
+  scale_color_manual(values = c("black", "grey60", "grey75", "deepskyblue", "cornflowerblue", "darkcyan", "aquamarine")) +
   geom_vline(xintercept = 0, lwd = .75, colour = "darkgrey") + 
-  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high, color = analysis),
-                lwd = .75, height = .2, position = position_dodge(.5)) +
-  geom_point(aes(color = analysis), size = 2, position = position_dodge(.5)) +
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high, color = Analysis),
+                lwd = .75, height = .2, position = position_dodge(-.7)) +
+  geom_point(aes(color = Analysis), size = 2, position = position_dodge(-.7)) +
   {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data, dv=="Life satisfaction"), aes(xintercept=-.3), colour="darkgrey", linetype = "dashed")} + 
     {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data, dv=="Life satisfaction"), aes(xintercept=.3), colour="darkgrey", linetype = "dashed")} + 
   {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data, dv!="Life satisfaction"), aes(xintercept=-.15), colour="darkgrey", linetype = "dashed")} +
@@ -232,7 +240,7 @@ make_graph_res <- function(data, sesoi = NULL, legend = TRUE){
     axis.text.y = element_text(hjust = 0)
     ) +
   {if(!isTRUE(legend)) theme(legend.position = "none")} + 
-  guides(colour = guide_legend(reverse=T)) +
+  # guides(colour = guide_legend(reverse=T)) +
   facet_grid(rows = vars(type),
              cols = vars(dv),
              scales = "free",
@@ -542,7 +550,7 @@ d_long %<>%
 
 # Impute data
 
-Determine amount of missingness per respondent per wave. Because calculation takes long, this chunk is not executed but loaded from memory. To execute, set eval == TRUE.
+Determine amount of missingness per respondent per wave. Because calculation takes long, this chunk is loaded from memory.
 
 ```{r eval=TRUE, cache=TRUE}
 vars_used <- c("life_sat", "aff_pos_1", "aff_pos_2", "aff_pos_3", "aff_neg_1", "aff_neg_2", "aff_neg_3", "aff_neg_4", "aff_neg_5", "aff_neg_6", "soc_med_read", "soc_med_like_share", "soc_med_post", "soc_med_fb", "soc_med_ig", "soc_med_wa", "soc_med_yt", "soc_med_tw", "age", "male", "born_aus", "born_aus_prnts", "edu_fac", "employment_fac", "health", "res_vienna", "acc_bal", "acc_gar", "home_sqm", "med_txt_kro", "med_txt_sta", "med_txt_pre", "med_txt_oes", "med_txt_kur", "med_txt_slz", "med_txt_son", "med_vid_orf", "med_vid_pri", "risk_prop", "loc_cntrl_int_1", "loc_cntrl_int_2", "loc_cntrl_int_3", "loc_cntrl_int_4", "act_wrk", "act_spo", "act_frn", "act_sho", "act_pet", "sat_dem")
@@ -580,9 +588,8 @@ d_long_mim_mice <- mice(d_long_filt,
 d_long_mim <- mice::complete(d_long_mim_mice, action = "long", include = TRUE)
 ```
 
-Load imputed data from disc.
-
-```{r}
+```{r eval=FALSE}
+# to further increase speed, you can also load the imputed data from the directory
 d_long_imp <- read_csv("data/data_imputed.csv")
 ```
 
@@ -905,22 +912,8 @@ kable(tab_desc_dat)
 ```
 
 # Analyses
-## Life satisfaction
-
-First, without control variables.
-
-```{r}
-model_life_sat_lmer_nco <- lmerTest::lmer(life_sat ~ 
-                            (1 | id) + (1 | wave) + 
-                            soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
-                            soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
-                            soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
-                            soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b,
-                data = d_long_imp)
-summary(model_life_sat_lmer_nco)
-```
-
-Now with control variables.
+## Preregistered
+### Life satisfaction
 
 ```{r}
 model_life_sat_lmer <- lmerTest::lmer(life_sat ~
@@ -945,23 +938,7 @@ model_life_sat_lmer <- lmerTest::lmer(life_sat ~
 summary(model_life_sat_lmer)
 ```
 
-## Positive Affect
-
-First, without control variables.
-
-```{r}
-model_aff_pos_lmer_nco <- lmerTest::lmer(aff_pos_fs ~ 
-                                        (1 | id) + (1 | wave) + 
-                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
-                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
-                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
-                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b
-                                      , data = d_long_imp)
-summary(model_aff_pos_lmer_nco)
-```
-
-
-Now with control variables. 
+### Positive Affect
 
 ```{r}
 model_aff_pos_lmer <- lmerTest::lmer(aff_pos_fs ~ 
@@ -982,22 +959,7 @@ model_aff_pos_lmer <- lmerTest::lmer(aff_pos_fs ~
 summary(model_aff_pos_lmer)
 ```
 
-## Negative Affect
-
-First, without control variables. 
-
-```{r}
-model_aff_neg_lmer_nco <- lmerTest::lmer(aff_neg_fs ~ 
-                                        (1 | id) + (1 | wave) + 
-                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
-                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
-                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
-                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b
-                                      , data = d_long_imp)
-summary(model_aff_neg_lmer_nco)
-```
-
-Then, with control variables. 
+### Negative Affect
 
 ```{r}
 model_aff_neg_lmer <- lmerTest::lmer(aff_neg_fs ~ 
@@ -1018,9 +980,123 @@ model_aff_neg_lmer <- lmerTest::lmer(aff_neg_fs ~
 summary(model_aff_neg_lmer)
 ```
 
+## Without control variables
+### Life Satisfaction
+
+```{r}
+model_life_sat_lmer_nco <- lmerTest::lmer(life_sat ~ 
+                            (1 | id) + (1 | wave) + 
+                            soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                            soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+                            soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+                            soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b,
+                data = d_long_imp)
+summary(model_life_sat_lmer_nco)
+```
+
+### Positive Affect
+
+```{r}
+model_aff_pos_lmer_nco <- lmerTest::lmer(aff_pos_fs ~ 
+                                        (1 | id) + (1 | wave) + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b
+                                      , data = d_long_imp)
+summary(model_aff_pos_lmer_nco)
+```
+
+### Negative Affect
+
+```{r}
+model_aff_neg_lmer_nco <- lmerTest::lmer(aff_neg_fs ~ 
+                                        (1 | id) + (1 | wave) + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b
+                                      , data = d_long_imp)
+summary(model_aff_neg_lmer_nco)
+```
+
+## Standardized results
+
+First, create standardized dataset.
+
+```{r}
+d_long_std <- d_long_imp %>% 
+  mutate(across(c(-id, -wave, -gender, -male, -born_aus, -born_aus_prnts, -edu_fac, -employment_fac, -res_vienna, -acc_bal, -acc_gar), scale))
+```
+
+Then let's rerun the analyses.
+
+### Life satisfaction
+
+```{r}
+model_life_sat_lmer_std <- lmerTest::lmer(life_sat ~
+                                        (1 | id) + (1 | wave) + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
+                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
+                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac + health_b + 
+                                        res_vienna + acc_bal + acc_gar + home_sqm + 
+                                        med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
+                                        med_vid_orf_b + med_vid_pri_b + 
+                                        risk_prop_b + loc_cntrl_int_m_b + 
+                                        act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
+                                        act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
+                                        sat_dem_w + sat_dem_b 
+                                      , data = d_long_std)
+summary(model_life_sat_lmer_std)
+```
+
+### Positive affect
+
+```{r}
+model_aff_pos_lmer_std <- lmerTest::lmer(aff_pos_fs ~ 
+                                        (1 | id) + (1 | wave) + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
+                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac + health_b + 
+                                        res_vienna + acc_bal + acc_gar + home_sqm + 
+                                        med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
+                                        med_vid_orf_b + med_vid_pri_b + 
+                                        risk_prop_b + loc_cntrl_int_m_b + 
+                                        act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
+                                        act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
+                                        sat_dem_w + sat_dem_b 
+                                      , data = d_long_imp)
+summary(model_aff_pos_lmer_std)
+```
+
+### Negative Affect
+
+```{r}
+model_aff_neg_lmer_std <- lmerTest::lmer(aff_neg_fs ~ 
+                                        (1 | id) + (1 | wave) + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
+                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac + health_b + 
+                                        res_vienna + acc_bal + acc_gar + home_sqm + 
+                                        med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
+                                        med_vid_orf_b + med_vid_pri_b + 
+                                        risk_prop_b + loc_cntrl_int_m_b + 
+                                        act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
+                                        act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
+                                        sat_dem_w + sat_dem_b 
+                                      , data = d_long_imp)
+summary(model_aff_neg_lmer_std)
+```
+
 # Figures
 
-First, for activities.
+## Activities
 
 ```{r}
 # get data
@@ -1028,10 +1104,15 @@ dat_fig_results_activity <- get_dat_res(model_aff_neg_lmer, model_aff_pos_lmer, 
                                         type = "activity", analysis = "regular")
 dat_fig_results_activity_nco <- get_dat_res(model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, 
                                             type = "activity", analysis = "no controls")
+dat_fig_results_activity_std <- get_dat_res(model_aff_neg_lmer_std, model_aff_pos_lmer_std, model_life_sat_lmer_std, 
+                                            type = "activity", analysis = "standardized")
+
 dat_fig_results_activity <- rbind(
   dat_fig_results_activity, 
-  dat_fig_results_activity_nco
-)
+  dat_fig_results_activity_nco,
+  dat_fig_results_activity_std
+) %>% 
+  mutate(Analysis = factor(Analysis, levels = c("regular", "no controls", "standardized")))
 
 # make figure
 fig_results_activity <- make_graph_res(
@@ -1046,7 +1127,7 @@ ggsave("figures/fig_results_activity.pdf",
        plot = fig_results_activity)
 ```
 
-Then for channels.
+## Channels
 
 ```{r}
 # get data
@@ -1054,10 +1135,15 @@ dat_fig_results_channels <- get_dat_res(model_aff_neg_lmer, model_aff_pos_lmer, 
                                         type = "channels", analysis = "regular")
 dat_fig_results_channels_nco <- get_dat_res(model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, 
                                             type = "channels", analysis = "no controls")
+dat_fig_results_channels_std <- get_dat_res(model_aff_neg_lmer_std, model_aff_pos_lmer_std, model_life_sat_lmer_std, 
+                                            type = "channels", analysis = "standardized")
+
 dat_fig_results_channels <- rbind(
   dat_fig_results_channels, 
-  dat_fig_results_channels_nco
-)
+  dat_fig_results_channels_nco,
+  dat_fig_results_channels_std
+) %>% 
+  mutate(Analysis = factor(Analysis, levels = c("regular", "no controls", "standardized")))
 
 # make figure
 fig_results_channels <- make_graph_res(
@@ -1072,20 +1158,24 @@ ggsave("figures/fig_results_channels.pdf",
        plot = fig_results_channels)
 ```
 
-Select control variables and make graph.
+## Selected control variables
+
+Standardized, to allow for better comparison across differently scaled variables.
 
 ```{r}
 # make figure
-fig_results_control <- make_graph_res(
-  get_dat_res(model_aff_neg_lmer, model_aff_pos_lmer, model_life_sat_lmer, analysis = "exploratory", type = "control"),
+fig_results_control_std <- make_graph_res(
+  get_dat_res(model_aff_neg_lmer_std, model_aff_pos_lmer_std, model_life_sat_lmer_std, 
+              type = "control", analysis = "standardized"),
+  sesoi = "std",
   legend = FALSE
   )
-fig_results_control
+fig_results_control_std
 
 # save figure
-ggsave("figures/fig_results_control.pdf", 
+ggsave("figures/fig_results_control_std.pdf", 
        width = 7, height = 4,
-       plot = fig_results_control)
+       plot = fig_results_control_std)
 ```
 
 ```{r}

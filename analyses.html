@@ -13,7 +13,7 @@
 
 <title>Analyses</title>
 
-<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.13/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
@@ -66,6 +66,7 @@ if (window.hljs) {
 
 
 
+
 <style type = "text/css">
 .main-container {
   max-width: 940px;
@@ -86,6 +87,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -320,7 +324,7 @@ div.tocify {
 <div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -374,7 +378,7 @@ div.tocify {
 <div id="header">
 
 <div class="btn-group pull-right float-right">
-<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
 <ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
 <li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
 <li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
@@ -388,7 +392,9 @@ div.tocify {
 </div>
 
 
-<p>Here you can find the code and the results of all analyses. To see the code, click on button “Code.” Alternatively, you can download the rmd file from the github repo.</p>
+<p>Here you can find the code and the results of all analyses. To see
+the code, click on button “Code”. Alternatively, you can download the
+rmd file from the github repo.</p>
 <div id="set-up" class="section level1">
 <h1>Set-up</h1>
 <p>Load packages.</p>
@@ -396,15 +402,59 @@ div.tocify {
 # devtools::install_github(&quot;https://github.com/tdienlin/td@v.0.0.2.5&quot;)
 
 # define packages
-packages &lt;- c(&quot;brms&quot;, &quot;devtools&quot;, &quot;GGally&quot;, &quot;ggplot2&quot;, 
+packages &lt;- c(&quot;broom.mixed&quot;, &quot;brms&quot;, &quot;devtools&quot;, &quot;GGally&quot;, &quot;ggplot2&quot;, 
               &quot;gridExtra&quot;, &quot;kableExtra&quot;, &quot;knitr&quot;, &quot;lavaan&quot;, &quot;lme4&quot;, 
-              &quot;magrittr&quot;, &quot;mice&quot;, &quot;mvnormalTest&quot;, 
+              &quot;magrittr&quot;, &quot;mice&quot;, #&quot;mvnormalTest&quot;, 
               &quot;PerFit&quot;, &quot;psych&quot;, &quot;quanteda.textstats&quot;, &quot;semTools&quot;, &quot;tidyverse&quot;)
 
 # load packages
 lapply(c(packages, &quot;td&quot;), library, character.only = TRUE)</code></pre>
+<div id="session-info" class="section level2">
+<h2>Session info</h2>
+<p>Provide session info to make results reproducible.</p>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>## R version 4.1.3 (2022-03-10)
+## Platform: aarch64-apple-darwin20 (64-bit)
+## Running under: macOS Monterey 12.3.1
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.1-arm64/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] stats4    stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] td_0.0.1                forcats_0.5.1           stringr_1.4.0           dplyr_1.0.8             purrr_0.3.4             readr_2.1.2             tidyr_1.2.0             tibble_3.1.6            tidyverse_1.3.1         semTools_0.5-5         
+## [11] quanteda.textstats_0.95 psych_2.2.3             PerFit_1.4.6            mirt_1.36.1             lattice_0.20-45         ltm_1.2-0               polycor_0.8-1           msm_1.6.9               MASS_7.3-55             mice_3.14.0            
+## [21] magrittr_2.0.3          lme4_1.1-29             Matrix_1.4-0            lavaan_0.6-11           knitr_1.38              kableExtra_1.3.4        gridExtra_2.3           GGally_2.1.2            ggplot2_3.3.5           devtools_2.4.3         
+## [31] usethis_2.1.5           brms_2.16.3             Rcpp_1.0.8.3            broom.mixed_0.2.9.3    
+## 
+## loaded via a namespace (and not attached):
+##   [1] coda_0.19-4           stopwords_2.3         dygraphs_1.1.1.6      data.table_1.14.2     rpart_4.1.16          inline_0.3.19         RCurl_1.98-1.6        generics_0.1.2        callr_3.7.0           future_1.24.0         nsyllable_1.0.1      
+##  [12] tzdb_0.3.0            webshot_0.5.2         xml2_1.3.3            lubridate_1.8.0       httpuv_1.6.5          StanHeaders_2.21.0-7  assertthat_0.2.1      xfun_0.30             hms_1.1.1             jquerylib_0.1.4       bayesplot_1.9.0      
+##  [23] evaluate_0.15         promises_1.2.0.1      fansi_1.0.3           dbplyr_2.1.1          readxl_1.4.0          igraph_1.2.11         DBI_1.1.2             tmvnsim_1.0-2         htmlwidgets_1.5.4     reshape_0.8.8         tensorA_0.36.2       
+##  [34] ellipsis_0.3.2        crosstalk_1.2.0       ks_1.13.4             backports_1.4.1       pbivnorm_0.6.0        permute_0.9-7         markdown_1.1          RcppParallel_5.1.5    vctrs_0.4.0           remotes_2.4.2         abind_1.4-5          
+##  [45] cachem_1.0.6          withr_2.5.0           checkmate_2.0.0       vegan_2.5-7           xts_0.12.1            prettyunits_1.1.1     mclust_5.4.9          mnormt_2.0.2          svglite_2.1.0         cluster_2.1.2         crayon_1.5.1         
+##  [56] pkgconfig_2.0.3       nlme_3.1-155          pkgload_1.2.4         nnet_7.3-17           rlang_1.0.2           globals_0.14.0        lifecycle_1.0.1       miniUI_0.1.1.1        colourpicker_1.1.1    modelr_0.1.8          cellranger_1.1.0     
+##  [67] distributional_0.3.0  rprojroot_2.0.3       matrixStats_0.61.0    loo_2.5.1             boot_1.3-28           zoo_1.8-9             reprex_2.0.1          base64enc_0.1-3       ggridges_0.5.3        processx_3.5.3        png_0.1-7            
+##  [78] viridisLite_0.4.0     bitops_1.0-7          KernSmooth_2.23-20    parallelly_1.30.0     jpeg_0.1-9            shinystan_2.6.0       scales_1.1.1          memoise_2.0.1         plyr_1.8.7            threejs_0.3.3         compiler_4.1.3       
+##  [89] hdrcde_3.4            rstantools_2.2.0      RColorBrewer_1.1-3    cli_3.2.0             listenv_0.8.0         pbapply_1.5-0         ps_1.6.0              Brobdingnag_1.2-7     htmlTable_2.4.0       Formula_1.2-4         mgcv_1.8-39          
+## [100] tidyselect_1.1.2      stringi_1.7.6         yaml_2.3.5            latticeExtra_0.6-29   bridgesampling_1.1-2  grid_4.1.3            sass_0.4.1            fastmatch_1.1-3       tools_4.1.3           parallel_4.1.3        rstudioapi_0.13      
+## [111] foreign_0.8-82        GPArotation_2014.11-1 quanteda_3.2.1        posterior_1.2.1       farver_2.1.0          irtoys_0.2.1          digest_0.6.29         shiny_1.7.1           pracma_2.3.8          broom_0.7.12          later_1.3.0          
+## [122] fda_5.5.1             httr_1.4.2            Deriv_4.1.3           colorspace_2.0-3      rvest_1.0.2           brio_1.1.3            fs_1.5.2              rainbow_3.6           splines_4.1.3         sm_2.2-5.7            expm_0.999-6         
+## [133] shinythemes_1.2.0     sessioninfo_1.2.2     systemfonts_1.0.4     xtable_1.8-4          jsonlite_1.8.0        nloptr_2.0.0          fds_1.8               rstan_2.21.3          dcurver_0.9.2         testthat_3.1.3        R6_2.5.1             
+## [144] Hmisc_4.6-0           pillar_1.7.0          htmltools_0.5.2       mime_0.12             glue_1.6.2            fastmap_1.1.0         minqa_1.2.4           DT_0.22               deSolve_1.31          codetools_0.2-18      pkgbuild_1.3.1       
+## [155] pcaPP_1.9-74          mvtnorm_1.1-3         furrr_0.2.3           utf8_1.2.2            bslib_0.3.1           gtools_3.9.2          shinyjs_2.1.0         survival_3.2-13       admisc_0.26           rmarkdown_2.13        desc_1.4.1           
+## [166] munsell_0.5.0         haven_2.4.3           reshape2_1.4.4        gtable_0.3.0</code></pre>
+</div>
 <div id="custom-functions" class="section level2">
 <h2>Custom functions</h2>
+<div id="find_var" class="section level3">
+<h3>find_var</h3>
 <p>Find variables in dataset.</p>
 <pre class="r"><code>find_var &lt;- function(name, data = doc)(
   # finds the variables names for an item for each wave
@@ -414,6 +464,9 @@ lapply(c(packages, &quot;td&quot;), library, character.only = TRUE)</code></pre>
     unlist() %&gt;% 
     set_names(sub(&quot;\\_.*&quot;, &quot;&quot;, .))
 )</code></pre>
+</div>
+<div id="get_specs" class="section level3">
+<h3>get_specs</h3>
 <p>Extract characteristics from fitted lmer models.</p>
 <pre class="r"><code>get_specs &lt;- function(model){
     # Get mean, max, and min values
@@ -426,6 +479,9 @@ lapply(c(packages, &quot;td&quot;), library, character.only = TRUE)</code></pre>
     mean = mean(dat$`(Intercept)`)
   )
 }</code></pre>
+</div>
+<div id="get_dat" class="section level3">
+<h3>get_dat</h3>
 <p>Get data from fitted lmer objects for descriptives.</p>
 <pre class="r"><code>get_dat &lt;- function(model){
   coefficients(model)$wave %&gt;% 
@@ -434,6 +490,9 @@ lapply(c(packages, &quot;td&quot;), library, character.only = TRUE)</code></pre>
   mutate(wave = as.integer(.$wave),
          value = as.numeric(.$value)) 
 } </code></pre>
+</div>
+<div id="get_rel" class="section level3">
+<h3>get_rel</h3>
 <p>Determine average reliability for measures across waves</p>
 <pre class="r"><code>get_rel &lt;- function(data, waves=24){
   
@@ -446,6 +505,9 @@ lapply(c(packages, &quot;td&quot;), library, character.only = TRUE)</code></pre>
   summarise(omega = rowMeans(.[&quot;omega&quot;,])) %&gt;% 
   return()
 }</code></pre>
+</div>
+<div id="make_graph" class="section level3">
+<h3>make_graph</h3>
 <p>Make graph of variables’ development.</p>
 <pre class="r"><code>make_graph &lt;- function(model, title, ll, ul, line = FALSE, labels = FALSE, lmer=TRUE, legend=TRUE){
 
@@ -472,21 +534,34 @@ lapply(c(packages, &quot;td&quot;), library, character.only = TRUE)</code></pre>
     scale_color_manual(values=c(&quot;dodgerblue3&quot;, &quot;deepskyblue2&quot;, &quot;magenta2&quot;, &quot;green2&quot;, &quot;red&quot;))
   graph
 }</code></pre>
+</div>
+<div id="get_dat_res" class="section level3">
+<h3>get_dat_res</h3>
 <p>Get data of lmer objects for results.</p>
 <pre class="r"><code># get data
-get_dat_res &lt;- function(data_aff_neg, data_aff_pos, data_life_sat, type){
+get_dat_res &lt;- function(data_aff_neg, data_aff_pos, data_life_sat, type, analysis = NULL){
   
-  dat_fig_results &lt;- 
-  broom.mixed::tidy(data_aff_neg, conf.int = T) %&gt;% 
-  mutate(dv = &quot;aff_neg&quot;) %&gt;% 
-  rbind(
-    broom.mixed::tidy(data_aff_pos, conf.int = T) %&gt;% 
-    mutate(dv = &quot;aff_pos&quot;)
-  ) %&gt;% 
-  rbind(
-    broom.mixed::tidy(data_life_sat, conf.int = T) %&gt;% 
-    mutate(dv = &quot;life_sat&quot;)
-  ) %&gt;% 
+  if(isTRUE(class(data_aff_neg) == &quot;lmerModLmerTest&quot;)) {
+         dat_fig_results &lt;- 
+           broom.mixed::tidy(data_aff_neg, conf.int = T) %&gt;% 
+           mutate(dv = &quot;aff_neg&quot;) %&gt;% 
+           rbind(
+             broom.mixed::tidy(data_aff_pos, conf.int = T) %&gt;% 
+               mutate(dv = &quot;aff_pos&quot;)) %&gt;% 
+           rbind(
+             broom.mixed::tidy(data_life_sat, conf.int = T) %&gt;% 
+               mutate(dv = &quot;life_sat&quot;))
+         } else{ 
+           dat_fig_results &lt;- 
+             data_aff_neg %&gt;% 
+             mutate(dv = &quot;aff_neg&quot;) %&gt;% 
+             rbind(data_aff_pos %&gt;% 
+                   mutate(dv = &quot;aff_pos&quot;)) %&gt;% 
+             rbind(data_life_sat %&gt;% 
+                     mutate(dv = &quot;life_sat&quot;)) %&gt;% 
+           rename(conf.low = `2.5 %`, conf.high = `97.5 %`)
+           }
+  dat_fig_results %&lt;&gt;% 
   mutate(
     type = ifelse(grepl(&quot;.*_w\\&gt;&quot;, .$term), &quot;within&quot;, &quot;between&quot;),
     iv = gsub(&quot;_(w|b)\\&gt;&quot;, &quot;&quot;, .$term)
@@ -496,9 +571,10 @@ get_dat_res &lt;- function(data_aff_neg, data_aff_pos, data_life_sat, type){
                   levels = c(&quot;within&quot;, &quot;between&quot;)),
     dv = factor(.$dv, 
                 levels = c(&quot;life_sat&quot;, &quot;aff_pos&quot;, &quot;aff_neg&quot;),
-                labels = c(&quot;Life satisfaction&quot;, &quot;Positive affect&quot;, &quot;Negative affect&quot;))
+                labels = c(&quot;Life satisfaction&quot;, &quot;Positive affect&quot;, &quot;Negative affect&quot;)),
+    Analysis = analysis
   ) %&gt;% 
-  select(dv, iv, type, estimate, conf.low, conf.high, p.value)
+  select(dv, iv, type, Analysis, estimate, conf.low, conf.high, p.value)
 
   # select Social Media type of activity
   if(type == &quot;activity&quot;) {
@@ -509,7 +585,7 @@ get_dat_res &lt;- function(data_aff_neg, data_aff_pos, data_life_sat, type){
                   levels = c(&quot;soc_med_post&quot;, &quot;soc_med_like_share&quot;, &quot;soc_med_read&quot;), 
                   labels = c(&quot;Posting&quot;, &quot;Liking &amp; Sharing&quot;, &quot;Reading&quot;))
     )
-  } else if(type == &quot;channel&quot;){
+  } else if(type == &quot;channels&quot;){
     dat_fig_results %&lt;&gt;%
     filter(iv %in% c(&quot;soc_med_fb&quot;, &quot;soc_med_ig&quot;, &quot;soc_med_wa&quot;, &quot;soc_med_yt&quot;, &quot;soc_med_tw&quot;)) %&gt;% 
     mutate(iv = factor(.$iv, levels = c(&quot;soc_med_yt&quot;, &quot;soc_med_wa&quot;, &quot;soc_med_ig&quot;, &quot;soc_med_tw&quot;, &quot;soc_med_fb&quot;), labels = c(&quot;YouTube&quot;, &quot;WhatsApp&quot;, &quot;Instagram&quot;, &quot;Twitter&quot;, &quot;Facebook&quot;)))
@@ -521,38 +597,40 @@ get_dat_res &lt;- function(data_aff_neg, data_aff_pos, data_life_sat, type){
   }
   return(dat_fig_results)
 }</code></pre>
+</div>
+<div id="make_graph_res" class="section level3">
+<h3>make_graph_res</h3>
 <p>Make graph of effects</p>
-<pre class="r"><code>make_graph_res &lt;- function(data_1, data_2 = NULL, sesoi = NULL){
-  ggplot(data_1, aes(x = estimate, y = iv)) + 
-  scale_color_manual(values = c(&quot;grey40&quot;, &quot;deepskyblue&quot;)) +
+<pre class="r"><code>make_graph_res &lt;- function(data, sesoi = NULL, legend = TRUE){
+  ggplot(data, aes(x = estimate, y = iv)) + 
+  scale_color_manual(values = c(&quot;black&quot;, &quot;grey60&quot;, &quot;grey75&quot;, &quot;deepskyblue&quot;, &quot;cornflowerblue&quot;, &quot;darkcyan&quot;, &quot;aquamarine&quot;)) +
   geom_vline(xintercept = 0, lwd = .75, colour = &quot;darkgrey&quot;) + 
-  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high),
-                lwd = .75, height = .2) +
-  geom_point(size = 2) +
-  {if(!is.null(data_2)) geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), data_2,
-                lwd = .75, height = .2, color = &quot;grey&quot;,
-                position = position_nudge(y = -.3)
-                )} +
-  {if(!is.null(data_2)) geom_point(data = data_2, size = 2, color = &quot;grey&quot;,
-             position = position_nudge(y = -.3)
-             )} +
-  {if(isTRUE(sesoi == &quot;est&quot;)) geom_vline(data=filter(data_1, dv==&quot;Life satisfaction&quot;), aes(xintercept=-.3), colour=&quot;darkgrey&quot;, linetype = &quot;dashed&quot;)} + 
-    {if(isTRUE(sesoi == &quot;est&quot;)) geom_vline(data=filter(data_1, dv==&quot;Life satisfaction&quot;), aes(xintercept=.3), colour=&quot;darkgrey&quot;, linetype = &quot;dashed&quot;)} + 
-  {if(isTRUE(sesoi == &quot;est&quot;)) geom_vline(data=filter(data_1, dv!=&quot;Life satisfaction&quot;), aes(xintercept=-.15), colour=&quot;darkgrey&quot;, linetype = &quot;dashed&quot;)} +
-    {if(isTRUE(sesoi == &quot;est&quot;)) geom_vline(data=filter(data_1, dv!=&quot;Life satisfaction&quot;), aes(xintercept=.15), colour=&quot;darkgrey&quot;, linetype = &quot;dashed&quot;)} +
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high, color = Analysis),
+                lwd = .75, height = .2, position = position_dodge(-.7)) +
+  geom_point(aes(color = Analysis), size = 2, position = position_dodge(-.7)) +
+  {if(isTRUE(sesoi == &quot;est&quot;)) geom_vline(data=filter(data, dv==&quot;Life satisfaction&quot;), aes(xintercept=-.3), colour=&quot;darkgrey&quot;, linetype = &quot;dashed&quot;)} + 
+    {if(isTRUE(sesoi == &quot;est&quot;)) geom_vline(data=filter(data, dv==&quot;Life satisfaction&quot;), aes(xintercept=.3), colour=&quot;darkgrey&quot;, linetype = &quot;dashed&quot;)} + 
+  {if(isTRUE(sesoi == &quot;est&quot;)) geom_vline(data=filter(data, dv!=&quot;Life satisfaction&quot;), aes(xintercept=-.15), colour=&quot;darkgrey&quot;, linetype = &quot;dashed&quot;)} +
+    {if(isTRUE(sesoi == &quot;est&quot;)) geom_vline(data=filter(data, dv!=&quot;Life satisfaction&quot;), aes(xintercept=.15), colour=&quot;darkgrey&quot;, linetype = &quot;dashed&quot;)} +
   {if(isTRUE(sesoi == &quot;std&quot;)) geom_vline(aes(xintercept=.1), colour=&quot;darkgrey&quot;, linetype = &quot;dashed&quot;)} + 
-  {if(isTRUE(sesoi == &quot;std&quot;)) geom_vline(aes(xintercept=-.1), colour=&quot;darkgrey&quot;, linetype = &quot;dashed&quot;)} +   theme(
+  {if(isTRUE(sesoi == &quot;std&quot;)) geom_vline(aes(xintercept=-.1), colour=&quot;darkgrey&quot;, linetype = &quot;dashed&quot;)} +   
+    theme(
     axis.title.y = element_blank(),
     plot.title = element_text(hjust = .5),
     panel.spacing = unit(.9, &quot;lines&quot;),
     text = element_text(size = 12),
     axis.text.y = element_text(hjust = 0)
     ) +
+  {if(!isTRUE(legend)) theme(legend.position = &quot;none&quot;)} + 
+  # guides(colour = guide_legend(reverse=T)) +
   facet_grid(rows = vars(type),
              cols = vars(dv),
              scales = &quot;free&quot;,
              space = &quot;free_y&quot;) 
 }</code></pre>
+</div>
+<div id="get_fs" class="section level3">
+<h3>get_fs</h3>
 <p>Extract factor scores.</p>
 <pre class="r"><code>get_fs &lt;- function(model) {
   # the aim is to get factor scores on original scaling
@@ -562,6 +640,7 @@ get_dat_res &lt;- function(data_aff_neg, data_aff_pos, data_life_sat, type){
     mutate(fs = rowMeans(.[1:3]))
   return(dat_ov$fs)
 }</code></pre>
+</div>
 </div>
 </div>
 <div id="data-wrangling" class="section level1">
@@ -821,7 +900,9 @@ d_long %&lt;&gt;%
 </div>
 <div id="impute-data" class="section level1">
 <h1>Impute data</h1>
-<p>Determine amount of missingness per respondent per wave. Because calculation takes long, this chunk is not executed but loaded from memory. To execute, set eval == TRUE.</p>
+<p>Determine amount of missingness per respondent per wave. Because
+calculation takes long, this chunk is not executed but loaded from
+memory. To execute, set eval == TRUE.</p>
 <pre class="r"><code>vars_used &lt;- c(&quot;life_sat&quot;, &quot;aff_pos_1&quot;, &quot;aff_pos_2&quot;, &quot;aff_pos_3&quot;, &quot;aff_neg_1&quot;, &quot;aff_neg_2&quot;, &quot;aff_neg_3&quot;, &quot;aff_neg_4&quot;, &quot;aff_neg_5&quot;, &quot;aff_neg_6&quot;, &quot;soc_med_read&quot;, &quot;soc_med_like_share&quot;, &quot;soc_med_post&quot;, &quot;soc_med_fb&quot;, &quot;soc_med_ig&quot;, &quot;soc_med_wa&quot;, &quot;soc_med_yt&quot;, &quot;soc_med_tw&quot;, &quot;age&quot;, &quot;male&quot;, &quot;born_aus&quot;, &quot;born_aus_prnts&quot;, &quot;edu_fac&quot;, &quot;employment_fac&quot;, &quot;health&quot;, &quot;res_vienna&quot;, &quot;acc_bal&quot;, &quot;acc_gar&quot;, &quot;home_sqm&quot;, &quot;med_txt_kro&quot;, &quot;med_txt_sta&quot;, &quot;med_txt_pre&quot;, &quot;med_txt_oes&quot;, &quot;med_txt_kur&quot;, &quot;med_txt_slz&quot;, &quot;med_txt_son&quot;, &quot;med_vid_orf&quot;, &quot;med_vid_pri&quot;, &quot;risk_prop&quot;, &quot;loc_cntrl_int_1&quot;, &quot;loc_cntrl_int_2&quot;, &quot;loc_cntrl_int_3&quot;, &quot;loc_cntrl_int_4&quot;, &quot;act_wrk&quot;, &quot;act_spo&quot;, &quot;act_frn&quot;, &quot;act_sho&quot;, &quot;act_pet&quot;, &quot;sat_dem&quot;)
 
 # filter respondents with more than 50% missing data
@@ -837,16 +918,20 @@ incl_ma &lt;- d_long_filt %&gt;%
   mutate(across(.cols = everything(), .fns = is.na))
 incl_ma[vars_excl] &lt;- FALSE
 
-# init &lt;- mice(select(d_long_test_filt, maxit = 0))
-# pred_ma &lt;- init$predictorMatrix
-# pred_ma[, vars_excl] &lt;- 0
-d_long_imp &lt;- mice(d_long_filt, method = &quot;pmm&quot;, m = 1, maxit = 30, 
-              where = incl_ma,
-              # predictorMatrix = pred_ma, 
-              seed = 180719, print = FALSE)
+d_long_imp &lt;- mice(d_long_filt, 
+                   method = &quot;pmm&quot;, # use predictive mean matching
+                   m = 1, maxit = 30, # only 1 imputation
+                   where = incl_ma,
+                   seed = 180719, print = FALSE)
 d_long_imp &lt;- mice::complete(d_long_imp)
-
 write_csv(d_long_imp, &quot;data/data_imputed.csv&quot;)</code></pre>
+<pre class="r"><code># impute missing data with multiple imputation
+d_long_mim_mice &lt;- mice(d_long_filt, 
+                   method = &quot;pmm&quot;, # use predictive mean matching
+                   m = 5, maxit = 5, # 5 imputations, 5 iterations
+                   where = incl_ma,
+                   seed = 180719, print = FALSE)
+d_long_mim &lt;- mice::complete(d_long_mim_mice, action = &quot;long&quot;, include = TRUE)</code></pre>
 <p>Load imputed data from disc.</p>
 <pre class="r"><code>d_long_imp &lt;- read_csv(&quot;data/data_imputed.csv&quot;)</code></pre>
 </div>
@@ -857,12 +942,14 @@ write_csv(d_long_imp, &quot;data/data_imputed.csv&quot;)</code></pre>
   mutate(aff_pos_m = rowMeans(select(., aff_pos_1 : aff_pos_3)),
          aff_neg_m = rowMeans(select(., aff_neg_1 : aff_neg_6)),
          loc_cntrl_int_m = rowMeans(select(., loc_cntrl_int_1 : loc_cntrl_int_4)))</code></pre>
-<p>Create mean values for each person (between), and unique changes per wave (within).</p>
+<p>Create mean values for each person (between), and unique changes per
+wave (within).</p>
 <pre class="r"><code>d_long_imp %&lt;&gt;% 
   group_by(id) %&gt;% 
   mutate_at(vars(health:loc_cntrl_int_4, loc_cntrl_int_m), funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %&gt;% 
   ungroup()</code></pre>
-<p>And because later we want to rerun the results without imputed data, now the same for data without imputation.</p>
+<p>And because later we want to rerun the results without imputed data,
+now the same for data without imputation.</p>
 <pre class="r"><code>d_long %&lt;&gt;%
   mutate(aff_pos_m = rowMeans(select(., aff_pos_1 : aff_pos_3)),
          aff_neg_m = rowMeans(select(., aff_neg_1 : aff_neg_6)),
@@ -872,6 +959,18 @@ d_long %&lt;&gt;%
   group_by(id) %&gt;% 
   mutate_at(vars(health:loc_cntrl_int_4, loc_cntrl_int_m), funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %&gt;% 
   ungroup()</code></pre>
+<p>And now the same for the multiple imputed data</p>
+<pre class="r"><code>d_long_mim %&lt;&gt;%
+  mutate(aff_pos_m = rowMeans(select(., aff_pos_1 : aff_pos_3)),
+         aff_neg_m = rowMeans(select(., aff_neg_1 : aff_neg_6)),
+         loc_cntrl_int_m = rowMeans(select(., loc_cntrl_int_1 : loc_cntrl_int_4)))
+
+d_long_mim %&lt;&gt;% 
+  group_by(id) %&gt;% 
+  mutate_at(vars(health:loc_cntrl_int_4, loc_cntrl_int_m), funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %&gt;% 
+  ungroup()
+
+d_long_mim_mice &lt;- as.mids(d_long_mim)</code></pre>
 </div>
 <div id="measures" class="section level1">
 <h1>Measures</h1>
@@ -904,16 +1003,18 @@ summary(model_life_sat)</code></pre>
 </div>
 <div id="positive-affect" class="section level3">
 <h3>Positive affect</h3>
-<p>Positive affect was measured as a scale. We hence first inspect factorial validity using CFA.</p>
+<p>Positive affect was measured as a scale. We hence first inspect
+factorial validity using CFA.</p>
 <p>We first test assumption of multivariate normality.</p>
 <pre class="r"><code>mardia(d_long_imp %&gt;% select(aff_pos_1, aff_pos_2, aff_pos_3))</code></pre>
-<p>Assumption of multivariate normal distributino was violated; hence, robust estimator will be used.</p>
+<p>Assumption of multivariate normal distribution was violated; hence,
+robust estimator will be used.</p>
 <pre class="r"><code>model &lt;- &quot;
 aff_pos =~ a1*aff_pos_1 + a2*aff_pos_2 + a3*aff_pos_3
 &quot;
 cfa_aff_pos &lt;- cfa(model, d_long_imp, group = &quot;wave&quot;, estimator = &quot;MLM&quot;)
 summary(cfa_aff_pos, standardized = TRUE, fit = TRUE, estimates = FALSE)</code></pre>
-<pre><code>## lavaan 0.6-9 ended normally after 82 iterations
+<pre><code>## lavaan 0.6-11 ended normally after 84 iterations
 ## 
 ##   Estimator                                         ML
 ##   Optimization method                           NLMINB
@@ -1017,12 +1118,16 @@ summary(cfa_aff_pos, standardized = TRUE, fit = TRUE, estimates = FALSE)</code><
 ## Standardized Root Mean Square Residual:
 ## 
 ##   SRMR                                           0.012       0.012</code></pre>
-<p>The data fit the model very well, <span class="math inline">\(\chi^2\)</span>(46) = 63.75, <em>p</em> = .043, CFI = 1.00, RMSEA = .02, 90% CI [&lt; .01, .03], SRMR = .01. Let’s next inspect reliability</p>
+<p>The data fit the model very well, <span
+class="math inline">\(\chi^2\)</span>(46) = 63.75, <em>p</em> = .043,
+CFI = 1.00, RMSEA = .02, 90% CI [&lt; .01, .03], SRMR = .01. Let’s next
+inspect reliability</p>
 <pre class="r"><code>rel_aff_pos &lt;- get_rel(cfa_aff_pos)
 rel_aff_pos</code></pre>
 <pre><code>##   omega
 ## 1 0.847</code></pre>
-<p>The average reliability across all waves was omega = 0.847, hence good.</p>
+<p>The average reliability across all waves was omega = 0.847, hence
+good.</p>
 <p>Let’s next expect the development across waves.</p>
 <pre class="r"><code>model_aff_pos &lt;- lmer(aff_pos_m ~ (1 | id) + (1 | wave), d_long_imp)
 summary(model_aff_pos)</code></pre>
@@ -1051,16 +1156,20 @@ summary(model_aff_pos)</code></pre>
 </div>
 <div id="negative-affect" class="section level3">
 <h3>Negative affect</h3>
-<p>Negative affect was measured as a scale. We hence inspect factorial validty using CFA.</p>
-<p>We first test assumption of multivariate normality. (Warning, as these analyses take long and might require additional working memory, they’re deactived currently.)</p>
+<p>Negative affect was measured as a scale. We hence inspect factorial
+validty using CFA.</p>
+<p>We first test assumption of multivariate normality. (Warning, as
+these analyses take long and might require additional working memory,
+they’re deactived currently.)</p>
 <pre class="r"><code>mardia(d_long_imp %&gt;% select(aff_neg_1, aff_neg_2, aff_neg_3, aff_neg_4, aff_neg_5, aff_neg_6))</code></pre>
-<p>Assumption of multivariate normal distributino was violated; hence, robust estimator will be used.</p>
+<p>Assumption of multivariate normal distributino was violated; hence,
+robust estimator will be used.</p>
 <pre class="r"><code>model &lt;- &quot;
 aff_neg =~ a1*aff_neg_1 + a2*aff_neg_2 + a3*aff_neg_3 + a4*aff_neg_4 + a5*aff_neg_5 + a6*aff_neg_6
 &quot;
 cfa_aff_neg &lt;- cfa(model, d_long_imp, group = &quot;wave&quot;, estimator = &quot;MLM&quot;)
 summary(cfa_aff_neg, standardized = TRUE, fit = TRUE, estimates = FALSE)</code></pre>
-<pre><code>## lavaan 0.6-9 ended normally after 71 iterations
+<pre><code>## lavaan 0.6-11 ended normally after 76 iterations
 ## 
 ##   Estimator                                         ML
 ##   Optimization method                           NLMINB
@@ -1102,12 +1211,12 @@ summary(cfa_aff_neg, standardized = TRUE, fit = TRUE, estimates = FALSE)</code><
 ##        Satorra-Bentler correction                                 
 ##   Test statistic for each group:
 ##     1                                          259.666     118.535
-##     2                                          276.647     126.287
+##     2                                          276.648     126.287
 ##     3                                          149.810      68.387
 ##     4                                          141.931      64.790
 ##     5                                          155.909      71.171
 ##     6                                          125.491      57.285
-##     7                                           82.877      37.833
+##     7                                           82.877      37.832
 ##     8                                           84.919      38.765
 ##     9                                          188.228      85.924
 ##     10                                         135.231      61.731
@@ -1116,12 +1225,12 @@ summary(cfa_aff_neg, standardized = TRUE, fit = TRUE, estimates = FALSE)</code><
 ##     13                                         111.444      50.873
 ##     14                                         149.221      68.118
 ##     15                                          52.652      24.035
-##     16                                         131.142      59.865
+##     16                                         131.141      59.865
 ##     17                                         135.694      61.943
-##     18                                         125.168      57.138
+##     18                                         125.167      57.138
 ##     20                                          90.328      41.234
 ##     21                                         120.045      54.799
-##     22                                          80.618      36.801
+##     22                                          80.617      36.801
 ##     23                                         125.698      57.380
 ##     24                                         104.900      47.886
 ##     19                                         120.524      55.018
@@ -1164,13 +1273,16 @@ summary(cfa_aff_neg, standardized = TRUE, fit = TRUE, estimates = FALSE)</code><
 ## Standardized Root Mean Square Residual:
 ## 
 ##   SRMR                                           0.033       0.033</code></pre>
-<p>The data fit the model very well, <span class="math inline">\(\chi^2\)</span>(331) = 3205.09, <em>p</em> &lt; .001, CFI = .97, RMSEA = .08, 90% CI [.08, .08], SRMR = .03.</p>
+<p>The data fit the model very well, <span
+class="math inline">\(\chi^2\)</span>(331) = 3205.09, <em>p</em> &lt;
+.001, CFI = .97, RMSEA = .08, 90% CI [.08, .08], SRMR = .03.</p>
 <p>Let’s next inspect reliability.</p>
 <pre class="r"><code>rel_aff_neg &lt;- get_rel(cfa_aff_neg)
 rel_aff_neg</code></pre>
 <pre><code>##   omega
 ## 1 0.886</code></pre>
-<p>The average reliability across all waves was omega = 0.886, hence good.</p>
+<p>The average reliability across all waves was omega = 0.886, hence
+good.</p>
 <pre class="r"><code>model_aff_neg &lt;- lmer(aff_neg_m ~ (1 | id) + (1 | wave), d_long_imp)
 summary(model_aff_neg)</code></pre>
 <pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
@@ -1327,8 +1439,10 @@ summary(model_soc_med_tw)</code></pre>
 ##             Estimate Std. Error t value
 ## (Intercept)   1.3026     0.0143    90.8
 ## optimizer (nloptwrap) convergence code: 0 (OK)
-## boundary (singular) fit: see ?isSingular</code></pre>
-<p>Interestingly, lme4 throws a warning, likely because there is too little variance across waves, while little variation measure itself. Let’s inspect the raw means.</p>
+## boundary (singular) fit: see help(&#39;isSingular&#39;)</code></pre>
+<p>Interestingly, lme4 throws a warning, likely because there is too
+little variance across waves, while little variation measure itself.
+Let’s inspect the raw means.</p>
 <pre class="r"><code>soc_med_tw_m &lt;- d_long_imp %&gt;% group_by(wave) %&gt;% summarise(value = mean(soc_med_tw, na.rm = T))
 soc_med_tw_m</code></pre>
 <pre><code>## # A tibble: 24 × 2
@@ -1345,7 +1459,8 @@ soc_med_tw_m</code></pre>
 ##  9     9   1.16
 ## 10    10   1.25
 ## # … with 14 more rows</code></pre>
-<p>Inspecting the means shows that the data are intact, only that the estimation didn’t fully work.</p>
+<p>Inspecting the means shows that the data are intact, only that the
+estimation didn’t fully work.</p>
 </div>
 <div id="instagram" class="section level3">
 <h3>Instagram</h3>
@@ -1425,7 +1540,8 @@ summary(model_soc_med_yt)</code></pre>
 </div>
 <div id="locus-of-control" class="section level2">
 <h2>Locus of control</h2>
-<p>The only other variable that was measured as a scale was Locus of Control. Below I hence report the scale’s factorial validity.</p>
+<p>The only other variable that was measured as a scale was Locus of
+Control. Below I hence report the scale’s factorial validity.</p>
 <pre class="r"><code>model &lt;- &quot;
 loc_cntrl_int =~ a1*loc_cntrl_int_1 + a2*loc_cntrl_int_2 + a3*loc_cntrl_int_3 + a4*loc_cntrl_int_4
 # loc_cntrl_int_1 ~~ loc_cntrl_int_2
@@ -1433,7 +1549,7 @@ loc_cntrl_int_3 ~~ loc_cntrl_int_4
 &quot;
 cfa_loc_cntrl_int &lt;- cfa(model, filter(d_long_imp, wave != 20), group = &quot;wave&quot;)
 summary(cfa_loc_cntrl_int, standardized = TRUE, fit = TRUE, estimates = FALSE)</code></pre>
-<pre><code>## lavaan 0.6-9 ended normally after 475 iterations
+<pre><code>## lavaan 0.6-11 ended normally after 472 iterations
 ## 
 ##   Estimator                                         ML
 ##   Optimization method                           NLMINB
@@ -1525,7 +1641,9 @@ summary(cfa_loc_cntrl_int, standardized = TRUE, fit = TRUE, estimates = FALSE)</
 ## Standardized Root Mean Square Residual:
 ## 
 ##   SRMR                                           0.024</code></pre>
-<p>The data fit the model very well, <span class="math inline">\(\chi^2\)</span>(89) = 196.41, <em>p</em> &lt; .001, CFI = .99, RMSEA = .04, 90% CI [.03, .05], SRMR = .02.</p>
+<p>The data fit the model very well, <span
+class="math inline">\(\chi^2\)</span>(89) = 196.41, <em>p</em> &lt;
+.001, CFI = .99, RMSEA = .04, 90% CI [.03, .05], SRMR = .02.</p>
 </div>
 <div id="figure" class="section level2">
 <h2>Figure</h2>
@@ -1586,7 +1704,7 @@ fig_desc_soc_med_channel &lt;- make_graph(
 fig_desc &lt;- grid.arrange(fig_desc_life_sat, fig_desc_aff, 
                          fig_desc_soc_med_use, fig_desc_soc_med_channel,
                          nrow = 2, ncol = 2)</code></pre>
-<p><img src="analyses_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
+<p><img src="analyses_files/figure-html/unnamed-chunk-46-1.png" width="672" /></p>
 <pre class="r"><code>ggsave(&quot;figures/fig_descriptives.pdf&quot;, 
        width = 10, height = 6,
        plot = fig_desc)</code></pre>
@@ -1824,57 +1942,10 @@ YouTube
 </div>
 <div id="analyses" class="section level1">
 <h1>Analyses</h1>
-<div id="life-satisfaction-1" class="section level2">
-<h2>Life satisfaction</h2>
-<p>First, without control variables.</p>
-<pre class="r"><code>model_life_sat_lmer_nco &lt;- lmerTest::lmer(life_sat ~ 
-                            (1 | id) + (1 | wave) + 
-                            soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
-                            soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
-                            soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
-                            soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b,
-                data = d_long_imp)
-summary(model_life_sat_lmer_nco)</code></pre>
-<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
-## Formula: life_sat ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +      soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
-##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b
-##    Data: d_long_imp
-## 
-## REML criterion at convergence: 33991
-## 
-## Scaled residuals: 
-##    Min     1Q Median     3Q    Max 
-## -4.305 -0.381  0.121  0.504  3.719 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  id       (Intercept) 2.70148  1.6436  
-##  wave     (Intercept) 0.00699  0.0836  
-##  Residual             3.22999  1.7972  
-## Number of obs: 7672, groups:  id, 2810; wave, 21
-## 
-## Fixed effects:
-##                        Estimate Std. Error         df t value            Pr(&gt;|t|)    
-## (Intercept)             6.88057    0.11424  519.52291   60.23 &lt;0.0000000000000002 ***
-## soc_med_read_w          0.03502    0.02786 4510.95167    1.26              0.2089    
-## soc_med_like_share_w   -0.00590    0.03463 5140.16075   -0.17              0.8648    
-## soc_med_post_w         -0.08275    0.04561 5152.25822   -1.81              0.0697 .  
-## soc_med_fb_w           -0.04513    0.03139 5156.08778   -1.44              0.1506    
-## soc_med_ig_w            0.09370    0.03607 5169.65241    2.60              0.0094 ** 
-## soc_med_wa_w           -0.00670    0.02594 5159.38839   -0.26              0.7963    
-## soc_med_yt_w            0.02677    0.03437 5137.63094    0.78              0.4360    
-## soc_med_tw_w           -0.10794    0.05357 5189.35451   -2.02              0.0440 *  
-## soc_med_read_b          0.02360    0.04668 3124.48363    0.51              0.6131    
-## soc_med_like_share_b   -0.09725    0.05516 3245.29374   -1.76              0.0780 .  
-## soc_med_post_b         -0.18430    0.06761 3335.38910   -2.73              0.0064 ** 
-## soc_med_fb_b           -0.00983    0.03393 3056.59450   -0.29              0.7720    
-## soc_med_ig_b            0.08755    0.03576 3096.99008    2.45              0.0144 *  
-## soc_med_wa_b            0.02876    0.03496 2921.58610    0.82              0.4107    
-## soc_med_yt_b           -0.08334    0.04373 2985.35768   -1.91              0.0568 .  
-## soc_med_tw_b           -0.04138    0.05665 2966.10622   -0.73              0.4651    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<p>Now with control variables.</p>
+<div id="preregistered" class="section level2">
+<h2>Preregistered</h2>
+<div id="life-satisfaction-1" class="section level3">
+<h3>Life satisfaction</h3>
 <pre class="r"><code>model_life_sat_lmer &lt;- lmerTest::lmer(life_sat ~
                                         (1 | id) + (1 | wave) + 
                                         soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
@@ -1917,126 +1988,77 @@ summary(model_life_sat_lmer)</code></pre>
 ## 
 ## Fixed effects:
 ##                                Estimate Std. Error         df t value             Pr(&gt;|t|)    
-## (Intercept)                    -3.48467    0.45432 2550.59008   -7.67    0.000000000000024 ***
-## soc_med_read_w                  0.04630    0.02807 4907.48268    1.65              0.09905 .  
+## (Intercept)                    -3.48467    0.45432 2550.58986   -7.67    0.000000000000024 ***
+## soc_med_read_w                  0.04630    0.02807 4907.48261    1.65              0.09905 .  
 ## soc_med_like_share_w            0.00125    0.03476 5100.57152    0.04              0.97136    
 ## soc_med_post_w                 -0.08239    0.04632 5123.71463   -1.78              0.07532 .  
-## soc_med_fb_w                   -0.04756    0.03165 5122.65807   -1.50              0.13297    
-## soc_med_ig_w                    0.09031    0.03628 5134.76954    2.49              0.01282 *  
-## soc_med_wa_w                   -0.01275    0.02605 5128.66392   -0.49              0.62442    
-## soc_med_yt_w                    0.03084    0.03474 5104.64995    0.89              0.37462    
-## soc_med_tw_w                   -0.12366    0.05386 5165.69898   -2.30              0.02171 *  
-## soc_med_read_b                 -0.00738    0.03993 2916.64440   -0.18              0.85347    
-## soc_med_like_share_b           -0.05299    0.04645 3070.74257   -1.14              0.25402    
-## soc_med_post_b                  0.03978    0.06029 3163.33125    0.66              0.50940    
+## soc_med_fb_w                   -0.04756    0.03165 5122.65806   -1.50              0.13297    
+## soc_med_ig_w                    0.09031    0.03628 5134.76953    2.49              0.01282 *  
+## soc_med_wa_w                   -0.01275    0.02605 5128.66391   -0.49              0.62442    
+## soc_med_yt_w                    0.03084    0.03474 5104.64994    0.89              0.37462    
+## soc_med_tw_w                   -0.12366    0.05386 5165.69897   -2.30              0.02171 *  
+## soc_med_read_b                 -0.00738    0.03993 2916.64439   -0.18              0.85347    
+## soc_med_like_share_b           -0.05299    0.04645 3070.74256   -1.14              0.25402    
+## soc_med_post_b                  0.03978    0.06029 3163.33122    0.66              0.50940    
 ## soc_med_fb_b                    0.01656    0.02940 2773.22220    0.56              0.57326    
-## soc_med_ig_b                   -0.00600    0.03384 2888.66646   -0.18              0.85919    
-## soc_med_wa_b                   -0.03961    0.03025 2648.67752   -1.31              0.19054    
-## soc_med_yt_b                    0.08207    0.03845 2781.54539    2.13              0.03288 *  
-## soc_med_tw_b                   -0.01852    0.04873 2682.81731   -0.38              0.70389    
+## soc_med_ig_b                   -0.00600    0.03384 2888.66644   -0.18              0.85919    
+## soc_med_wa_b                   -0.03961    0.03025 2648.67750   -1.31              0.19054    
+## soc_med_yt_b                    0.08207    0.03845 2781.54538    2.13              0.03288 *  
+## soc_med_tw_b                   -0.01852    0.04873 2682.81730   -0.38              0.70389    
 ## age                             0.00522    0.00360 2608.66999    1.45              0.14702    
-## male                            0.06946    0.07141 2510.45157    0.97              0.33080    
-## born_aus                       -0.10456    0.12880 2729.33003   -0.81              0.41697    
-## born_aus_prnts                  0.02190    0.04335 2551.28988    0.51              0.61356    
-## edu_facBachelor                 0.24938    0.18468 2585.40320    1.35              0.17703    
-## edu_facHigh school              0.05724    0.13821 2719.74943    0.41              0.67880    
+## male                            0.06946    0.07141 2510.45156    0.97              0.33080    
+## born_aus                       -0.10456    0.12880 2729.33006   -0.81              0.41697    
+## born_aus_prnts                  0.02190    0.04335 2551.28989    0.51              0.61356    
+## edu_facBachelor                 0.24938    0.18468 2585.40319    1.35              0.17703    
+## edu_facHigh school              0.05724    0.13821 2719.74942    0.41              0.67880    
 ## edu_facMaster                   0.06631    0.15513 2447.89288    0.43              0.66907    
-## edu_facMiddle school            0.05661    0.13802 2773.74386    0.41              0.68173    
-## edu_facNo degree                1.08201    0.40073 2162.60974    2.70              0.00699 ** 
+## edu_facMiddle school            0.05661    0.13802 2773.74385    0.41              0.68173    
+## edu_facNo degree                1.08201    0.40073 2162.60975    2.70              0.00699 ** 
 ## edu_facPhD                      0.06516    0.32908 2275.98803    0.20              0.84305    
-## edu_facState college           -0.19738    0.22199 2632.48917   -0.89              0.37401    
-## edu_facTechnical school         0.03784    0.10705 2641.98832    0.35              0.72379    
-## edu_facVocational school        0.14202    0.13655 2454.31287    1.04              0.29844    
-## employment_facIncapacitated     0.17993    0.37788 3061.86418    0.48              0.63400    
-## employment_facIndustrie        -0.67571    0.24798 2498.37119   -2.72              0.00648 ** 
-## employment_facParental Leave   -0.29359    0.32466 2560.27691   -0.90              0.36592    
-## employment_facPublic service   -0.56560    0.25549 2496.99093   -2.21              0.02693 *  
-## employment_facRetired          -0.60430    0.25108 2408.79646   -2.41              0.01617 *  
-## employment_facSelf-employed    -0.91406    0.27568 2478.88016   -3.32              0.00093 ***
-## employment_facStudent          -0.47116    0.26979 2622.49453   -1.75              0.08086 .  
-## employment_facUnemployed       -1.04498    0.27645 2481.73771   -3.78              0.00016 ***
-## health_b                        0.62103    0.05611 2843.62643   11.07 &lt; 0.0000000000000002 ***
-## res_vienna                      0.13467    0.08667 2440.05971    1.55              0.12036    
+## edu_facState college           -0.19738    0.22199 2632.48918   -0.89              0.37401    
+## edu_facTechnical school         0.03784    0.10705 2641.98830    0.35              0.72379    
+## edu_facVocational school        0.14202    0.13655 2454.31286    1.04              0.29844    
+## employment_facIncapacitated     0.17993    0.37788 3061.86405    0.48              0.63400    
+## employment_facIndustrie        -0.67571    0.24798 2498.37100   -2.72              0.00648 ** 
+## employment_facParental Leave   -0.29359    0.32466 2560.27680   -0.90              0.36592    
+## employment_facPublic service   -0.56560    0.25549 2496.99075   -2.21              0.02693 *  
+## employment_facRetired          -0.60430    0.25108 2408.79636   -2.41              0.01617 *  
+## employment_facSelf-employed    -0.91406    0.27568 2478.88004   -3.32              0.00093 ***
+## employment_facStudent          -0.47116    0.26979 2622.49433   -1.75              0.08086 .  
+## employment_facUnemployed       -1.04498    0.27645 2481.73755   -3.78              0.00016 ***
+## health_b                        0.62103    0.05611 2843.62640   11.07 &lt; 0.0000000000000002 ***
+## res_vienna                      0.13467    0.08667 2440.05972    1.55              0.12036    
 ## acc_bal                        -0.00408    0.06959 2470.51029   -0.06              0.95324    
 ## acc_gar                         0.02370    0.08364 2476.93366    0.28              0.77698    
-## home_sqm                        0.05594    0.01680 2677.11722    3.33              0.00088 ***
+## home_sqm                        0.05594    0.01680 2677.11720    3.33              0.00088 ***
 ## med_txt_kro_b                   0.06932    0.02900 2403.42240    2.39              0.01691 *  
-## med_txt_sta_b                   0.00521    0.03724 2611.52308    0.14              0.88882    
+## med_txt_sta_b                   0.00521    0.03724 2611.52307    0.14              0.88882    
 ## med_txt_pre_b                   0.03335    0.04956 2722.90917    0.67              0.50102    
-## med_txt_oes_b                  -0.01376    0.03608 2552.73674   -0.38              0.70298    
+## med_txt_oes_b                  -0.01376    0.03608 2552.73673   -0.38              0.70298    
 ## med_txt_kur_b                   0.04049    0.04041 2487.34922    1.00              0.31641    
-## med_txt_slz_b                   0.00269    0.05083 2646.37986    0.05              0.95785    
-## med_txt_son_b                  -0.00457    0.02864 2542.96237   -0.16              0.87324    
-## med_vid_orf_b                  -0.00049    0.03224 2602.66734   -0.02              0.98787    
-## med_vid_pri_b                   0.01136    0.03200 2521.01640    0.35              0.72263    
+## med_txt_slz_b                   0.00269    0.05083 2646.37984    0.05              0.95785    
+## med_txt_son_b                  -0.00457    0.02864 2542.96238   -0.16              0.87324    
+## med_vid_orf_b                  -0.00049    0.03224 2602.66733   -0.02              0.98787    
+## med_vid_pri_b                   0.01136    0.03200 2521.01639    0.35              0.72263    
 ## risk_prop_b                     0.06330    0.02118 2852.04131    2.99              0.00282 ** 
-## loc_cntrl_int_m_b               1.76965    0.09033 2775.35273   19.59 &lt; 0.0000000000000002 ***
-## act_wrk_w                       0.08028    0.02691 5687.26031    2.98              0.00286 ** 
+## loc_cntrl_int_m_b               1.76965    0.09033 2775.35255   19.59 &lt; 0.0000000000000002 ***
+## act_wrk_w                       0.08028    0.02691 5687.26021    2.98              0.00286 ** 
 ## act_spo_w                       0.01003    0.03307 6367.82171    0.30              0.76169    
-## act_frn_w                       0.06019    0.04088 1844.70389    1.47              0.14107    
-## act_sho_w                       0.06082    0.04135 6306.04343    1.47              0.14136    
+## act_frn_w                       0.06019    0.04088 1844.70370    1.47              0.14107    
+## act_sho_w                       0.06082    0.04135 6306.04341    1.47              0.14136    
 ## act_pet_w                      -0.05575    0.04020 6495.67540   -1.39              0.16553    
-## act_wrk_b                       0.06149    0.03400 2759.74519    1.81              0.07060 .  
-## act_spo_b                       0.09353    0.03939 2643.87371    2.37              0.01765 *  
-## act_frn_b                       0.11338    0.06268 2958.70113    1.81              0.07058 .  
-## act_sho_b                      -0.01963    0.05819 2714.27353   -0.34              0.73587    
-## act_pet_b                       0.03128    0.02613 2423.51237    1.20              0.23150    
-## sat_dem_w                       0.17196    0.03466 3095.32250    4.96    0.000000735972220 ***
-## sat_dem_b                       0.33721    0.03745 2510.47052    9.01 &lt; 0.0000000000000002 ***
+## act_wrk_b                       0.06149    0.03400 2759.74518    1.81              0.07060 .  
+## act_spo_b                       0.09353    0.03939 2643.87370    2.37              0.01765 *  
+## act_frn_b                       0.11338    0.06268 2958.70117    1.81              0.07058 .  
+## act_sho_b                      -0.01963    0.05819 2714.27349   -0.34              0.73587    
+## act_pet_b                       0.03128    0.02613 2423.51236    1.20              0.23150    
+## sat_dem_w                       0.17196    0.03466 3095.32214    4.96    0.000000735972479 ***
+## sat_dem_b                       0.33721    0.03745 2510.47050    9.01 &lt; 0.0000000000000002 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
-<div id="positive-affect-1" class="section level2">
-<h2>Positive Affect</h2>
-<p>First, without control variables.</p>
-<pre class="r"><code>model_aff_pos_lmer_nco &lt;- lmerTest::lmer(aff_pos_fs ~ 
-                                        (1 | id) + (1 | wave) + 
-                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
-                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
-                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
-                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b
-                                      , data = d_long_imp)
-summary(model_aff_pos_lmer_nco)</code></pre>
-<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
-## Formula: aff_pos_fs ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +      soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
-##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b
-##    Data: d_long_imp
-## 
-## REML criterion at convergence: 16193
-## 
-## Scaled residuals: 
-##    Min     1Q Median     3Q    Max 
-## -4.811 -0.540 -0.009  0.538  4.333 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  id       (Intercept) 0.4633   0.6806  
-##  wave     (Intercept) 0.0028   0.0529  
-##  Residual             0.2574   0.5074  
-## Number of obs: 7672, groups:  id, 2810; wave, 21
-## 
-## Fixed effects:
-##                         Estimate  Std. Error          df t value            Pr(&gt;|t|)    
-## (Intercept)             3.197321    0.044566  258.189551   71.74 &lt;0.0000000000000002 ***
-## soc_med_read_w         -0.012539    0.007942 5018.216931   -1.58               0.114    
-## soc_med_like_share_w   -0.003114    0.009820 5034.659973   -0.32               0.751    
-## soc_med_post_w          0.000289    0.012932 5040.232724    0.02               0.982    
-## soc_med_fb_w            0.004730    0.008901 5040.214679    0.53               0.595    
-## soc_med_ig_w            0.013086    0.010232 5052.798307    1.28               0.201    
-## soc_med_wa_w            0.002385    0.007356 5044.909824    0.32               0.746    
-## soc_med_yt_w            0.009577    0.009746 5032.384194    0.98               0.326    
-## soc_med_tw_w            0.000151    0.015200 5066.983425    0.01               0.992    
-## soc_med_read_b         -0.039793    0.017257 3061.927584   -2.31               0.021 *  
-## soc_med_like_share_b   -0.010790    0.020295 3129.233773   -0.53               0.595    
-## soc_med_post_b          0.030070    0.024812 3187.003755    1.21               0.226    
-## soc_med_fb_b           -0.008553    0.012576 3017.415758   -0.68               0.496    
-## soc_med_ig_b           -0.008644    0.013246 3038.042276   -0.65               0.514    
-## soc_med_wa_b            0.035145    0.013017 2937.225765    2.70               0.007 ** 
-## soc_med_yt_b           -0.026940    0.016246 2968.647779   -1.66               0.097 .  
-## soc_med_tw_b            0.011964    0.021052 2963.099837    0.57               0.570    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<p>Now with control variables.</p>
+<div id="positive-affect-1" class="section level3">
+<h3>Positive Affect</h3>
 <pre class="r"><code>model_aff_pos_lmer &lt;- lmerTest::lmer(aff_pos_fs ~ 
                                         (1 | id) + (1 | wave) + 
                                         soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
@@ -2075,126 +2097,77 @@ summary(model_aff_pos_lmer)</code></pre>
 ## 
 ## Fixed effects:
 ##                                  Estimate   Std. Error           df t value             Pr(&gt;|t|)    
-## (Intercept)                    -0.6526773    0.1689184 2717.0226866   -3.86              0.00011 ***
-## soc_med_read_w                 -0.0124633    0.0078877 5026.6126744   -1.58              0.11415    
-## soc_med_like_share_w           -0.0034185    0.0097359 4999.0160214   -0.35              0.72551    
-## soc_med_post_w                 -0.0045671    0.0129754 5012.9703901   -0.35              0.72486    
-## soc_med_fb_w                    0.0090351    0.0088651 5009.3413667    1.02              0.30817    
-## soc_med_ig_w                    0.0117619    0.0101665 5024.0277749    1.16              0.24736    
-## soc_med_wa_w                   -0.0000373    0.0072990 5015.7209765   -0.01              0.99593    
-## soc_med_yt_w                    0.0099324    0.0097300 5000.5658595    1.02              0.30740    
-## soc_med_tw_w                   -0.0094885    0.0151058 5046.8942961   -0.63              0.52994    
-## soc_med_read_b                 -0.0306863    0.0146174 2965.4543908   -2.10              0.03587 *  
-## soc_med_like_share_b            0.0085526    0.0168905 3063.5179450    0.51              0.61264    
-## soc_med_post_b                  0.0472801    0.0218602 3117.3145674    2.16              0.03063 *  
-## soc_med_fb_b                   -0.0094014    0.0108225 2869.5916379   -0.87              0.38509    
-## soc_med_ig_b                   -0.0229298    0.0124026 2932.7793277   -1.85              0.06459 .  
-## soc_med_wa_b                    0.0093036    0.0111866 2797.5092425    0.83              0.40566    
-## soc_med_yt_b                    0.0071263    0.0141442 2869.2849413    0.50              0.61442    
-## soc_med_tw_b                    0.0138065    0.0179896 2820.2319450    0.77              0.44287    
-## age                             0.0019804    0.0013324 2834.6641098    1.49              0.13730    
-## male                            0.1133019    0.0265848 2699.6278376    4.26     0.00002096351844 ***
-## born_aus                       -0.0106653    0.0474367 2882.3484053   -0.22              0.82213    
+## (Intercept)                    -0.6526775    0.1689184 2717.0228006   -3.86              0.00011 ***
+## soc_med_read_w                 -0.0124633    0.0078877 5026.6126162   -1.58              0.11415    
+## soc_med_like_share_w           -0.0034185    0.0097359 4999.0159762   -0.35              0.72551    
+## soc_med_post_w                 -0.0045671    0.0129754 5012.9703435   -0.35              0.72486    
+## soc_med_fb_w                    0.0090351    0.0088651 5009.3413204    1.02              0.30817    
+## soc_med_ig_w                    0.0117619    0.0101665 5024.0277284    1.16              0.24736    
+## soc_med_wa_w                   -0.0000372    0.0072990 5015.7209304   -0.01              0.99593    
+## soc_med_yt_w                    0.0099324    0.0097300 5000.5658143    1.02              0.30740    
+## soc_med_tw_w                   -0.0094885    0.0151058 5046.8942468   -0.63              0.52994    
+## soc_med_read_b                 -0.0306863    0.0146174 2965.4543237   -2.10              0.03587 *  
+## soc_med_like_share_b            0.0085526    0.0168905 3063.5178907    0.51              0.61264    
+## soc_med_post_b                  0.0472800    0.0218602 3117.3145365    2.16              0.03063 *  
+## soc_med_fb_b                   -0.0094014    0.0108225 2869.5916108   -0.87              0.38509    
+## soc_med_ig_b                   -0.0229298    0.0124026 2932.7792997   -1.85              0.06459 .  
+## soc_med_wa_b                    0.0093037    0.0111866 2797.5092110    0.83              0.40566    
+## soc_med_yt_b                    0.0071263    0.0141442 2869.2849183    0.50              0.61442    
+## soc_med_tw_b                    0.0138065    0.0179896 2820.2319320    0.77              0.44287    
+## age                             0.0019804    0.0013324 2834.6642601    1.49              0.13730    
+## male                            0.1133019    0.0265848 2699.6278628    4.26     0.00002096357061 ***
+## born_aus                       -0.0106653    0.0474368 2882.3484000   -0.22              0.82213    
 ## born_aus_prnts                 -0.0217556    0.0161012 2752.7760003   -1.35              0.17675    
-## edu_facBachelor                 0.0495394    0.0685266 2745.2061463    0.72              0.46979    
-## edu_facHigh school              0.0211310    0.0509747 2847.7987117    0.41              0.67851    
-## edu_facMaster                  -0.0608854    0.0579362 2646.1306315   -1.05              0.29340    
-## edu_facMiddle school            0.0369281    0.0507743 2905.9600280    0.73              0.46710    
-## edu_facNo degree                0.2736128    0.1517428 2469.8272131    1.80              0.07149 .  
-## edu_facPhD                     -0.0166252    0.1241092 2488.2416670   -0.13              0.89345    
-## edu_facState college            0.1535849    0.0821671 2795.4982103    1.87              0.06170 .  
-## edu_facTechnical school         0.0354051    0.0395849 2844.9867081    0.89              0.37118    
-## edu_facVocational school       -0.0050146    0.0509751 2663.4705698   -0.10              0.92164    
-## employment_facIncapacitated    -0.0851909    0.1366105 3352.3236132   -0.62              0.53293    
-## employment_facIndustrie        -0.2347696    0.0923034 2715.3169687   -2.54              0.01103 *  
-## employment_facParental Leave   -0.0476175    0.1202805 2829.5914685   -0.40              0.69222    
-## employment_facPublic service   -0.2250237    0.0951122 2709.2583560   -2.37              0.01806 *  
-## employment_facRetired          -0.1129814    0.0938329 2653.5829433   -1.20              0.22867    
-## employment_facSelf-employed    -0.2760256    0.1027220 2689.1419332   -2.69              0.00725 ** 
-## employment_facStudent          -0.2302517    0.0998230 2807.7262252   -2.31              0.02115 *  
-## employment_facUnemployed       -0.1947224    0.1030189 2686.0260988   -1.89              0.05884 .  
-## health_b                        0.2520524    0.0205858 2938.9100868   12.24 &lt; 0.0000000000000002 ***
-## res_vienna                     -0.0178660    0.0323666 2680.0906685   -0.55              0.58100    
-## acc_bal                        -0.0429201    0.0259648 2664.9840078   -1.65              0.09845 .  
-## acc_gar                        -0.0146618    0.0311798 2692.9213066   -0.47              0.63822    
-## home_sqm                        0.0185923    0.0062022 2852.8471480    3.00              0.00274 ** 
-## med_txt_kro_b                  -0.0082224    0.0108569 2602.6967518   -0.76              0.44891    
-## med_txt_sta_b                  -0.0197385    0.0138017 2762.1287550   -1.43              0.15279    
-## med_txt_pre_b                   0.0073644    0.0182742 2837.3692859    0.40              0.68699    
-## med_txt_oes_b                  -0.0008572    0.0134061 2716.2192941   -0.06              0.94902    
-## med_txt_kur_b                   0.0281583    0.0150632 2669.7400285    1.87              0.06169 .  
-## med_txt_slz_b                   0.0283852    0.0188016 2791.9631695    1.51              0.13123    
-## med_txt_son_b                   0.0297216    0.0106429 2712.8840472    2.79              0.00526 ** 
-## med_vid_orf_b                  -0.0255863    0.0119568 2753.6931512   -2.14              0.03245 *  
-## med_vid_pri_b                   0.0089244    0.0119082 2692.7060907    0.75              0.45366    
-## risk_prop_b                    -0.0037844    0.0077669 2928.0622039   -0.49              0.62612    
-## loc_cntrl_int_m_b               0.6493392    0.0332357 2870.3400433   19.54 &lt; 0.0000000000000002 ***
-## act_wrk_w                       0.0159524    0.0077781 5716.4053614    2.05              0.04032 *  
-## act_spo_w                       0.0685985    0.0095433 5805.2064714    7.19     0.00000000000074 ***
-## act_frn_w                       0.0358526    0.0120304 4350.8579962    2.98              0.00290 ** 
-## act_sho_w                       0.0513572    0.0119415 5818.7825033    4.30     0.00001730069972 ***
-## act_pet_w                       0.0280012    0.0116443 5955.8835781    2.40              0.01622 *  
-## act_wrk_b                       0.0349977    0.0125108 2926.9843776    2.80              0.00519 ** 
-## act_spo_b                       0.1463879    0.0145738 2786.7919071   10.04 &lt; 0.0000000000000002 ***
-## act_frn_b                       0.0976696    0.0228425 3067.3560026    4.28     0.00001962779396 ***
-## act_sho_b                       0.0250022    0.0214675 2829.6078238    1.16              0.24426    
-## act_pet_b                       0.0175615    0.0097747 2615.6383882    1.80              0.07251 .  
-## sat_dem_w                       0.0318664    0.0100964 5318.4155254    3.16              0.00161 ** 
-## sat_dem_b                       0.0434876    0.0139436 2686.4181039    3.12              0.00184 ** 
+## edu_facBachelor                 0.0495394    0.0685266 2745.2061247    0.72              0.46979    
+## edu_facHigh school              0.0211310    0.0509747 2847.7986864    0.41              0.67851    
+## edu_facMaster                  -0.0608854    0.0579362 2646.1306285   -1.05              0.29340    
+## edu_facMiddle school            0.0369281    0.0507743 2905.9599965    0.73              0.46710    
+## edu_facNo degree                0.2736127    0.1517428 2469.8272365    1.80              0.07149 .  
+## edu_facPhD                     -0.0166252    0.1241092 2488.2416749   -0.13              0.89345    
+## edu_facState college            0.1535849    0.0821671 2795.4981977    1.87              0.06170 .  
+## edu_facTechnical school         0.0354052    0.0395849 2844.9867068    0.89              0.37118    
+## edu_facVocational school       -0.0050145    0.0509751 2663.4705640   -0.10              0.92164    
+## employment_facIncapacitated    -0.0851906    0.1366105 3352.3236169   -0.62              0.53293    
+## employment_facIndustrie        -0.2347695    0.0923034 2715.3169430   -2.54              0.01103 *  
+## employment_facParental Leave   -0.0476173    0.1202805 2829.5914852   -0.40              0.69222    
+## employment_facPublic service   -0.2250236    0.0951122 2709.2583242   -2.37              0.01806 *  
+## employment_facRetired          -0.1129813    0.0938329 2653.5829102   -1.20              0.22867    
+## employment_facSelf-employed    -0.2760255    0.1027220 2689.1418990   -2.69              0.00725 ** 
+## employment_facStudent          -0.2302516    0.0998231 2807.7262012   -2.31              0.02115 *  
+## employment_facUnemployed       -0.1947223    0.1030189 2686.0260661   -1.89              0.05884 .  
+## health_b                        0.2520524    0.0205858 2938.9100950   12.24 &lt; 0.0000000000000002 ***
+## res_vienna                     -0.0178660    0.0323666 2680.0906790   -0.55              0.58100    
+## acc_bal                        -0.0429201    0.0259648 2664.9839984   -1.65              0.09845 .  
+## acc_gar                        -0.0146618    0.0311798 2692.9213303   -0.47              0.63822    
+## home_sqm                        0.0185923    0.0062022 2852.8471530    3.00              0.00274 ** 
+## med_txt_kro_b                  -0.0082225    0.0108569 2602.6967514   -0.76              0.44891    
+## med_txt_sta_b                  -0.0197385    0.0138017 2762.1287356   -1.43              0.15279    
+## med_txt_pre_b                   0.0073643    0.0182742 2837.3692779    0.40              0.68699    
+## med_txt_oes_b                  -0.0008572    0.0134061 2716.2192814   -0.06              0.94902    
+## med_txt_kur_b                   0.0281583    0.0150632 2669.7400314    1.87              0.06169 .  
+## med_txt_slz_b                   0.0283852    0.0188016 2791.9631689    1.51              0.13123    
+## med_txt_son_b                   0.0297216    0.0106429 2712.8840332    2.79              0.00526 ** 
+## med_vid_orf_b                  -0.0255863    0.0119568 2753.6931396   -2.14              0.03245 *  
+## med_vid_pri_b                   0.0089244    0.0119082 2692.7060599    0.75              0.45366    
+## risk_prop_b                    -0.0037844    0.0077669 2928.0621775   -0.49              0.62612    
+## loc_cntrl_int_m_b               0.6493393    0.0332357 2870.3404178   19.54 &lt; 0.0000000000000002 ***
+## act_wrk_w                       0.0159524    0.0077781 5716.4052037    2.05              0.04032 *  
+## act_spo_w                       0.0685985    0.0095433 5805.2063254    7.19     0.00000000000074 ***
+## act_frn_w                       0.0358526    0.0120304 4350.8577515    2.98              0.00290 ** 
+## act_sho_w                       0.0513572    0.0119415 5818.7823567    4.30     0.00001730071288 ***
+## act_pet_w                       0.0280012    0.0116443 5955.8834335    2.40              0.01622 *  
+## act_wrk_b                       0.0349977    0.0125108 2926.9843703    2.80              0.00519 ** 
+## act_spo_b                       0.1463879    0.0145738 2786.7918967   10.04 &lt; 0.0000000000000002 ***
+## act_frn_b                       0.0976696    0.0228425 3067.3559721    4.28     0.00001962784492 ***
+## act_sho_b                       0.0250022    0.0214675 2829.6078000    1.16              0.24426    
+## act_pet_b                       0.0175615    0.0097747 2615.6383946    1.80              0.07251 .  
+## sat_dem_w                       0.0318664    0.0100964 5318.4152271    3.16              0.00161 ** 
+## sat_dem_b                       0.0434876    0.0139436 2686.4180567    3.12              0.00184 ** 
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
-<div id="negative-affect-1" class="section level2">
-<h2>Negative Affect</h2>
-<p>First, without control variables.</p>
-<pre class="r"><code>model_aff_neg_lmer_nco &lt;- lmerTest::lmer(aff_neg_fs ~ 
-                                        (1 | id) + (1 | wave) + 
-                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
-                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
-                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
-                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b
-                                      , data = d_long_imp)
-summary(model_aff_neg_lmer_nco)</code></pre>
-<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
-## Formula: aff_neg_fs ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +      soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
-##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b
-##    Data: d_long_imp
-## 
-## REML criterion at convergence: 11101
-## 
-## Scaled residuals: 
-##    Min     1Q Median     3Q    Max 
-## -4.144 -0.397 -0.125  0.289  5.168 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  id       (Intercept) 0.2465   0.496   
-##  wave     (Intercept) 0.0141   0.119   
-##  Residual             0.1299   0.360   
-## Number of obs: 7672, groups:  id, 2810; wave, 21
-## 
-## Fixed effects:
-##                        Estimate Std. Error         df t value             Pr(&gt;|t|)    
-## (Intercept)             1.36409    0.04218   32.96819   32.34 &lt; 0.0000000000000002 ***
-## soc_med_read_w          0.00691    0.00565 4933.29714    1.22               0.2218    
-## soc_med_like_share_w    0.00578    0.00698 4901.81759    0.83               0.4081    
-## soc_med_post_w          0.01546    0.00919 4911.93560    1.68               0.0927 .  
-## soc_med_fb_w           -0.00481    0.00633 4906.46424   -0.76               0.4471    
-## soc_med_ig_w           -0.00984    0.00727 4917.76192   -1.35               0.1762    
-## soc_med_wa_w           -0.00362    0.00523 4911.92326   -0.69               0.4887    
-## soc_med_yt_w            0.00402    0.00693 4897.48507    0.58               0.5618    
-## soc_med_tw_w            0.01694    0.01081 4941.51653    1.57               0.1170    
-## soc_med_read_b         -0.00279    0.01253 2919.21610   -0.22               0.8236    
-## soc_med_like_share_b    0.02634    0.01472 2980.65483    1.79               0.0736 .  
-## soc_med_post_b          0.16269    0.01801 3040.78914    9.04 &lt; 0.0000000000000002 ***
-## soc_med_fb_b           -0.01567    0.00914 2886.60718   -1.71               0.0865 .  
-## soc_med_ig_b            0.04351    0.00965 2931.20817    4.51            0.0000067 ***
-## soc_med_wa_b           -0.01018    0.00945 2799.33156   -1.08               0.2812    
-## soc_med_yt_b            0.05655    0.01179 2830.20563    4.80            0.0000017 ***
-## soc_med_tw_b            0.04073    0.01527 2823.47764    2.67               0.0077 ** 
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<p>Then, with control variables.</p>
+<div id="negative-affect-1" class="section level3">
+<h3>Negative Affect</h3>
 <pre class="r"><code>model_aff_neg_lmer &lt;- lmerTest::lmer(aff_neg_fs ~ 
                                         (1 | id) + (1 | wave) + 
                                         soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
@@ -2233,124 +2206,643 @@ summary(model_aff_neg_lmer)</code></pre>
 ## 
 ## Fixed effects:
 ##                                Estimate Std. Error         df t value             Pr(&gt;|t|)    
-## (Intercept)                     4.27663    0.12093 1914.88525   35.36 &lt; 0.0000000000000002 ***
-## soc_med_read_w                  0.00385    0.00564 4925.72335    0.68              0.49487    
-## soc_med_like_share_w            0.00632    0.00695 4884.07995    0.91              0.36325    
-## soc_med_post_w                  0.00990    0.00926 4901.30675    1.07              0.28521    
-## soc_med_fb_w                   -0.00348    0.00633 4894.51447   -0.55              0.58248    
-## soc_med_ig_w                   -0.01100    0.00726 4908.19628   -1.52              0.12956    
-## soc_med_wa_w                   -0.00265    0.00521 4901.46895   -0.51              0.61083    
-## soc_med_yt_w                    0.00533    0.00695 4884.08553    0.77              0.44269    
-## soc_med_tw_w                    0.01201    0.01078 4939.65268    1.11              0.26556    
-## soc_med_read_b                 -0.00298    0.01031 2841.50866   -0.29              0.77279    
-## soc_med_like_share_b            0.00703    0.01191 2942.36906    0.59              0.55484    
-## soc_med_post_b                  0.06355    0.01542 2997.67993    4.12     0.00003884643132 ***
-## soc_med_fb_b                   -0.00324    0.00763 2748.82135   -0.42              0.67101    
-## soc_med_ig_b                    0.01097    0.00875 2812.87378    1.25              0.20998    
-## soc_med_wa_b                    0.01147    0.00788 2673.40126    1.45              0.14585    
-## soc_med_yt_b                    0.00477    0.00997 2747.21070    0.48              0.63230    
+## (Intercept)                     4.27663    0.12093 1914.97163   35.36 &lt; 0.0000000000000002 ***
+## soc_med_read_w                  0.00385    0.00564 4925.72303    0.68              0.49487    
+## soc_med_like_share_w            0.00632    0.00695 4884.07949    0.91              0.36325    
+## soc_med_post_w                  0.00990    0.00926 4901.30612    1.07              0.28521    
+## soc_med_fb_w                   -0.00348    0.00633 4894.51405   -0.55              0.58248    
+## soc_med_ig_w                   -0.01100    0.00726 4908.19590   -1.52              0.12956    
+## soc_med_wa_w                   -0.00265    0.00521 4901.46849   -0.51              0.61083    
+## soc_med_yt_w                    0.00533    0.00695 4884.08512    0.77              0.44268    
+## soc_med_tw_w                    0.01201    0.01078 4939.65189    1.11              0.26556    
+## soc_med_read_b                 -0.00298    0.01031 2841.50895   -0.29              0.77279    
+## soc_med_like_share_b            0.00703    0.01191 2942.36911    0.59              0.55484    
+## soc_med_post_b                  0.06355    0.01542 2997.68005    4.12     0.00003884521529 ***
+## soc_med_fb_b                   -0.00324    0.00763 2748.82139   -0.42              0.67101    
+## soc_med_ig_b                    0.01097    0.00875 2812.87391    1.25              0.20998    
+## soc_med_wa_b                    0.01147    0.00788 2673.40135    1.45              0.14585    
+## soc_med_yt_b                    0.00477    0.00997 2747.21080    0.48              0.63230    
 ## soc_med_tw_b                    0.00808    0.01267 2696.52299    0.64              0.52388    
-## age                            -0.00695    0.00094 2712.37586   -7.40     0.00000000000019 ***
-## male                           -0.10577    0.01873 2574.15621   -5.65     0.00000001810871 ***
-## born_aus                       -0.09037    0.03343 2753.90108   -2.70              0.00691 ** 
-## born_aus_prnts                 -0.01290    0.01135 2626.65260   -1.14              0.25557    
-## edu_facBachelor                -0.03665    0.04829 2622.56284   -0.76              0.44793    
-## edu_facHigh school              0.03149    0.03593 2722.46168    0.88              0.38098    
-## edu_facMaster                   0.02081    0.04080 2522.47144    0.51              0.61004    
-## edu_facMiddle school            0.01240    0.03582 2786.20188    0.35              0.72918    
-## edu_facNo degree                0.07105    0.10686 2346.82506    0.66              0.50618    
-## edu_facPhD                      0.07578    0.08737 2366.28963    0.87              0.38580    
-## edu_facState college           -0.08511    0.05794 2669.55013   -1.47              0.14193    
-## edu_facTechnical school        -0.03490    0.02792 2722.45433   -1.25              0.21137    
-## edu_facVocational school       -0.00259    0.03591 2541.04932   -0.07              0.94248    
-## employment_facIncapacitated    -0.03796    0.09638 3213.48096   -0.39              0.69374    
-## employment_facIndustrie         0.09964    0.06504 2590.85848    1.53              0.12567    
-## employment_facParental Leave    0.07936    0.08478 2699.09300    0.94              0.34932    
-## employment_facPublic service    0.12572    0.06702 2585.29162    1.88              0.06076 .  
-## employment_facRetired           0.15637    0.06609 2527.86764    2.37              0.01805 *  
-## employment_facSelf-employed     0.19038    0.07236 2565.11733    2.63              0.00857 ** 
-## employment_facStudent           0.12849    0.07035 2683.34836    1.83              0.06788 .  
-## employment_facUnemployed        0.16798    0.07258 2561.85538    2.31              0.02072 *  
-## health_b                       -0.24181    0.01452 2813.48591  -16.65 &lt; 0.0000000000000002 ***
-## res_vienna                     -0.04859    0.02283 2559.93574   -2.13              0.03342 *  
-## acc_bal                        -0.02964    0.01830 2541.87875   -1.62              0.10535    
-## acc_gar                        -0.04236    0.02197 2566.61638   -1.93              0.05395 .  
-## home_sqm                       -0.01440    0.00437 2724.80085   -3.29              0.00100 ***
-## med_txt_kro_b                  -0.00801    0.00765 2480.83060   -1.05              0.29499    
-## med_txt_sta_b                   0.03007    0.00973 2638.57008    3.09              0.00201 ** 
-## med_txt_pre_b                   0.00198    0.01288 2712.15402    0.15              0.87761    
-## med_txt_oes_b                   0.00668    0.00944 2593.15067    0.71              0.47972    
-## med_txt_kur_b                  -0.00343    0.01061 2546.23562   -0.32              0.74656    
-## med_txt_slz_b                   0.00286    0.01325 2669.40937    0.22              0.82886    
-## med_txt_son_b                  -0.00922    0.00750 2588.49188   -1.23              0.21862    
-## med_vid_orf_b                   0.02127    0.00843 2630.65744    2.52              0.01164 *  
-## med_vid_pri_b                  -0.00118    0.00839 2568.63138   -0.14              0.88783    
-## risk_prop_b                    -0.01628    0.00548 2804.79588   -2.97              0.00297 ** 
-## loc_cntrl_int_m_b              -0.45258    0.02342 2745.52278  -19.32 &lt; 0.0000000000000002 ***
-## act_wrk_w                      -0.00140    0.00556 5715.33155   -0.25              0.80116    
-## act_spo_w                       0.00690    0.00681 5739.14832    1.01              0.31142    
-## act_frn_w                       0.02563    0.00866 5809.54866    2.96              0.00310 ** 
-## act_sho_w                       0.00427    0.00852 5744.43709    0.50              0.61634    
-## act_pet_w                       0.05244    0.00830 5893.45010    6.32     0.00000000028977 ***
-## act_wrk_b                       0.00540    0.00883 2808.62358    0.61              0.54083    
-## act_spo_b                       0.02240    0.01027 2662.74985    2.18              0.02923 *  
-## act_frn_b                       0.06768    0.01616 2989.38052    4.19     0.00002900001486 ***
-## act_sho_b                       0.01885    0.01513 2706.23213    1.25              0.21293    
-## act_pet_b                       0.01389    0.00688 2492.91318    2.02              0.04373 *  
-## sat_dem_w                      -0.02644    0.00723 5774.90560   -3.66              0.00026 ***
-## sat_dem_b                      -0.03724    0.00982 2563.65665   -3.79              0.00015 ***
+## age                            -0.00695    0.00094 2712.37615   -7.40     0.00000000000019 ***
+## male                           -0.10577    0.01873 2574.15630   -5.65     0.00000001810879 ***
+## born_aus                       -0.09037    0.03343 2753.90123   -2.70              0.00691 ** 
+## born_aus_prnts                 -0.01290    0.01135 2626.65264   -1.14              0.25557    
+## edu_facBachelor                -0.03665    0.04829 2622.56289   -0.76              0.44793    
+## edu_facHigh school              0.03149    0.03593 2722.46182    0.88              0.38098    
+## edu_facMaster                   0.02081    0.04080 2522.47146    0.51              0.61004    
+## edu_facMiddle school            0.01240    0.03582 2786.20190    0.35              0.72918    
+## edu_facNo degree                0.07105    0.10686 2346.82507    0.66              0.50618    
+## edu_facPhD                      0.07578    0.08737 2366.28966    0.87              0.38580    
+## edu_facState college           -0.08511    0.05794 2669.55032   -1.47              0.14193    
+## edu_facTechnical school        -0.03490    0.02792 2722.45434   -1.25              0.21137    
+## edu_facVocational school       -0.00259    0.03591 2541.04933   -0.07              0.94248    
+## employment_facIncapacitated    -0.03796    0.09638 3213.48124   -0.39              0.69374    
+## employment_facIndustrie         0.09964    0.06504 2590.85894    1.53              0.12567    
+## employment_facParental Leave    0.07936    0.08478 2699.09333    0.94              0.34932    
+## employment_facPublic service    0.12572    0.06702 2585.29204    1.88              0.06076 .  
+## employment_facRetired           0.15637    0.06609 2527.86787    2.37              0.01805 *  
+## employment_facSelf-employed     0.19038    0.07236 2565.11764    2.63              0.00857 ** 
+## employment_facStudent           0.12849    0.07035 2683.34886    1.83              0.06788 .  
+## employment_facUnemployed        0.16798    0.07258 2561.85583    2.31              0.02072 *  
+## health_b                       -0.24181    0.01452 2813.48620  -16.65 &lt; 0.0000000000000002 ***
+## res_vienna                     -0.04859    0.02283 2559.93578   -2.13              0.03342 *  
+## acc_bal                        -0.02964    0.01830 2541.87883   -1.62              0.10535    
+## acc_gar                        -0.04236    0.02197 2566.61646   -1.93              0.05395 .  
+## home_sqm                       -0.01440    0.00437 2724.80094   -3.29              0.00100 ***
+## med_txt_kro_b                  -0.00801    0.00765 2480.83061   -1.05              0.29499    
+## med_txt_sta_b                   0.03007    0.00973 2638.57018    3.09              0.00201 ** 
+## med_txt_pre_b                   0.00198    0.01288 2712.15411    0.15              0.87761    
+## med_txt_oes_b                   0.00668    0.00944 2593.15073    0.71              0.47972    
+## med_txt_kur_b                  -0.00343    0.01061 2546.23567   -0.32              0.74656    
+## med_txt_slz_b                   0.00286    0.01325 2669.40938    0.22              0.82886    
+## med_txt_son_b                  -0.00922    0.00750 2588.49192   -1.23              0.21862    
+## med_vid_orf_b                   0.02127    0.00843 2630.65753    2.52              0.01164 *  
+## med_vid_pri_b                  -0.00118    0.00839 2568.63146   -0.14              0.88783    
+## risk_prop_b                    -0.01628    0.00548 2804.79596   -2.97              0.00297 ** 
+## loc_cntrl_int_m_b              -0.45258    0.02342 2745.52312  -19.32 &lt; 0.0000000000000002 ***
+## act_wrk_w                      -0.00140    0.00556 5715.33115   -0.25              0.80115    
+## act_spo_w                       0.00690    0.00681 5739.14789    1.01              0.31142    
+## act_frn_w                       0.02563    0.00866 5809.54049    2.96              0.00310 ** 
+## act_sho_w                       0.00427    0.00852 5744.43695    0.50              0.61634    
+## act_pet_w                       0.05244    0.00830 5893.44951    6.32     0.00000000028976 ***
+## act_wrk_b                       0.00540    0.00883 2808.62363    0.61              0.54083    
+## act_spo_b                       0.02240    0.01027 2662.74992    2.18              0.02922 *  
+## act_frn_b                       0.06768    0.01616 2989.38079    4.19     0.00002900019954 ***
+## act_sho_b                       0.01885    0.01513 2706.23218    1.25              0.21293    
+## act_pet_b                       0.01389    0.00688 2492.91323    2.02              0.04373 *  
+## sat_dem_w                      -0.02644    0.00723 5774.90449   -3.66              0.00026 ***
+## sat_dem_b                      -0.03724    0.00982 2563.65671   -3.79              0.00015 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
 </div>
+<div id="without-control-variables" class="section level2">
+<h2>Without control variables</h2>
+<div id="life-satisfaction-2" class="section level3">
+<h3>Life Satisfaction</h3>
+<pre class="r"><code>model_life_sat_lmer_nco &lt;- lmerTest::lmer(life_sat ~ 
+                            (1 | id) + (1 | wave) + 
+                            soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                            soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+                            soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+                            soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b,
+                data = d_long_imp)
+summary(model_life_sat_lmer_nco)</code></pre>
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
+## Formula: life_sat ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +      soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
+##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b
+##    Data: d_long_imp
+## 
+## REML criterion at convergence: 33991
+## 
+## Scaled residuals: 
+##    Min     1Q Median     3Q    Max 
+## -4.305 -0.381  0.121  0.504  3.719 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  id       (Intercept) 2.70148  1.6436  
+##  wave     (Intercept) 0.00699  0.0836  
+##  Residual             3.22999  1.7972  
+## Number of obs: 7672, groups:  id, 2810; wave, 21
+## 
+## Fixed effects:
+##                        Estimate Std. Error         df t value            Pr(&gt;|t|)    
+## (Intercept)             6.88057    0.11424  519.52293   60.23 &lt;0.0000000000000002 ***
+## soc_med_read_w          0.03502    0.02786 4510.95167    1.26              0.2089    
+## soc_med_like_share_w   -0.00590    0.03463 5140.16075   -0.17              0.8648    
+## soc_med_post_w         -0.08275    0.04561 5152.25822   -1.81              0.0697 .  
+## soc_med_fb_w           -0.04513    0.03139 5156.08778   -1.44              0.1506    
+## soc_med_ig_w            0.09370    0.03607 5169.65240    2.60              0.0094 ** 
+## soc_med_wa_w           -0.00670    0.02594 5159.38839   -0.26              0.7963    
+## soc_med_yt_w            0.02677    0.03437 5137.63094    0.78              0.4360    
+## soc_med_tw_w           -0.10794    0.05357 5189.35451   -2.02              0.0440 *  
+## soc_med_read_b          0.02360    0.04668 3124.48364    0.51              0.6131    
+## soc_med_like_share_b   -0.09725    0.05516 3245.29374   -1.76              0.0780 .  
+## soc_med_post_b         -0.18430    0.06761 3335.38908   -2.73              0.0064 ** 
+## soc_med_fb_b           -0.00983    0.03393 3056.59448   -0.29              0.7720    
+## soc_med_ig_b            0.08755    0.03576 3096.99007    2.45              0.0144 *  
+## soc_med_wa_b            0.02876    0.03496 2921.58609    0.82              0.4107    
+## soc_med_yt_b           -0.08334    0.04373 2985.35767   -1.91              0.0568 .  
+## soc_med_tw_b           -0.04138    0.05665 2966.10620   -0.73              0.4651    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="positive-affect-2" class="section level3">
+<h3>Positive Affect</h3>
+<pre class="r"><code>model_aff_pos_lmer_nco &lt;- lmerTest::lmer(aff_pos_fs ~ 
+                                        (1 | id) + (1 | wave) + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b
+                                      , data = d_long_imp)
+summary(model_aff_pos_lmer_nco)</code></pre>
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
+## Formula: aff_pos_fs ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +      soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
+##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b
+##    Data: d_long_imp
+## 
+## REML criterion at convergence: 16193
+## 
+## Scaled residuals: 
+##    Min     1Q Median     3Q    Max 
+## -4.811 -0.540 -0.009  0.538  4.333 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  id       (Intercept) 0.4633   0.6806  
+##  wave     (Intercept) 0.0028   0.0529  
+##  Residual             0.2574   0.5074  
+## Number of obs: 7672, groups:  id, 2810; wave, 21
+## 
+## Fixed effects:
+##                         Estimate  Std. Error          df t value            Pr(&gt;|t|)    
+## (Intercept)             3.197321    0.044566  258.189328   71.74 &lt;0.0000000000000002 ***
+## soc_med_read_w         -0.012539    0.007942 5018.217079   -1.58               0.114    
+## soc_med_like_share_w   -0.003114    0.009820 5034.659952   -0.32               0.751    
+## soc_med_post_w          0.000289    0.012932 5040.232702    0.02               0.982    
+## soc_med_fb_w            0.004730    0.008901 5040.214656    0.53               0.595    
+## soc_med_ig_w            0.013086    0.010232 5052.798282    1.28               0.201    
+## soc_med_wa_w            0.002385    0.007356 5044.909801    0.32               0.746    
+## soc_med_yt_w            0.009577    0.009746 5032.384173    0.98               0.326    
+## soc_med_tw_w            0.000151    0.015200 5066.983402    0.01               0.992    
+## soc_med_read_b         -0.039793    0.017257 3061.927550   -2.31               0.021 *  
+## soc_med_like_share_b   -0.010790    0.020295 3129.233768   -0.53               0.595    
+## soc_med_post_b          0.030070    0.024812 3187.003737    1.21               0.226    
+## soc_med_fb_b           -0.008553    0.012576 3017.415753   -0.68               0.496    
+## soc_med_ig_b           -0.008644    0.013246 3038.042297   -0.65               0.514    
+## soc_med_wa_b            0.035145    0.013017 2937.225758    2.70               0.007 ** 
+## soc_med_yt_b           -0.026940    0.016246 2968.647812   -1.66               0.097 .  
+## soc_med_tw_b            0.011964    0.021052 2963.099816    0.57               0.570    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="negative-affect-2" class="section level3">
+<h3>Negative Affect</h3>
+<pre class="r"><code>model_aff_neg_lmer_nco &lt;- lmerTest::lmer(aff_neg_fs ~ 
+                                        (1 | id) + (1 | wave) + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b
+                                      , data = d_long_imp)
+summary(model_aff_neg_lmer_nco)</code></pre>
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
+## Formula: aff_neg_fs ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +      soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
+##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b
+##    Data: d_long_imp
+## 
+## REML criterion at convergence: 11101
+## 
+## Scaled residuals: 
+##    Min     1Q Median     3Q    Max 
+## -4.144 -0.397 -0.125  0.289  5.168 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  id       (Intercept) 0.2465   0.496   
+##  wave     (Intercept) 0.0141   0.119   
+##  Residual             0.1299   0.360   
+## Number of obs: 7672, groups:  id, 2810; wave, 21
+## 
+## Fixed effects:
+##                        Estimate Std. Error         df t value             Pr(&gt;|t|)    
+## (Intercept)             1.36409    0.04218   32.96811   32.34 &lt; 0.0000000000000002 ***
+## soc_med_read_w          0.00691    0.00565 4933.29700    1.22               0.2218    
+## soc_med_like_share_w    0.00578    0.00698 4901.81748    0.83               0.4081    
+## soc_med_post_w          0.01546    0.00919 4911.93550    1.68               0.0927 .  
+## soc_med_fb_w           -0.00481    0.00633 4906.46412   -0.76               0.4471    
+## soc_med_ig_w           -0.00984    0.00727 4917.76180   -1.35               0.1762    
+## soc_med_wa_w           -0.00362    0.00523 4911.92315   -0.69               0.4887    
+## soc_med_yt_w            0.00402    0.00693 4897.48495    0.58               0.5618    
+## soc_med_tw_w            0.01694    0.01081 4941.51643    1.57               0.1170    
+## soc_med_read_b         -0.00279    0.01253 2919.21599   -0.22               0.8236    
+## soc_med_like_share_b    0.02634    0.01472 2980.65472    1.79               0.0736 .  
+## soc_med_post_b          0.16269    0.01801 3040.78901    9.04 &lt; 0.0000000000000002 ***
+## soc_med_fb_b           -0.01567    0.00914 2886.60708   -1.71               0.0865 .  
+## soc_med_ig_b            0.04351    0.00965 2931.20810    4.51            0.0000067 ***
+## soc_med_wa_b           -0.01018    0.00945 2799.33147   -1.08               0.2812    
+## soc_med_yt_b            0.05655    0.01179 2830.20551    4.80            0.0000017 ***
+## soc_med_tw_b            0.04073    0.01527 2823.47754    2.67               0.0077 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+</div>
+<div id="standardized-results" class="section level2">
+<h2>Standardized results</h2>
+<p>First, create standardized dataset.</p>
+<pre class="r"><code>d_long_std &lt;- d_long_imp %&gt;% 
+  mutate(across(c(-id, -wave, -gender, -male, -born_aus, -born_aus_prnts, -edu_fac, -employment_fac, -res_vienna, -acc_bal, -acc_gar), scale))</code></pre>
+<p>Then let’s rerun the analyses.</p>
+<div id="life-satisfaction-3" class="section level3">
+<h3>Life satisfaction</h3>
+<pre class="r"><code>model_life_sat_lmer_std &lt;- lmerTest::lmer(life_sat ~
+                                        (1 | id) + (1 | wave) + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
+                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
+                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac + health_b + 
+                                        res_vienna + acc_bal + acc_gar + home_sqm + 
+                                        med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
+                                        med_vid_orf_b + med_vid_pri_b + 
+                                        risk_prop_b + loc_cntrl_int_m_b + 
+                                        act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
+                                        act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
+                                        sat_dem_w + sat_dem_b 
+                                      , data = d_long_std)
+summary(model_life_sat_lmer_std)</code></pre>
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
+## Formula: life_sat ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +      soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
+##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b + age + male + born_aus + born_aus_prnts +      edu_fac + employment_fac + health_b + res_vienna + acc_bal +  
+##     acc_gar + home_sqm + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b +      med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b +      med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_m_b +  
+##     act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w +      act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +      sat_dem_w + sat_dem_b
+##    Data: d_long_std
+## 
+## REML criterion at convergence: 19231
+## 
+## Scaled residuals: 
+##    Min     1Q Median     3Q    Max 
+## -4.369 -0.372  0.137  0.527  4.150 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  id       (Intercept) 0.22459  0.474   
+##  wave     (Intercept) 0.00203  0.045   
+##  Residual             0.55297  0.744   
+## Number of obs: 7545, groups:  id, 2750; wave, 21
+## 
+## Fixed effects:
+##                                 Estimate  Std. Error          df t value             Pr(&gt;|t|)    
+## (Intercept)                     0.193486    0.120415 2320.115990    1.61              0.10823    
+## soc_med_read_w                  0.016503    0.010003 4907.482665    1.65              0.09905 .  
+## soc_med_like_share_w            0.000361    0.010055 5100.571522    0.04              0.97136    
+## soc_med_post_w                 -0.017029    0.009573 5123.714628   -1.78              0.07532 .  
+## soc_med_fb_w                   -0.015401    0.010249 5122.658064   -1.50              0.13297    
+## soc_med_ig_w                    0.024657    0.009904 5134.769535    2.49              0.01282 *  
+## soc_med_wa_w                   -0.005242    0.010705 5128.663915   -0.49              0.62442    
+## soc_med_yt_w                    0.008979    0.010112 5104.649944    0.89              0.37462    
+## soc_med_tw_w                   -0.021187    0.009228 5165.698974   -2.30              0.02171 *  
+## soc_med_read_b                 -0.003558    0.019263 2916.644383   -0.18              0.85347    
+## soc_med_like_share_b           -0.021817    0.019124 3070.742556   -1.14              0.25402    
+## soc_med_post_b                  0.010952    0.016598 3163.331218    0.66              0.50940    
+## soc_med_fb_b                    0.009841    0.017470 2773.222196    0.56              0.57326    
+## soc_med_ig_b                   -0.002973    0.016756 2888.666447   -0.18              0.85919    
+## soc_med_wa_b                   -0.022227    0.016976 2648.677502   -1.31              0.19054    
+## soc_med_yt_b                    0.035999    0.016864 2781.545396    2.13              0.03288 *  
+## soc_med_tw_b                   -0.005652    0.014869 2682.817296   -0.38              0.70389    
+## age                             0.036150    0.024921 2608.670043    1.45              0.14702    
+## male                            0.028687    0.029493 2510.451562    0.97              0.33080    
+## born_aus                       -0.043184    0.053195 2729.330055   -0.81              0.41697    
+## born_aus_prnts                  0.009044    0.017906 2551.289883    0.51              0.61356    
+## edu_facBachelor                 0.102997    0.076275 2585.403200    1.35              0.17703    
+## edu_facHigh school              0.023641    0.057084 2719.749433    0.41              0.67880    
+## edu_facMaster                   0.027388    0.064069 2447.892884    0.43              0.66907    
+## edu_facMiddle school            0.023380    0.057003 2773.743865    0.41              0.68173    
+## edu_facNo degree                0.446886    0.165507 2162.609744    2.70              0.00699 ** 
+## edu_facPhD                      0.026914    0.135914 2275.988030    0.20              0.84305    
+## edu_facState college           -0.081520    0.091683 2632.489175   -0.89              0.37401    
+## edu_facTechnical school         0.015626    0.044213 2641.988317    0.35              0.72379    
+## edu_facVocational school        0.058655    0.056399 2454.312871    1.04              0.29844    
+## employment_facIncapacitated     0.074312    0.156070 3061.864184    0.48              0.63400    
+## employment_facIndustrie        -0.279076    0.102419 2498.371173   -2.72              0.00648 ** 
+## employment_facParental Leave   -0.121259    0.134091 2560.276919   -0.90              0.36592    
+## employment_facPublic service   -0.233600    0.105520 2496.990920   -2.21              0.02693 *  
+## employment_facRetired          -0.249584    0.103699 2408.796469   -2.41              0.01617 *  
+## employment_facSelf-employed    -0.377521    0.113861 2478.880157   -3.32              0.00093 ***
+## employment_facStudent          -0.194596    0.111428 2622.494544   -1.75              0.08086 .  
+## employment_facUnemployed       -0.431592    0.114177 2481.737722   -3.78              0.00016 ***
+## health_b                        0.167946    0.015174 2843.626417   11.07 &lt; 0.0000000000000002 ***
+## res_vienna                      0.055621    0.035797 2440.059713    1.55              0.12036    
+## acc_bal                        -0.001686    0.028743 2470.510289   -0.06              0.95324    
+## acc_gar                         0.009787    0.034547 2476.933667    0.28              0.77698    
+## home_sqm                        0.050065    0.015037 2677.117216    3.33              0.00088 ***
+## med_txt_kro_b                   0.037135    0.015535 2403.422393    2.39              0.01691 *  
+## med_txt_sta_b                   0.002404    0.017192 2611.523083    0.14              0.88882    
+## med_txt_pre_b                   0.011591    0.017224 2722.909172    0.67              0.50102    
+## med_txt_oes_b                  -0.005887    0.015437 2552.736735   -0.38              0.70298    
+## med_txt_kur_b                   0.016520    0.016486 2487.349216    1.00              0.31641    
+## med_txt_slz_b                   0.000754    0.014260 2646.379833    0.05              0.95785    
+## med_txt_son_b                  -0.002222    0.013927 2542.962376   -0.16              0.87324    
+## med_vid_orf_b                  -0.000254    0.016680 2602.667337   -0.02              0.98787    
+## med_vid_pri_b                   0.005656    0.015934 2521.016388    0.35              0.72263    
+## risk_prop_b                     0.044046    0.014734 2852.041315    2.99              0.00282 ** 
+## loc_cntrl_int_m_b               0.306238    0.015632 2775.352663   19.59 &lt; 0.0000000000000002 ***
+## act_wrk_w                       0.028580    0.009580 5687.260315    2.98              0.00286 ** 
+## act_spo_w                       0.002817    0.009288 6367.821712    0.30              0.76169    
+## act_frn_w                       0.016424    0.011154 1844.703892    1.47              0.14107    
+## act_sho_w                       0.014369    0.009769 6306.043421    1.47              0.14136    
+## act_pet_w                      -0.012472    0.008993 6495.675403   -1.39              0.16553    
+## act_wrk_b                       0.032220    0.017813 2759.745179    1.81              0.07060 .  
+## act_spo_b                       0.035624    0.015004 2643.873712    2.37              0.01765 *  
+## act_frn_b                       0.027420    0.015159 2958.701170    1.81              0.07058 .  
+## act_sho_b                      -0.004956    0.014691 2714.273501   -0.34              0.73587    
+## act_pet_b                       0.016222    0.013554 2423.512361    1.20              0.23150    
+## sat_dem_w                       0.046082    0.009287 3095.322471    4.96           0.00000074 ***
+## sat_dem_b                       0.132555    0.014720 2510.470522    9.01 &lt; 0.0000000000000002 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="positive-affect-3" class="section level3">
+<h3>Positive affect</h3>
+<pre class="r"><code>model_aff_pos_lmer_std &lt;- lmerTest::lmer(aff_pos_fs ~ 
+                                        (1 | id) + (1 | wave) + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
+                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac + health_b + 
+                                        res_vienna + acc_bal + acc_gar + home_sqm + 
+                                        med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
+                                        med_vid_orf_b + med_vid_pri_b + 
+                                        risk_prop_b + loc_cntrl_int_m_b + 
+                                        act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
+                                        act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
+                                        sat_dem_w + sat_dem_b 
+                                      , data = d_long_imp)
+summary(model_aff_pos_lmer_std)</code></pre>
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
+## Formula: aff_pos_fs ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +      soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
+##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b + age + male + born_aus + born_aus_prnts +      edu_fac + employment_fac + health_b + res_vienna + acc_bal +  
+##     acc_gar + home_sqm + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b +      med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b +      med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_m_b +  
+##     act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w +      act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +      sat_dem_w + sat_dem_b
+##    Data: d_long_imp
+## 
+## REML criterion at convergence: 14854
+## 
+## Scaled residuals: 
+##    Min     1Q Median     3Q    Max 
+## -4.679 -0.550 -0.021  0.554  4.762 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  id       (Intercept) 0.26140  0.5113  
+##  wave     (Intercept) 0.00368  0.0606  
+##  Residual             0.25154  0.5015  
+## Number of obs: 7545, groups:  id, 2750; wave, 21
+## 
+## Fixed effects:
+##                                  Estimate   Std. Error           df t value             Pr(&gt;|t|)    
+## (Intercept)                    -0.6526775    0.1689184 2717.0228006   -3.86              0.00011 ***
+## soc_med_read_w                 -0.0124633    0.0078877 5026.6126162   -1.58              0.11415    
+## soc_med_like_share_w           -0.0034185    0.0097359 4999.0159762   -0.35              0.72551    
+## soc_med_post_w                 -0.0045671    0.0129754 5012.9703435   -0.35              0.72486    
+## soc_med_fb_w                    0.0090351    0.0088651 5009.3413204    1.02              0.30817    
+## soc_med_ig_w                    0.0117619    0.0101665 5024.0277284    1.16              0.24736    
+## soc_med_wa_w                   -0.0000372    0.0072990 5015.7209304   -0.01              0.99593    
+## soc_med_yt_w                    0.0099324    0.0097300 5000.5658143    1.02              0.30740    
+## soc_med_tw_w                   -0.0094885    0.0151058 5046.8942468   -0.63              0.52994    
+## soc_med_read_b                 -0.0306863    0.0146174 2965.4543237   -2.10              0.03587 *  
+## soc_med_like_share_b            0.0085526    0.0168905 3063.5178907    0.51              0.61264    
+## soc_med_post_b                  0.0472800    0.0218602 3117.3145365    2.16              0.03063 *  
+## soc_med_fb_b                   -0.0094014    0.0108225 2869.5916108   -0.87              0.38509    
+## soc_med_ig_b                   -0.0229298    0.0124026 2932.7792997   -1.85              0.06459 .  
+## soc_med_wa_b                    0.0093037    0.0111866 2797.5092110    0.83              0.40566    
+## soc_med_yt_b                    0.0071263    0.0141442 2869.2849183    0.50              0.61442    
+## soc_med_tw_b                    0.0138065    0.0179896 2820.2319320    0.77              0.44287    
+## age                             0.0019804    0.0013324 2834.6642601    1.49              0.13730    
+## male                            0.1133019    0.0265848 2699.6278628    4.26     0.00002096357061 ***
+## born_aus                       -0.0106653    0.0474368 2882.3484000   -0.22              0.82213    
+## born_aus_prnts                 -0.0217556    0.0161012 2752.7760003   -1.35              0.17675    
+## edu_facBachelor                 0.0495394    0.0685266 2745.2061247    0.72              0.46979    
+## edu_facHigh school              0.0211310    0.0509747 2847.7986864    0.41              0.67851    
+## edu_facMaster                  -0.0608854    0.0579362 2646.1306285   -1.05              0.29340    
+## edu_facMiddle school            0.0369281    0.0507743 2905.9599965    0.73              0.46710    
+## edu_facNo degree                0.2736127    0.1517428 2469.8272365    1.80              0.07149 .  
+## edu_facPhD                     -0.0166252    0.1241092 2488.2416749   -0.13              0.89345    
+## edu_facState college            0.1535849    0.0821671 2795.4981977    1.87              0.06170 .  
+## edu_facTechnical school         0.0354052    0.0395849 2844.9867068    0.89              0.37118    
+## edu_facVocational school       -0.0050145    0.0509751 2663.4705640   -0.10              0.92164    
+## employment_facIncapacitated    -0.0851906    0.1366105 3352.3236169   -0.62              0.53293    
+## employment_facIndustrie        -0.2347695    0.0923034 2715.3169430   -2.54              0.01103 *  
+## employment_facParental Leave   -0.0476173    0.1202805 2829.5914852   -0.40              0.69222    
+## employment_facPublic service   -0.2250236    0.0951122 2709.2583242   -2.37              0.01806 *  
+## employment_facRetired          -0.1129813    0.0938329 2653.5829102   -1.20              0.22867    
+## employment_facSelf-employed    -0.2760255    0.1027220 2689.1418990   -2.69              0.00725 ** 
+## employment_facStudent          -0.2302516    0.0998231 2807.7262012   -2.31              0.02115 *  
+## employment_facUnemployed       -0.1947223    0.1030189 2686.0260661   -1.89              0.05884 .  
+## health_b                        0.2520524    0.0205858 2938.9100950   12.24 &lt; 0.0000000000000002 ***
+## res_vienna                     -0.0178660    0.0323666 2680.0906790   -0.55              0.58100    
+## acc_bal                        -0.0429201    0.0259648 2664.9839984   -1.65              0.09845 .  
+## acc_gar                        -0.0146618    0.0311798 2692.9213303   -0.47              0.63822    
+## home_sqm                        0.0185923    0.0062022 2852.8471530    3.00              0.00274 ** 
+## med_txt_kro_b                  -0.0082225    0.0108569 2602.6967514   -0.76              0.44891    
+## med_txt_sta_b                  -0.0197385    0.0138017 2762.1287356   -1.43              0.15279    
+## med_txt_pre_b                   0.0073643    0.0182742 2837.3692779    0.40              0.68699    
+## med_txt_oes_b                  -0.0008572    0.0134061 2716.2192814   -0.06              0.94902    
+## med_txt_kur_b                   0.0281583    0.0150632 2669.7400314    1.87              0.06169 .  
+## med_txt_slz_b                   0.0283852    0.0188016 2791.9631689    1.51              0.13123    
+## med_txt_son_b                   0.0297216    0.0106429 2712.8840332    2.79              0.00526 ** 
+## med_vid_orf_b                  -0.0255863    0.0119568 2753.6931396   -2.14              0.03245 *  
+## med_vid_pri_b                   0.0089244    0.0119082 2692.7060599    0.75              0.45366    
+## risk_prop_b                    -0.0037844    0.0077669 2928.0621775   -0.49              0.62612    
+## loc_cntrl_int_m_b               0.6493393    0.0332357 2870.3404178   19.54 &lt; 0.0000000000000002 ***
+## act_wrk_w                       0.0159524    0.0077781 5716.4052037    2.05              0.04032 *  
+## act_spo_w                       0.0685985    0.0095433 5805.2063254    7.19     0.00000000000074 ***
+## act_frn_w                       0.0358526    0.0120304 4350.8577515    2.98              0.00290 ** 
+## act_sho_w                       0.0513572    0.0119415 5818.7823567    4.30     0.00001730071288 ***
+## act_pet_w                       0.0280012    0.0116443 5955.8834335    2.40              0.01622 *  
+## act_wrk_b                       0.0349977    0.0125108 2926.9843703    2.80              0.00519 ** 
+## act_spo_b                       0.1463879    0.0145738 2786.7918967   10.04 &lt; 0.0000000000000002 ***
+## act_frn_b                       0.0976696    0.0228425 3067.3559721    4.28     0.00001962784492 ***
+## act_sho_b                       0.0250022    0.0214675 2829.6078000    1.16              0.24426    
+## act_pet_b                       0.0175615    0.0097747 2615.6383946    1.80              0.07251 .  
+## sat_dem_w                       0.0318664    0.0100964 5318.4152271    3.16              0.00161 ** 
+## sat_dem_b                       0.0434876    0.0139436 2686.4180567    3.12              0.00184 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="negative-affect-3" class="section level3">
+<h3>Negative Affect</h3>
+<pre class="r"><code>model_aff_neg_lmer_std &lt;- lmerTest::lmer(aff_neg_fs ~ 
+                                        (1 | id) + (1 | wave) + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
+                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac + health_b + 
+                                        res_vienna + acc_bal + acc_gar + home_sqm + 
+                                        med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
+                                        med_vid_orf_b + med_vid_pri_b + 
+                                        risk_prop_b + loc_cntrl_int_m_b + 
+                                        act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
+                                        act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
+                                        sat_dem_w + sat_dem_b 
+                                      , data = d_long_imp)
+summary(model_aff_neg_lmer_std)</code></pre>
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
+## Formula: aff_neg_fs ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +      soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
+##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b + age + male + born_aus + born_aus_prnts +      edu_fac + employment_fac + health_b + res_vienna + acc_bal +  
+##     acc_gar + home_sqm + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b +      med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b +      med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_m_b +  
+##     act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w +      act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +      sat_dem_w + sat_dem_b
+##    Data: d_long_imp
+## 
+## REML criterion at convergence: 9758
+## 
+## Scaled residuals: 
+##    Min     1Q Median     3Q    Max 
+## -4.066 -0.438 -0.085  0.306  5.565 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  id       (Intercept) 0.1281   0.358   
+##  wave     (Intercept) 0.0105   0.103   
+##  Residual             0.1282   0.358   
+## Number of obs: 7545, groups:  id, 2750; wave, 21
+## 
+## Fixed effects:
+##                                Estimate Std. Error         df t value             Pr(&gt;|t|)    
+## (Intercept)                     4.27663    0.12093 1914.97163   35.36 &lt; 0.0000000000000002 ***
+## soc_med_read_w                  0.00385    0.00564 4925.72303    0.68              0.49487    
+## soc_med_like_share_w            0.00632    0.00695 4884.07949    0.91              0.36325    
+## soc_med_post_w                  0.00990    0.00926 4901.30612    1.07              0.28521    
+## soc_med_fb_w                   -0.00348    0.00633 4894.51405   -0.55              0.58248    
+## soc_med_ig_w                   -0.01100    0.00726 4908.19590   -1.52              0.12956    
+## soc_med_wa_w                   -0.00265    0.00521 4901.46849   -0.51              0.61083    
+## soc_med_yt_w                    0.00533    0.00695 4884.08512    0.77              0.44268    
+## soc_med_tw_w                    0.01201    0.01078 4939.65189    1.11              0.26556    
+## soc_med_read_b                 -0.00298    0.01031 2841.50895   -0.29              0.77279    
+## soc_med_like_share_b            0.00703    0.01191 2942.36911    0.59              0.55484    
+## soc_med_post_b                  0.06355    0.01542 2997.68005    4.12     0.00003884521529 ***
+## soc_med_fb_b                   -0.00324    0.00763 2748.82139   -0.42              0.67101    
+## soc_med_ig_b                    0.01097    0.00875 2812.87391    1.25              0.20998    
+## soc_med_wa_b                    0.01147    0.00788 2673.40135    1.45              0.14585    
+## soc_med_yt_b                    0.00477    0.00997 2747.21080    0.48              0.63230    
+## soc_med_tw_b                    0.00808    0.01267 2696.52299    0.64              0.52388    
+## age                            -0.00695    0.00094 2712.37615   -7.40     0.00000000000019 ***
+## male                           -0.10577    0.01873 2574.15630   -5.65     0.00000001810879 ***
+## born_aus                       -0.09037    0.03343 2753.90123   -2.70              0.00691 ** 
+## born_aus_prnts                 -0.01290    0.01135 2626.65264   -1.14              0.25557    
+## edu_facBachelor                -0.03665    0.04829 2622.56289   -0.76              0.44793    
+## edu_facHigh school              0.03149    0.03593 2722.46182    0.88              0.38098    
+## edu_facMaster                   0.02081    0.04080 2522.47146    0.51              0.61004    
+## edu_facMiddle school            0.01240    0.03582 2786.20190    0.35              0.72918    
+## edu_facNo degree                0.07105    0.10686 2346.82507    0.66              0.50618    
+## edu_facPhD                      0.07578    0.08737 2366.28966    0.87              0.38580    
+## edu_facState college           -0.08511    0.05794 2669.55032   -1.47              0.14193    
+## edu_facTechnical school        -0.03490    0.02792 2722.45434   -1.25              0.21137    
+## edu_facVocational school       -0.00259    0.03591 2541.04933   -0.07              0.94248    
+## employment_facIncapacitated    -0.03796    0.09638 3213.48124   -0.39              0.69374    
+## employment_facIndustrie         0.09964    0.06504 2590.85894    1.53              0.12567    
+## employment_facParental Leave    0.07936    0.08478 2699.09333    0.94              0.34932    
+## employment_facPublic service    0.12572    0.06702 2585.29204    1.88              0.06076 .  
+## employment_facRetired           0.15637    0.06609 2527.86787    2.37              0.01805 *  
+## employment_facSelf-employed     0.19038    0.07236 2565.11764    2.63              0.00857 ** 
+## employment_facStudent           0.12849    0.07035 2683.34886    1.83              0.06788 .  
+## employment_facUnemployed        0.16798    0.07258 2561.85583    2.31              0.02072 *  
+## health_b                       -0.24181    0.01452 2813.48620  -16.65 &lt; 0.0000000000000002 ***
+## res_vienna                     -0.04859    0.02283 2559.93578   -2.13              0.03342 *  
+## acc_bal                        -0.02964    0.01830 2541.87883   -1.62              0.10535    
+## acc_gar                        -0.04236    0.02197 2566.61646   -1.93              0.05395 .  
+## home_sqm                       -0.01440    0.00437 2724.80094   -3.29              0.00100 ***
+## med_txt_kro_b                  -0.00801    0.00765 2480.83061   -1.05              0.29499    
+## med_txt_sta_b                   0.03007    0.00973 2638.57018    3.09              0.00201 ** 
+## med_txt_pre_b                   0.00198    0.01288 2712.15411    0.15              0.87761    
+## med_txt_oes_b                   0.00668    0.00944 2593.15073    0.71              0.47972    
+## med_txt_kur_b                  -0.00343    0.01061 2546.23567   -0.32              0.74656    
+## med_txt_slz_b                   0.00286    0.01325 2669.40938    0.22              0.82886    
+## med_txt_son_b                  -0.00922    0.00750 2588.49192   -1.23              0.21862    
+## med_vid_orf_b                   0.02127    0.00843 2630.65753    2.52              0.01164 *  
+## med_vid_pri_b                  -0.00118    0.00839 2568.63146   -0.14              0.88783    
+## risk_prop_b                    -0.01628    0.00548 2804.79596   -2.97              0.00297 ** 
+## loc_cntrl_int_m_b              -0.45258    0.02342 2745.52312  -19.32 &lt; 0.0000000000000002 ***
+## act_wrk_w                      -0.00140    0.00556 5715.33115   -0.25              0.80115    
+## act_spo_w                       0.00690    0.00681 5739.14789    1.01              0.31142    
+## act_frn_w                       0.02563    0.00866 5809.54049    2.96              0.00310 ** 
+## act_sho_w                       0.00427    0.00852 5744.43695    0.50              0.61634    
+## act_pet_w                       0.05244    0.00830 5893.44951    6.32     0.00000000028976 ***
+## act_wrk_b                       0.00540    0.00883 2808.62363    0.61              0.54083    
+## act_spo_b                       0.02240    0.01027 2662.74992    2.18              0.02922 *  
+## act_frn_b                       0.06768    0.01616 2989.38079    4.19     0.00002900019954 ***
+## act_sho_b                       0.01885    0.01513 2706.23218    1.25              0.21293    
+## act_pet_b                       0.01389    0.00688 2492.91323    2.02              0.04373 *  
+## sat_dem_w                      -0.02644    0.00723 5774.90449   -3.66              0.00026 ***
+## sat_dem_b                      -0.03724    0.00982 2563.65671   -3.79              0.00015 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+</div>
+</div>
 <div id="figures" class="section level1">
 <h1>Figures</h1>
-<p>First, for activities.</p>
+<div id="activities" class="section level2">
+<h2>Activities</h2>
 <pre class="r"><code># get data
-dat_fig_results_activity &lt;- get_dat_res(model_aff_neg_lmer, model_aff_pos_lmer, model_life_sat_lmer, type = &quot;activity&quot;)
-dat_fig_results_activity_nco &lt;- get_dat_res(model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, type = &quot;activity&quot;)
+dat_fig_results_activity &lt;- get_dat_res(model_aff_neg_lmer, model_aff_pos_lmer, model_life_sat_lmer, 
+                                        type = &quot;activity&quot;, analysis = &quot;regular&quot;)
+dat_fig_results_activity_nco &lt;- get_dat_res(model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, 
+                                            type = &quot;activity&quot;, analysis = &quot;no controls&quot;)
+dat_fig_results_activity_std &lt;- get_dat_res(model_aff_neg_lmer_std, model_aff_pos_lmer_std, model_life_sat_lmer_std, 
+                                            type = &quot;activity&quot;, analysis = &quot;standardized&quot;)
+
+dat_fig_results_activity &lt;- rbind(
+  dat_fig_results_activity, 
+  dat_fig_results_activity_nco,
+  dat_fig_results_activity_std
+) %&gt;% 
+  mutate(Analysis = factor(Analysis, levels = c(&quot;regular&quot;, &quot;no controls&quot;, &quot;standardized&quot;)))
 
 # make figure
 fig_results_activity &lt;- make_graph_res(
-  data_1 = dat_fig_results_activity,
-  data_2 = dat_fig_results_activity_nco,
+  data = dat_fig_results_activity,
   sesoi = &quot;est&quot;
   )
 fig_results_activity</code></pre>
-<p><img src="analyses_files/figure-html/unnamed-chunk-51-1.png" width="672" /></p>
+<p><img src="analyses_files/figure-html/unnamed-chunk-58-1.png" width="672" /></p>
 <pre class="r"><code># safe figure
 ggsave(&quot;figures/fig_results_activity.pdf&quot;, 
        width = 7, height = 4,
        plot = fig_results_activity)</code></pre>
-<p>Then for channels.</p>
+</div>
+<div id="channels" class="section level2">
+<h2>Channels</h2>
 <pre class="r"><code># get data
-dat_fig_results_channel &lt;- get_dat_res(model_aff_neg_lmer, model_aff_pos_lmer, model_life_sat_lmer, type = &quot;channel&quot;)
-dat_fig_results_channel_nco &lt;- get_dat_res(model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, type = &quot;channel&quot;)
+dat_fig_results_channels &lt;- get_dat_res(model_aff_neg_lmer, model_aff_pos_lmer, model_life_sat_lmer, 
+                                        type = &quot;channels&quot;, analysis = &quot;regular&quot;)
+dat_fig_results_channels_nco &lt;- get_dat_res(model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, 
+                                            type = &quot;channels&quot;, analysis = &quot;no controls&quot;)
+dat_fig_results_channels_std &lt;- get_dat_res(model_aff_neg_lmer_std, model_aff_pos_lmer_std, model_life_sat_lmer_std, 
+                                            type = &quot;channels&quot;, analysis = &quot;standardized&quot;)
+
+dat_fig_results_channels &lt;- rbind(
+  dat_fig_results_channels, 
+  dat_fig_results_channels_nco,
+  dat_fig_results_channels_std
+) %&gt;% 
+  mutate(Analysis = factor(Analysis, levels = c(&quot;regular&quot;, &quot;no controls&quot;, &quot;standardized&quot;)))
 
 # make figure
-fig_results_channel &lt;- make_graph_res(
-  data_1 = dat_fig_results_channel,
-  data_2 = dat_fig_results_channel_nco,
+fig_results_channels &lt;- make_graph_res(
+  data = dat_fig_results_channels,
   sesoi = &quot;est&quot;
   )
-fig_results_channel</code></pre>
-<p><img src="analyses_files/figure-html/unnamed-chunk-52-1.png" width="672" /></p>
-<pre class="r"><code># save figure
-ggsave(&quot;figures/fig_results_channel.pdf&quot;, 
+fig_results_channels</code></pre>
+<p><img src="analyses_files/figure-html/unnamed-chunk-59-1.png" width="672" /></p>
+<pre class="r"><code># safe figure
+ggsave(&quot;figures/fig_results_channels.pdf&quot;, 
        width = 7, height = 4,
-       plot = fig_results_channel)</code></pre>
-<p>Select control variables and make graph.</p>
+       plot = fig_results_channels)</code></pre>
+</div>
+<div id="selected-control-variables" class="section level2">
+<h2>Selected control variables</h2>
+<p>Standardized, to allow for better comparison across differently
+scaled variables.</p>
 <pre class="r"><code># make figure
-fig_results_control &lt;- make_graph_res(
-  get_dat_res(model_aff_neg_lmer, model_aff_pos_lmer, model_life_sat_lmer, type = &quot;control&quot;)
+fig_results_control_std &lt;- make_graph_res(
+  get_dat_res(model_aff_neg_lmer_std, model_aff_pos_lmer_std, model_life_sat_lmer_std, 
+              type = &quot;control&quot;, analysis = &quot;standardized&quot;),
+  sesoi = &quot;std&quot;,
+  legend = FALSE
   )
-fig_results_control</code></pre>
-<p><img src="analyses_files/figure-html/unnamed-chunk-53-1.png" width="672" /></p>
+fig_results_control_std</code></pre>
+<p><img src="analyses_files/figure-html/unnamed-chunk-60-1.png" width="672" /></p>
 <pre class="r"><code># save figure
-ggsave(&quot;figures/fig_results_control.pdf&quot;, 
+ggsave(&quot;figures/fig_results_control_std.pdf&quot;, 
        width = 7, height = 4,
-       plot = fig_results_control)</code></pre>
+       plot = fig_results_control_std)</code></pre>
 <pre class="r"><code>save.image(&quot;data/workspace_1.RData&quot;)</code></pre>
+</div>
 </div>
 
 

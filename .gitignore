@@ -4,8 +4,6 @@
 .Ruserdata
 .DS_Store
 title_page.*
-data/10094_da_de_v4_0.zsav
-data/10094_da_de_v4_0.csv
-data/workspace.RData
+data/
 analyses_cache/*
 manuscript_cache/*
