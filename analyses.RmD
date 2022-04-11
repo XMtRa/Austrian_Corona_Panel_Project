@@ -16,7 +16,7 @@ bibliography      :
 
 ```{r knitr-setup, include=F}
 set.seed(170819)
-knitr::opts_chunk$set(warning=F, echo=T, error=F, message=F, cache = T)
+knitr::opts_chunk$set(warning=F, echo=T, error=F, message=F, cache = F)
 options(digits = 3, width = 250, scipen=999)
 ```
 
@@ -31,9 +31,9 @@ Load packages.
 # devtools::install_github("https://github.com/tdienlin/td@v.0.0.2.5")
 
 # define packages
-packages <- c("brms", "devtools", "GGally", "ggplot2", 
+packages <- c("broom.mixed", "brms", "devtools", "GGally", "ggplot2", 
               "gridExtra", "kableExtra", "knitr", "lavaan", "lme4", 
-              "magrittr", "mice", "mvnormalTest", 
+              "magrittr", "mice", #"mvnormalTest", 
               "PerFit", "psych", "quanteda.textstats", "semTools", "tidyverse")
 
 # load packages
@@ -41,6 +41,8 @@ lapply(c(packages, "td"), library, character.only = TRUE)
 ```
 
 ## Custom functions
+
+### find_var
 
 Find variables in dataset.
 
@@ -54,6 +56,8 @@ find_var <- function(name, data = doc)(
     set_names(sub("\\_.*", "", .))
 )
 ```
+
+### get_specs
 
 Extract characteristics from fitted lmer models.
 
@@ -71,6 +75,8 @@ get_specs <- function(model){
 }
 ```
 
+### get_dat
+
 Get data from fitted lmer objects for descriptives.
 
 ```{r}
@@ -82,6 +88,8 @@ get_dat <- function(model){
          value = as.numeric(.$value)) 
 } 
 ```
+
+### get_rel
 
 Determine average reliability for measures across waves
 
@@ -98,6 +106,8 @@ get_rel <- function(data, waves=24){
   return()
 }
 ```
+
+### make_graph
 
 Make graph of variables' development.
 
@@ -129,23 +139,35 @@ make_graph <- function(model, title, ll, ul, line = FALSE, labels = FALSE, lmer=
 }
 ```
 
+### get_dat_res
+
 Get data of lmer objects for results.
 
 ```{r}
 # get data
-get_dat_res <- function(data_aff_neg, data_aff_pos, data_life_sat, type){
+get_dat_res <- function(data_aff_neg, data_aff_pos, data_life_sat, type, analysis = NULL){
   
-  dat_fig_results <- 
-  broom.mixed::tidy(data_aff_neg, conf.int = T) %>% 
-  mutate(dv = "aff_neg") %>% 
-  rbind(
-    broom.mixed::tidy(data_aff_pos, conf.int = T) %>% 
-    mutate(dv = "aff_pos")
-  ) %>% 
-  rbind(
-    broom.mixed::tidy(data_life_sat, conf.int = T) %>% 
-    mutate(dv = "life_sat")
-  ) %>% 
+  if(isTRUE(class(data_aff_neg) == "lmerModLmerTest")) {
+         dat_fig_results <- 
+           broom.mixed::tidy(data_aff_neg, conf.int = T) %>% 
+           mutate(dv = "aff_neg") %>% 
+           rbind(
+             broom.mixed::tidy(data_aff_pos, conf.int = T) %>% 
+               mutate(dv = "aff_pos")) %>% 
+           rbind(
+             broom.mixed::tidy(data_life_sat, conf.int = T) %>% 
+               mutate(dv = "life_sat"))
+         } else{ 
+           dat_fig_results <- 
+             data_aff_neg %>% 
+             mutate(dv = "aff_neg") %>% 
+             rbind(data_aff_pos %>% 
+                   mutate(dv = "aff_pos")) %>% 
+             rbind(data_life_sat %>% 
+                     mutate(dv = "life_sat")) %>% 
+           rename(conf.low = `2.5 %`, conf.high = `97.5 %`)
+           }
+  dat_fig_results %<>% 
   mutate(
     type = ifelse(grepl(".*_w\\>", .$term), "within", "between"),
     iv = gsub("_(w|b)\\>", "", .$term)
@@ -155,9 +177,10 @@ get_dat_res <- function(data_aff_neg, data_aff_pos, data_life_sat, type){
                   levels = c("within", "between")),
     dv = factor(.$dv, 
                 levels = c("life_sat", "aff_pos", "aff_neg"),
-                labels = c("Life satisfaction", "Positive affect", "Negative affect"))
+                labels = c("Life satisfaction", "Positive affect", "Negative affect")),
+    analysis = analysis
   ) %>% 
-  select(dv, iv, type, estimate, conf.low, conf.high, p.value)
+  select(dv, iv, type, analysis, estimate, conf.low, conf.high, p.value)
 
   # select Social Media type of activity
   if(type == "activity") {
@@ -168,7 +191,7 @@ get_dat_res <- function(data_aff_neg, data_aff_pos, data_life_sat, type){
                   levels = c("soc_med_post", "soc_med_like_share", "soc_med_read"), 
                   labels = c("Posting", "Liking & Sharing", "Reading"))
     )
-  } else if(type == "channel"){
+  } else if(type == "channels"){
     dat_fig_results %<>%
     filter(iv %in% c("soc_med_fb", "soc_med_ig", "soc_med_wa", "soc_med_yt", "soc_med_tw")) %>% 
     mutate(iv = factor(.$iv, levels = c("soc_med_yt", "soc_med_wa", "soc_med_ig", "soc_med_tw", "soc_med_fb"), labels = c("YouTube", "WhatsApp", "Instagram", "Twitter", "Facebook")))
@@ -183,41 +206,41 @@ get_dat_res <- function(data_aff_neg, data_aff_pos, data_life_sat, type){
 
 ```
 
+### make_graph_res
+
 Make graph of effects
 
 ```{r}
-make_graph_res <- function(data_1, data_2 = NULL, sesoi = NULL){
-  ggplot(data_1, aes(x = estimate, y = iv)) + 
-  scale_color_manual(values = c("grey40", "deepskyblue")) +
+make_graph_res <- function(data, sesoi = NULL, legend = TRUE){
+  ggplot(data, aes(x = estimate, y = iv)) + 
+  scale_color_manual(values = c("grey40", "deepskyblue", "darkcyan", "cornflowerblue", "aquamarine")) +
   geom_vline(xintercept = 0, lwd = .75, colour = "darkgrey") + 
-  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high),
-                lwd = .75, height = .2) +
-  geom_point(size = 2) +
-  {if(!is.null(data_2)) geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), data_2,
-                lwd = .75, height = .2, color = "grey",
-                position = position_nudge(y = -.3)
-                )} +
-  {if(!is.null(data_2)) geom_point(data = data_2, size = 2, color = "grey",
-             position = position_nudge(y = -.3)
-             )} +
-  {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data_1, dv=="Life satisfaction"), aes(xintercept=-.3), colour="darkgrey", linetype = "dashed")} + 
-    {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data_1, dv=="Life satisfaction"), aes(xintercept=.3), colour="darkgrey", linetype = "dashed")} + 
-  {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data_1, dv!="Life satisfaction"), aes(xintercept=-.15), colour="darkgrey", linetype = "dashed")} +
-    {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data_1, dv!="Life satisfaction"), aes(xintercept=.15), colour="darkgrey", linetype = "dashed")} +
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high, color = analysis),
+                lwd = .75, height = .2, position = position_dodge(.5)) +
+  geom_point(aes(color = analysis), size = 2, position = position_dodge(.5)) +
+  {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data, dv=="Life satisfaction"), aes(xintercept=-.3), colour="darkgrey", linetype = "dashed")} + 
+    {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data, dv=="Life satisfaction"), aes(xintercept=.3), colour="darkgrey", linetype = "dashed")} + 
+  {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data, dv!="Life satisfaction"), aes(xintercept=-.15), colour="darkgrey", linetype = "dashed")} +
+    {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data, dv!="Life satisfaction"), aes(xintercept=.15), colour="darkgrey", linetype = "dashed")} +
   {if(isTRUE(sesoi == "std")) geom_vline(aes(xintercept=.1), colour="darkgrey", linetype = "dashed")} + 
-  {if(isTRUE(sesoi == "std")) geom_vline(aes(xintercept=-.1), colour="darkgrey", linetype = "dashed")} +   theme(
+  {if(isTRUE(sesoi == "std")) geom_vline(aes(xintercept=-.1), colour="darkgrey", linetype = "dashed")} +   
+    theme(
     axis.title.y = element_blank(),
     plot.title = element_text(hjust = .5),
     panel.spacing = unit(.9, "lines"),
     text = element_text(size = 12),
     axis.text.y = element_text(hjust = 0)
     ) +
+  {if(!isTRUE(legend)) theme(legend.position = "none")} + 
+  guides(colour = guide_legend(reverse=T)) +
   facet_grid(rows = vars(type),
              cols = vars(dv),
              scales = "free",
              space = "free_y") 
 }
 ```
+
+### get_fs
 
 Extract factor scores.
 
@@ -521,7 +544,7 @@ d_long %<>%
 
 Determine amount of missingness per respondent per wave. Because calculation takes long, this chunk is not executed but loaded from memory. To execute, set eval == TRUE.
 
-```{r eval=TRUE}
+```{r eval=TRUE, cache=TRUE}
 vars_used <- c("life_sat", "aff_pos_1", "aff_pos_2", "aff_pos_3", "aff_neg_1", "aff_neg_2", "aff_neg_3", "aff_neg_4", "aff_neg_5", "aff_neg_6", "soc_med_read", "soc_med_like_share", "soc_med_post", "soc_med_fb", "soc_med_ig", "soc_med_wa", "soc_med_yt", "soc_med_tw", "age", "male", "born_aus", "born_aus_prnts", "edu_fac", "employment_fac", "health", "res_vienna", "acc_bal", "acc_gar", "home_sqm", "med_txt_kro", "med_txt_sta", "med_txt_pre", "med_txt_oes", "med_txt_kur", "med_txt_slz", "med_txt_son", "med_vid_orf", "med_vid_pri", "risk_prop", "loc_cntrl_int_1", "loc_cntrl_int_2", "loc_cntrl_int_3", "loc_cntrl_int_4", "act_wrk", "act_spo", "act_frn", "act_sho", "act_pet", "sat_dem")
 
 # filter respondents with more than 50% missing data
@@ -537,16 +560,24 @@ incl_ma <- d_long_filt %>%
   mutate(across(.cols = everything(), .fns = is.na))
 incl_ma[vars_excl] <- FALSE
 
-# init <- mice(select(d_long_test_filt, maxit = 0))
-# pred_ma <- init$predictorMatrix
-# pred_ma[, vars_excl] <- 0
-d_long_imp <- mice(d_long_filt, method = "pmm", m = 1, maxit = 30, 
-              where = incl_ma,
-              # predictorMatrix = pred_ma, 
-              seed = 180719, print = FALSE)
+d_long_imp <- mice(d_long_filt, 
+                   method = "pmm", # use predictive mean matching
+                   m = 1, maxit = 30, # only 1 imputation
+                   where = incl_ma,
+                   seed = 180719, print = FALSE)
 d_long_imp <- mice::complete(d_long_imp)
-
 write_csv(d_long_imp, "data/data_imputed.csv")
+```
+
+
+```{r eval=TRUE, cache=TRUE}
+# impute missing data with multiple imputation
+d_long_mim_mice <- mice(d_long_filt, 
+                   method = "pmm", # use predictive mean matching
+                   m = 5, maxit = 5, # 5 imputations, 5 iterations
+                   where = incl_ma,
+                   seed = 180719, print = FALSE)
+d_long_mim <- mice::complete(d_long_mim_mice, action = "long", include = TRUE)
 ```
 
 Load imputed data from disc.
@@ -589,6 +620,22 @@ d_long %<>%
   ungroup()
 ```
 
+And now the same for the multiple imputed data
+
+```{r}
+d_long_mim %<>%
+  mutate(aff_pos_m = rowMeans(select(., aff_pos_1 : aff_pos_3)),
+         aff_neg_m = rowMeans(select(., aff_neg_1 : aff_neg_6)),
+         loc_cntrl_int_m = rowMeans(select(., loc_cntrl_int_1 : loc_cntrl_int_4)))
+
+d_long_mim %<>% 
+  group_by(id) %>% 
+  mutate_at(vars(health:loc_cntrl_int_4, loc_cntrl_int_m), funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %>% 
+  ungroup()
+
+d_long_mim_mice <- as.mids(d_long_mim)
+```
+
 # Measures
 ## Well-being
 ### Life satisfaction
@@ -608,7 +655,7 @@ We first test assumption of multivariate normality.
 mardia(d_long_imp %>% select(aff_pos_1, aff_pos_2, aff_pos_3))
 ```
 
-Assumption of multivariate normal distributino was violated; hence, robust estimator will be used.
+Assumption of multivariate normal distribution was violated; hence, robust estimator will be used.
 
 
 ```{r}
@@ -977,13 +1024,18 @@ First, for activities.
 
 ```{r}
 # get data
-dat_fig_results_activity <- get_dat_res(model_aff_neg_lmer, model_aff_pos_lmer, model_life_sat_lmer, type = "activity")
-dat_fig_results_activity_nco <- get_dat_res(model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, type = "activity")
+dat_fig_results_activity <- get_dat_res(model_aff_neg_lmer, model_aff_pos_lmer, model_life_sat_lmer, 
+                                        type = "activity", analysis = "regular")
+dat_fig_results_activity_nco <- get_dat_res(model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, 
+                                            type = "activity", analysis = "no controls")
+dat_fig_results_activity <- rbind(
+  dat_fig_results_activity, 
+  dat_fig_results_activity_nco
+)
 
 # make figure
 fig_results_activity <- make_graph_res(
-  data_1 = dat_fig_results_activity,
-  data_2 = dat_fig_results_activity_nco,
+  data = dat_fig_results_activity,
   sesoi = "est"
   )
 fig_results_activity
@@ -998,21 +1050,26 @@ Then for channels.
 
 ```{r}
 # get data
-dat_fig_results_channel <- get_dat_res(model_aff_neg_lmer, model_aff_pos_lmer, model_life_sat_lmer, type = "channel")
-dat_fig_results_channel_nco <- get_dat_res(model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, type = "channel")
+dat_fig_results_channels <- get_dat_res(model_aff_neg_lmer, model_aff_pos_lmer, model_life_sat_lmer, 
+                                        type = "channels", analysis = "regular")
+dat_fig_results_channels_nco <- get_dat_res(model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, 
+                                            type = "channels", analysis = "no controls")
+dat_fig_results_channels <- rbind(
+  dat_fig_results_channels, 
+  dat_fig_results_channels_nco
+)
 
 # make figure
-fig_results_channel <- make_graph_res(
-  data_1 = dat_fig_results_channel,
-  data_2 = dat_fig_results_channel_nco,
+fig_results_channels <- make_graph_res(
+  data = dat_fig_results_channels,
   sesoi = "est"
   )
-fig_results_channel
+fig_results_channels
 
-# save figure
-ggsave("figures/fig_results_channel.pdf", 
+# safe figure
+ggsave("figures/fig_results_channels.pdf", 
        width = 7, height = 4,
-       plot = fig_results_channel)
+       plot = fig_results_channels)
 ```
 
 Select control variables and make graph.
@@ -1020,7 +1077,8 @@ Select control variables and make graph.
 ```{r}
 # make figure
 fig_results_control <- make_graph_res(
-  get_dat_res(model_aff_neg_lmer, model_aff_pos_lmer, model_life_sat_lmer, type = "control")
+  get_dat_res(model_aff_neg_lmer, model_aff_pos_lmer, model_life_sat_lmer, analysis = "exploratory", type = "control"),
+  legend = FALSE
   )
 fig_results_control
 
