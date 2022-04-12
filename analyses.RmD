@@ -225,7 +225,7 @@ make_graph_res <- function(data, sesoi = NULL, legend = TRUE){
   geom_vline(xintercept = 0, lwd = .75, colour = "darkgrey") + 
   geom_errorbarh(aes(xmin = conf.low, xmax = conf.high, color = Analysis),
                 lwd = .75, height = .2, position = position_dodge(-.7)) +
-  geom_point(aes(color = Analysis), size = 2, position = position_dodge(-.7)) +
+  geom_point(aes(color = Analysis), size = 1.5, position = position_dodge(-.7)) +
   {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data, dv=="Life satisfaction"), aes(xintercept=-.3), colour="darkgrey", linetype = "dashed")} + 
     {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data, dv=="Life satisfaction"), aes(xintercept=.3), colour="darkgrey", linetype = "dashed")} + 
   {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data, dv!="Life satisfaction"), aes(xintercept=-.15), colour="darkgrey", linetype = "dashed")} +
@@ -883,8 +883,8 @@ fig_desc <- grid.arrange(fig_desc_life_sat, fig_desc_aff,
                          fig_desc_soc_med_use, fig_desc_soc_med_channel,
                          nrow = 2, ncol = 2)
 
-ggsave("figures/fig_descriptives.pdf", 
-       width = 10, height = 6,
+ggsave("figures/fig_descriptives.png", 
+       width = 10, height = 5,
        plot = fig_desc)
 ```
 
@@ -1098,7 +1098,7 @@ summary(model_aff_neg_lmer_std)
 
 ## Activities
 
-```{r}
+```{r warning=FALSE}
 # get data
 dat_fig_results_activity <- get_dat_res(model_aff_neg_lmer, model_aff_pos_lmer, model_life_sat_lmer, 
                                         type = "activity", analysis = "regular")
@@ -1122,14 +1122,14 @@ fig_results_activity <- make_graph_res(
 fig_results_activity
 
 # safe figure
-ggsave("figures/fig_results_activity.pdf", 
+ggsave("figures/fig_results_activity.png", 
        width = 7, height = 4,
        plot = fig_results_activity)
 ```
 
 ## Channels
 
-```{r}
+```{r warning=FALSE}
 # get data
 dat_fig_results_channels <- get_dat_res(model_aff_neg_lmer, model_aff_pos_lmer, model_life_sat_lmer, 
                                         type = "channels", analysis = "regular")
@@ -1153,7 +1153,7 @@ fig_results_channels <- make_graph_res(
 fig_results_channels
 
 # safe figure
-ggsave("figures/fig_results_channels.pdf", 
+ggsave("figures/fig_results_channels.png", 
        width = 7, height = 4,
        plot = fig_results_channels)
 ```
@@ -1162,7 +1162,7 @@ ggsave("figures/fig_results_channels.pdf",
 
 Standardized, to allow for better comparison across differently scaled variables.
 
-```{r}
+```{r warning=FALSE}
 # make figure
 fig_results_control_std <- make_graph_res(
   get_dat_res(model_aff_neg_lmer_std, model_aff_pos_lmer_std, model_life_sat_lmer_std, 
@@ -1173,7 +1173,7 @@ fig_results_control_std <- make_graph_res(
 fig_results_control_std
 
 # save figure
-ggsave("figures/fig_results_control_std.pdf", 
+ggsave("figures/fig_results_control_std.png", 
        width = 7, height = 4,
        plot = fig_results_control_std)
 ```
