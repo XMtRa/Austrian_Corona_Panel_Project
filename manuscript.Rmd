@@ -14,7 +14,7 @@ affiliation:
     institution   : ""
 
 
-abstract          : "In times of crisis such as the Corona pandemic citizens need to stay informed about recent events, political decisions, or mandatory protection measures. To this end, many people use various types of media, and increasingly social media. However, because social media are particularly engaging, some find it hard to disconnect. In this preregistered study, I investigate whether using social media for COVID-19 related reasons affects psychological well-being. To answer this question I analyzed data from the Austrian Corona Panel Project, which consists of 3,018 participants. Well-being was measured at each wave, and communication at five waves. I ran three random effects within between models, controlling for several stable and varying confounders. Results showed that the effects of COVID-19 related social media use on well-being were very small, arguably too small to matter. Fears that social media use during times of crisis critically impairs well-being are likely to be unfounded."
+abstract          : "In times of crisis such as the Corona pandemic citizens need to stay informed about recent events, political decisions, or mandatory protection measures. To this end, many people use various types of media, and increasingly social media. However, because social media are particularly engaging, some find it hard to disconnect. In this preregistered study, I investigated whether using social media for COVID-19 related reasons affected psychological well-being. To answer this question I analyzed data from the Austrian Corona Panel Project, which consists of 3,018 participants. Well-being was measured at all 24 waves, and communication at five specific waves. I ran three random effects within between models, controlling for several stable and varying confounders. Results showed that the effects of COVID-19 related social media use on well-being were very small, arguably too small to matter. Fears that social media use during times of crisis critically impairs well-being are not supported."
 keywords          : "COVID-19, well-being, social media, news use, panel study."
 
 bibliography      : 
@@ -71,9 +71,9 @@ numerous events unfolded in quick succession and several open questions emerged.
 How dangerous is the virus? 
 Is it spreading in my region? 
 How is it transmitted, and how can I protect myself?
-Because for many it was (and still is) a matter of life or death, people aimed to stay informed regarding the latest developments.
+Because for many it was (and at the time of writing still is) a matter of life or death, people aimed to stay informed regarding the latest developments.
 Governments around the world implemented safety measures, such as wearing masks, keeping physical distance, or enforcing lockdowns.
-In this extraordinary situation, many people used media excessively to attain information, and especially social media were at an all time high [@statistaAverageDailyTime2021].
+In this extraordinary situation, many people heavily relied on media to attain relevant information, and especially social media were at an all time high [@statistaAverageDailyTime2021].
 
 Some people actually couldn't stop using social media to learn about COVID-19 related news.
 A new phenomenon emerged, termed "doomscrolling":
@@ -108,10 +108,10 @@ Together, this should provide an encompassing perspective on potential media eff
 The hierarchical taxonomy of computer-mediated communication differentiates six levels of how people engage with digital technology.
 First, the device (e.g., smartphone); second, the type of application (e.g., social networking site); third, the branded application (e.g., Twitter); fourth, the feature (e.g., status post); fifth, the interaction (e.g., one-to-many); and sixth, the message (e.g., content) [@meierComputermediatedCommunicationSocial2020a].
 Whereas the first four levels focus on the communication _channel_, the last two address the communication _type_.
-To measure social media use for the consumption of COVID-19 related news and topics, I here employ both the channel and the type of communication perspective, which together provides a nuanced understanding of communication.
+To measure social media use for the consumption of COVID-19 related news and topics, I here employ both the channel and the type of communication perspective, which together should offer a nuanced understanding of communication.
 
 First, I investigate how well-being is affected by different types of communication affect, namely active and passive use.
-Defining what constitutes active and what passive use is not always clear, and different understandings are currently discussed [@ellisonWhyWeDon2020, @meierComputermediatedCommunicationSocial2020a].
+Defining what constitutes active and what passive use is not always clear, and different understandings are currently discussed [@ellisonWhyWeDon2020; @meierComputermediatedCommunicationSocial2020a].
 Reading is generally considered as passive and writing as active, while there are also specific behaviors such as such liking or sharing content that fall somewhere in-between [@meierDoesPassiveSocial2022].
 In this study, I hence distinguish (a) _reading_ (passive), (b) _posting_ (active), and (c) _liking and sharing_ COVID-19 related posts (both active and passive).
 Second, I analyze how using the most prominent branded applications affects well-being, and whether this effect changes across applications.
@@ -127,42 +127,42 @@ Examples of such media use include posting thoughts about the pandemic or retwee
 <!-- In conclusion, most effects are likely somewhere between trivial and small. -->
 <!-- I therefore expect that also in the case of COVID-19 related social media use effects will be trivial to small. -->
 
-From a theoretical perspective, how could we explain whether COVID-19 related social media use might affect well-being?
+From a theoretical perspective, how could we explain whether COVID-19 related social media use affects well-being?
 <!-- In what follows, I outline potential arguments as to why the effect might be positive or negative, direct or indirect, or nonexistent. -->
 According to the set-point model of subjective well-being, well-being is surprisingly stable [@lykkenHappinessWhatStudies1999].
 Although specific events such as marriage or salary can have significant effects, after some time well-being routinely returns to prior levels, which are mostly determined genetically [@sheldonStabilityHappinessTheories2014].
-Only very specific events such as unemployment, disability, or death can cause long-term decreases in well-being [@lucasAdaptationSetpointModel2007].
-So although well-being can change this does not happen easily.
+Only very specific events and factors such as unemployment, disability, or death can cause long-term changes in well-being [@lucasAdaptationSetpointModel2007].
+<!-- So although well-being can change this does not happen easily. -->
 <!-- Although the set-point theory has been criticized lately because events such as marriage, unemployment, or death can indeed lead to long-term changes, it is still widely maintained that well-being is very stable and hence hard to be influenced  -->
 
-Can media use be such a negative or positive factor?
+Can media use be such a factor?
 In advance, there doesn't seem to be a clear winner, and it's likely that both positive and negative effects cancel each other out.
-Empirically, social media use---on average---does not have a strong effect on well-being [@meierComputermediatedCommunicationSocial2020a].
+Empirically, social media use on average oes not have a strong effect on well-being [@meierComputermediatedCommunicationSocial2020a].
 According to the Differential Susceptibility to Media Effects Model [@valkenburgDifferentialSusceptibilityMedia2013], the effects of media use differ across individuals. 
 Whereas for some media are beneficial, for others they are harmful.
 On average, however, effects are often small or negligible.
-Also when focusing on individual users, social media have both positive and negative effects on well-being [@buchiDigitalWellbeingTheory2021].
+But also when focusing on individual users, social media can have both positive and negative effects on well-being [@buchiDigitalWellbeingTheory2021].
 They can impair well-being when causing embarrassment, stress, or disinformation, and they can improve well-being when providing connectedness, information, or entertainment [@buchiDigitalWellbeingTheory2021].
 
 Two of the most prominent media effect theories argue against strong negative impacts.
 First, uses and gratifications theory states that people explicitly and rationally chose specific media because of their respective benefits. 
-If those benefits don't exist, they invest their time elsewhere.
-And social media offer ample benefits. 
+If those benefits don't exist, they will spend their time elsewhere.
+And social media offer copiuos benefits. 
 Most prominently, they help find relevant information, maintain and foster relationships, express one's personality, and entertain oneself [@pelletierOneSizeDoesn2020].
-The second major theory is mood management theory [@zillmannMoodManagementCommunication1988].
+The second major theory that needs to be listed here is mood management theory [@zillmannMoodManagementCommunication1988].
 Users implicitly learn what media help them balance their mood and affect.
 For example, when bored people use social media to entertain themselves.
-Using experience sampling of well-being and logs of social media use, a study with 82 participants from Italy found that after episodes of social media use, levels of positive affect increased for a short time [@marcianoDynamicsAdolescentsSmartphone2022].
+Using experience sampling of well-being and logs of social media use, a study with 82 participants from Italy found that after episodes of social media use, levels of positive affect increased significantly [@marcianoDynamicsAdolescentsSmartphone2022].
 
-But people also misjudge media affects, often being overly optimistic [@metzgerComparativeOptimismPrivacy2017].
-And precisely because social media have so many positive consequences, one can ask if this where the actual problem lies.
+But people can also misjudge media affects and are often overly optimistic [@metzgerComparativeOptimismPrivacy2017].
+And precisely because social media have so many positive consequences, one can ask if this is not where the actual problem lies.
 In other words, social media aren't problematic because they're inherently bad, but rather because they're too good.
 And as with many other things, there can be too much of a good thing.
 It is therefore often asked whether social media are addictive, and users sometimes express this fear themselves [@yangCanWatchingOnline2021]. 
 However, a recently published meta-analysis found that the two most prominent measures of addiction, the Bergen Facebook Addiction Scale and the Bergen Social Media Addiction Scale, have only small relations to well-being [@duradoniWellbeingSocialMedia2020]. 
-In addition, the general idea of labeling excessive social and new media use as addiction was criticized, arguing that social and new media represent new regular behaviors that should not be pathologized [@galerHowMuchToo2018; @vanrooijWeakScientificBasis2018].
+In addition, the general idea of labeling excessive social and new media use as addiction was criticized, arguing that social media represent new regular behaviors that should not be pathologized [@galerHowMuchToo2018; @vanrooijWeakScientificBasis2018].
 
-Because effects can differ across situations, I now briefly focus on the effects of COVID-19 related social media use specifically.
+Because media effects can differ across situations [@valkenburgDifferentialSusceptibilityMedia2013], I now briefly focus on the effects of COVID-19 related social media use specifically.
 First, one could assume a _direct_ negative effect on well-being, and especially on positive or negative affect, which are more volatile and fluctuating.
 Dangers, inequalities, corruption---these were the headlines during the pandemic across many countries worldwide.
 If one learns about such events, the initial reaction might be shock, fear, or dismay.
@@ -175,19 +175,18 @@ A study with 2.057 respondents from Italy reported that during the pandemic virt
 There could also be _indirect_ effects.
 When browsing social media for Covid-19 related news, many users reported being captivated to such an extent that they could not stop using social media [@kleinDarklySoothingCompulsion2021].
 During the pandemic social media use was at an all-time high in the US [@statistaAverageDailyTime2021].
-It is most likely that moderate social media use is not detrimental [@orbenTeenagersScreensSocial2020].
-Overuse, however, might be more critical, and several studies have shown more pronounced negative effects for extreme users [@przybylskiLargescaleTestGoldilocks2017].
+Although it is most likely that moderate social media use is not detrimental [@orbenTeenagersScreensSocial2020], overuse, however, might be more critical, and several studies have shown more pronounced negative effects for extreme users [@przybylskiLargescaleTestGoldilocks2017].
 To explain, overuse could impair well-being if it replaces meaningful or functional activities such as meeting others, working, actively relaxing, or exercising.
 So if a society collectively overuses social media during a pandemic, there might be potential for negative effects.
 <!-- If overuse replaces such activities it's reasonable to assume that it's also detrimental. -->
-On the other hand, one can make the case that overuse might also be beneficial, especially in times of a pandemic---even if the use is mainly COVID-19 related.
+On the other hand, one can make the case that overuse might even be beneficial, especially in times of a pandemic.
 Exchanging COVID-19 related messages with friends via WhatsApp might replace the in-person contact one would have otherwise, but which is literally impossible at the time.
 In situations where meaningful and functional activities are prohibited, using social media to exchange about COVID-19 related topics might not be the worst idea.
 Besides, given that nowadays a large number of experts, scientists, and politicians converse directly on social media, one can get first-hand high quality information on current developments.
 <!-- On the other hand, there is of course also much disinformation, and "bingeing" on COVID-19 fake news might also pose risks for impaired well-being. -->
 
 To summarize, from a theoretical perspective it is most likely that the average effects of social media use on well-being are negligible. 
-Building on established theories from Communication, it is not particularly likely that effects are either profoundly negative or strongly positive.
+Building on established theories from Communication, we would not assume that effects are either profoundly negative or strongly positive.
 
 ## Empirical Studies on Social Media Effects
 
@@ -210,17 +209,17 @@ As a starting point, we could refer to standardized effect sizes.
 According to @cohenPowerPrimer1992, small effect sizes start at _r_ = .10.
 And indeed, several if not most of the current meta-analyses find effect sizes below that threshold [@huangTimeSpentSocial2017; @meierComputermediatedCommunicationSocial2020a; @fergusonThisMetaanalysisScreen2021].
 
-Several individual studies employing advanced methods found smalls relations between social media use and well-being [@orbenSocialMediaEnduring2019; @przybylskiDoesTakingShort2021a; @schemerImpactInternetSocial2021; @kerestesAdolescentsOnlineSocial2020].
+Finally, also several individual studies employing advanced methods found smalls relations between social media use and well-being [@orbenSocialMediaEnduring2019; @przybylskiDoesTakingShort2021a; @schemerImpactInternetSocial2021; @kerestesAdolescentsOnlineSocial2020].
 For example, @beyensSocialMediaUse2021 reported that although for some users (roughly one quarter) the effects of social media use on well-being were negative, for almost the same number of users they were positive, while for the rest the effects were neutral.
-This finding is aligned the Differential Susceptibility to Media Effects Model.
-Although there is substantial variation of media effects for individual users, the average effects reported in the literature are often small [@valkenburgDifferentialSusceptibilityMedia2013]. 
+This finding is aligned the Differential Susceptibility to Media Effects Model: 
+Although there is substantial _variation_ of media effects for individual users, the _average_ effects reported in the literature are often small [@valkenburgDifferentialSusceptibilityMedia2013]. 
 
 <!-- Together, the strongest argument to me is that _in general_ the effects of social media on well-being are, on average, small at best.  -->
 <!-- Because this study only looks at _one part_ of social media use---namely, COVID-19 related interactions---it is very focused, diminishing the overall potential of the effects even further. -->
 <!-- Whether or not using social media for COVID-19 related aspects is detrimental during a pandemic is also not entirely clear. -->
 <!-- At least, there does not seem to be a case where we should expect a clear deviation to the negative, despite anecdotes of doomscrolling. -->
 
-In conclusion, in light of the theoretical considerations and the empirical studies presented above, I expect that COVID-19 related communication on social media doesn't affect well-being in a meaningful or relevant way.
+In conclusion, in light of the theoretical considerations and empirical studies presented above, I expect that COVID-19 related communication on social media doesn't affect well-being in a meaningful or relevant way.
 
 > Hypothesis: The within-person effects of all types of COVID-19 related social media use on all types of well-being indicators---while controlling for several stable and varying covariates such as sociodemographic variables and psychological dispositions---will be trivial.
 
@@ -284,9 +283,10 @@ However, in doing so not much is gained or lost, because the effects of social m
 
 In this study, I hence plan to control for the following variables, which either have already been shown to affect both social media use and well-being or which are likely to do so, and which also aren't mediators:
 <!-- (I'll additionally include variables that likely affect only well-being, also to obtain a comparison benchmark for social media effects): -->
-gender, age, education, Austria country of birth, Austria country of birth of parents, text-based news consumption, video-based news consumption, residency Vienna, household size, health, living space, access to garden, access to balcony, employment, work hours per week, being in home-office, household income, outdoor activities, satisfaction with democracy, disposition to take risks, and locus of control.
+gender, age, education, Austria country of birth, Austria country of birth of parents, text-based news consumption, video-based news consumption, residency Vienna, household size, health, living space, access to garden, access to balcony, employment, work hours per week, being in home-office, household income, outdoor activities, satisfaction with democracy, disposition to take risks, and locus of control.[^explore]
 <!-- I will not control for variables such as trust in institutions or trust in media, because these variables might be influenced by social media use to a meaningful extent. -->
-The dataset includes many other variables that one could also potentially control for, and I invite interested readers to download the and explore potential interesting relationships.
+
+[^explore]: The dataset includes many other variables that one could also potentially control for, and I invite interested readers to download the and explore potential interesting relationships.
 
 Next to including covariates, it's now increasingly understood that causal effects should be analyzed from an internal, within-person perspective [@hamakerWhyResearchersShould2014].
 If a specific person changes their media diet, we need to measure how this behavior affects _their own_ well-being.
@@ -303,13 +303,13 @@ If variables are stable, longer intervals are needed; if they fluctuate, shorter
 In the case of well-being, we need shorter intervals for affect and longer ones for life satisfaction.
 Still, choosing the right interval is challenging, because especially short intervals are hard to implement in practice and often require advanced methods such as experience sampling (also known as in situ measurement or ambulant assessment) [@schnauber-stockmannMobileDevicesTools2020].
 
-In this study, I analyze how using social media during the last week affected their positive and negative affect during the last week.
+In this study, I hence analyze how using social media during the last week affected their positive and negative affect during the same week.
 More precisely, if people during the last week used COVID-19 related social media more than the usually do, did they feel better or worse during that week than they usually do?
 Regarding life satisfaction, I implemented a longer interval.
-Namely, if people during the last week used COVID-19 related social media more than the usually do, did this affect if they are now more or less satisfied with their lives than they usually are?
+Namely, if people during the last week used COVID-19 related social media more than the usually do, were they at the end of the week more or less satisfied with their lives than they usually are?
 I hence analyze if when a person changes their social media diet, are there (a) _simultaneous_ changes in their affect and (b) _subsequent_ changes in their life satisfaction?
 When additionally controlling for both stable and varying confounders, we can then be more sure that the effect is indeed causal.
-Similar approaches were implemented by other studies [@johannesNoEffectDifferent2022; @scharkowHowSocialNetwork2020], and they are considered a best practice to analyze causality [@bellFixedRandomEffects2019].
+Similar approaches were implemented by other studies [@johannesNoEffectDifferent2022; @scharkowHowSocialNetwork2020], and they are considered a best practice approach toward analyzing causality [@bellFixedRandomEffects2019].
 
 # Method
 
@@ -328,7 +328,8 @@ The most relevant deviations are reported below, and a complete list of all chan
 
 The data come from the Austrian Corona Panel Project [@kittelAustrianCoronaPanel2021].
 The study was conducted between March 2020 and October 2021.
-It contains 26 waves, and at the time of writing the first 24 waves were available for download. 
+It contains 26 waves, and at the time of writing the first 24 waves were available for download.
+Between March 2020 and July 2020, the intervals were weekly, and afterward the intervals were monthly.
 Each wave consists of at least 1,500 respondents.
 The overall sample size was _N_ = `r d_raw %>% nrow() %>% prettyNum(big.mark = ",")`, and `r d_long %>% nrow() %>% prettyNum(big.mark = ",")` observations were collected.
 Panel mortality was compensated through a continuous acquisition of new participants. 
