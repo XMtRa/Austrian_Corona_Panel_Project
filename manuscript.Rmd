@@ -32,10 +32,10 @@ draft             : no
 
 documentclass     : "apa6"
 classoption       : "man"
-# output            :
-#   papaja::apa6_pdf:
-#     latex_engine  : xelatex
-output            : papaja::apa6_docx
+output            :
+  papaja::apa6_pdf:
+    latex_engine  : xelatex
+# output            : papaja::apa6_docx
 header-includes:
   - \usepackage{endnotes}
   - \setlength{\parskip}{0em}
@@ -145,7 +145,7 @@ But also when focusing on individual users, social media can have both positive 
 They can impair well-being when causing embarrassment, stress, or disinformation, and they can improve well-being when providing connectedness, information, or entertainment [@buchiDigitalWellbeingTheory2021].
 
 Two of the most prominent media effect theories argue against strong negative impacts.
-First, uses and gratifications theory states that people explicitly and rationally chose specific media because of their respective benefits. 
+First, uses and gratifications theory states that people explicitly and rationally chose specific media because of their respective benefits [@katzUsesGratificationsResearch1973]. 
 If those benefits don't exist, they will spend their time elsewhere.
 And social media offer copiuos benefits. 
 Most prominently, they help find relevant information, maintain and foster relationships, express one's personality, and entertain oneself [@pelletierOneSizeDoesn2020].
@@ -300,7 +300,7 @@ Finding the right interval between cause and effect is crucial.
 For example, if we want to understand the effect of alcohol consumption on driving performance, it makes a big difference if driving performance is measured one minute, one hour, one day, or one week after consumption.
 <!-- Finding the right interval is difficult. -->
 If variables are stable, longer intervals are needed; if they fluctuate, shorter intervals.
-In the case of well-being, we need shorter intervals for affect and longer ones for life satisfaction.
+In the case of well-being, we need shorter intervals for affect and longer ones for life satisfaction [@dienlinImpactDigitalTechnology2020].
 Still, choosing the right interval is challenging, because especially short intervals are hard to implement in practice and often require advanced methods such as experience sampling (also known as in situ measurement or ambulant assessment) [@schnauber-stockmannMobileDevicesTools2020].
 
 In this study, I hence analyze how using social media during the last week affected their positive and negative affect during the same week.
@@ -346,7 +346,7 @@ The average age was `r mean(2021 - d_wide$year_birth, na.rm = T) %>% round(0)` y
 ## Inference Criteria
 
 Because the data were analyzed post-hoc, no a-priori sample size planning on the basis of power analyses was conducted.
-The sample is large, and it is hence well-equipped reliably to detect also small effects.
+The sample is large, and it is hence well-equipped to reliably detect also small effects.
 <!-- , which is why no exact post hoc power analysis were conducted. -->
 In addition, because such large samples easily generate significant _p_-values even for very small effects, it helps that the hypotheses were tested with a smallest effect size of interest-approach.
 To this end, I adopted the interval testing approach as proposed by @dienesUsingBayesGet2014.
@@ -450,7 +450,7 @@ Because it lead to too much attrition in the sample, I did not control for (a) h
 
 # Results
 
-First, when looking at the variables from a descriptive perspective (Figure \@ref(fig:descriptives))), we see that all well-being measures did not change substantially across the different waves of data collection.
+First, when looking at the variables from a descriptive perspective (Figure \@ref(fig:descriptives)), we see that all well-being measures did not change substantially across the different waves of data collection.
 COVID-19 related media use, however, decreased slightly at the beginning of the study and remained stable after approximately six waves.
 The initial decrease might be explained by the fact that the collection of data began at the end of March 2020, hence approximately three months after the pandemic began.
 It could be that after an initial uptick, COVID-19 related social media use was already declining at the time, returning to more normal levels.
@@ -507,8 +507,8 @@ For an overview, see Figure \@ref(fig:res-control).
 
 To find out whether my inferences were robust across legitimate (though arguably inferior) alternative analyses, I reran the analyses also using standardized estimates, mean scores instead of factor scores, and with a data set where missing data were not imputed.
 The results were virtually the same.
-For example, all standardized COVID-19 related types of social media use or channels were not significantly larger than a SESOI of $\beta$ = |.10|.
-The additional analyses are reported in the [companion website](https://XMtRA.github.io/Austrian_Corona_Panel_Project/analyses_additional.html).
+For example, all within-person standardized COVID-19 related types of social media use or channels were significantly smaller than $\beta$ = |.05|, again supporting that effects were tiny.
+The additional analyses are reported in Figure 3 and Figure 4, and in the [companion website](https://XMtRA.github.io/Austrian_Corona_Panel_Project/analyses_additional.html).
 
 # Discussion
 
@@ -520,12 +520,14 @@ People who used social media more than usual to learn about COVID-19 didn't show
 
 The results imply that COVID-19 related social media use doesn't seem to be particularly relevant for well-being.
 Other factors among the third variables that were measured revealed larger effects or relations, suggesting that well-being is determined by alternative aspects such as health, satisfaction with democracy, locus of control, or exercising.
-According to this study, popular fears that "doomscrolling" or overusing social media during times of crises don't seem to be justified.
+According to this study, popular fears that "doomscrolling" or overusing social media during times of crises are not supported.
 
 On the one hand, the results are not aligned with several recent studies analyzing similar or closely related research questions.
 This includes a study by @bendauAssociationsCOVID19Related2021, which showed negative relations between social media and well-being [but see @bradleyStressMoodSmartphone2021; or @sewallObjectivelyMeasuredDigital2021].
 However, note that @bendauAssociationsCOVID19Related2021 analyzed cross-sectional data on a between-person level while not controlling for third variables, which is not optimal for investigating causal effects.
-On the other hand, the results are well-aligned with recent studies and meta-analyses analyzing the effects of social media use from a more general perspective or from a somewhat different angle. 
+On the other hand, the results are well-aligned with many seminal Communication theories such as the uses and gratifications model [@katzUsesGratificationsResearch1973].
+If effects were indeed profoundly negative on average, then people likely wouldn't spend so much time on social media.
+Likewise, recent studies and meta-analyses analyzing the effects of social media use from a more general perspective or from a somewhat different angle. 
 These studies have found that the effects of various types of social media use on several well-being indicators are small at best, often too small to matter [@meierComputermediatedCommunicationSocial2020a; @orbenTeenagersScreensSocial2020; @fergusonThisMetaanalysisScreen2021], which echoes the results obtained here.
 
 If anything, two preliminary and subtle trends can be observed.
@@ -533,7 +535,7 @@ First, in terms of media channels, using Twitter more than usual was related to 
 Twitter is considered to have more negative affordances and tonality as compared to other networks such as Instagram [@waterlooNormsOnlineExpressions2018], which might help explain the results.
 Instagram, on the other hand, was related to slightly increased levels of life satisfaction.
 To speculate, the often-criticized positivity bias on Instagram might have been somewhat beneficial in times of the pandemic.
-The critique that the positivity bias necessarily leads to envy and negative feelings is unrealistic and myopic, because positive content can also inspire and motivate users [@meierInstagramInspirationHow2020].
+The critique that the positivity bias necessarily leads to envy and negative feelings is unrealistic and myopic, because positive content can also inspire and motivate users [@meierInstagramInspirationHow2020], which could be especially helpful in times of lockdown and home-office.
 Second, of all the three COVID-19 related social media activities, people who read about the pandemic more than others showed slightly decreased levels of positive affect, and people who actively posted about the pandemic more than others showed slightly increased levels of negative affect.
 On the other hand, however, people who posted more about COVID-19 also showed slightly higher levels of positive affects, so taken together the results are ambivalent.
 But future research might elaborate on these specific relations to probe their stability and relevance.
@@ -545,7 +547,7 @@ But future research might elaborate on these specific relations to probe their s
 ## Limitations
 
 The current study analyzed whether changes in media use were related to changes in well-being, while controlling for several potential confounders. 
-Together, this allows for an improved perspective on assessing causality.
+Together, this allowed for an improved perspective on assessing causality.
 That said, causality necessitates temporal order, and the cause needs to precede the effect.
 Regarding media use, such effects often happen immediately or shortly after use, necessitating intervals in the hours, minutes, or even seconds.
 In many cases only experience sampling studies asking users in the very moment can produce such knowledge.
