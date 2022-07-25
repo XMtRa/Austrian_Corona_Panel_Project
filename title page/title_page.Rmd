@@ -1,0 +1,67 @@
+---
+title             : "The effects of COVID-19 related social media use on well-being"
+shorttitle        : "COVID-19 related social media use and well-being"
+
+author: 
+  - name          : "Tobias Dienlin"
+    affiliation   : "1"
+    corresponding : yes
+    address       : "University of Vienna, Department of Communication, 1090 Vienna, Austria"
+    email         : "tobias.dienlin@univie.ac.at"
+
+affiliation:
+  - id            : "1"
+    institution   : "University of Vienna"
+
+authornote: | 
+  Tobias Dienlin, Department of Communication, University of Vienna.
+
+
+abstract          : "In times of crisis such as the Corona pandemic citizens need to stay informed about recent events, political decisions, or mandatory protection measures. To this end, many people use various types of media, and increasingly social media. However, because social media are particularly engaging, some find it hard to disconnect. In this preregistered study, I investigated whether using social media for COVID-19 related reasons affected psychological well-being. To answer this question I analyzed data from the Austrian Corona Panel Project, which consists of 3,018 participants. Well-being was measured at all 24 waves, and communication at five specific waves. I ran three random effects within between models, controlling for several stable and varying confounders. Results showed that the effects of COVID-19 related social media use on well-being were very small, arguably too small to matter. Fears that social media use during times of crisis critically impairs well-being are not supported."
+keywords          : "COVID-19, Coronavirus, well-being, affect, life satisfaction, social media use, news use, communication, random effects within between model, panel study, longitudinal study."
+
+bibliography      : 
+  - "bibliography/r-references.bib"
+  - "bibliography/references.bib"
+
+floatsintext      : yes
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : yes
+mask              : no
+draft             : no
+
+documentclass     : "apa6"
+classoption       : "man"
+output            : papaja::apa6_pdf
+# output            : papaja::apa6_word
+header-includes:
+  - \setlength{\parskip}{0em}
+  - \raggedbottom
+  # - \note{\clearpage}
+---
+
+```{r analysis-preferences, include=F, cache=F}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed,
+                      cache=T, echo=F
+                      )
+```
+
+```{r setup, include=F, cache=F}
+
+# install necessary packages
+# devtools::install_github("https://github.com/tdienlin/td@v.0.0.2.5")
+# devtools::install_github("https://github.com/crsh/papaja@devel")
+
+# load packages
+packages <- c("devtools", "english", "ggplot2", "kableExtra", 
+              "lavaan", "lme4", "lmerTest",
+              "magrittr", "semPlot", "tidyverse")
+lapply(c(packages, "papaja", "td"), library, character.only = TRUE)
+
+# load workspace created from analyses.rmd to use results
+load("data/workspace_2.RData")
+```

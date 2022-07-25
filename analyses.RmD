@@ -7,6 +7,7 @@ output:
       collapsed: FALSE
     toc_depth: 2
     code_folding: hide
+    df_print: paged
 bibliography      : 
   - "bibliography/r-references.bib"
   - "bibliography/references.bib"
@@ -16,17 +17,21 @@ bibliography      :
 
 ```{r knitr-setup, include=F}
 set.seed(170819)
-knitr::opts_chunk$set(warning=F, echo=T, error=F, message=F, cache = F)
-options(digits = 3, width = 250, scipen=999)
+knitr::opts_chunk$set(warning=F, echo=T, error=F, message=F, cache=T, rows.print=20)
+options(digits=2, width=260, scipen=999)
 ```
 
-Here you can find the code and the results of all analyses. To see the code, click on button "Code". Alternatively, you can download the rmd file from the github repo.
+ - Here you can find the code and the results of all analyses. 
+ - To see the code, click on button "Code". A
+ - Alternatively, you can download the rmd file from the github repo.
+ - The data are hosted on aussda. Please download them separately, to rerun the analyses (https://doi.org/10.11587/28KQNS). 
+ - Note that this paper uses an advance version consisting of 32 waves, which is at the time of writing not officially published.
 
 # Set-up
 
 Load packages.
 
-```{r r-setup, results='hide', cache=FALSE}
+```{r r-setup, results='hide', cache=F}
 # install packages
 # devtools::install_github("https://github.com/tdienlin/td@v.0.0.2.5")
 
@@ -57,12 +62,20 @@ Find variables in dataset.
 ```{r}
 find_var <- function(name, data = doc)(
   # finds the variables names for an item for each wave
-    data %>% 
-    filter(Label == name) %>% 
-    select(variable) %>% 
-    unlist() %>% 
+    data %>%
+    filter(Label == name) %>%
+    select(Variable) %>%
+    unlist() %>%
     set_names(sub("\\_.*", "", .))
 )
+# find_var <- function(name, data = doc)(
+#   # finds the variables names for an item for each wave
+#     data %>% 
+#     filter(`Variable names (DE)` == name) %>% 
+#     select(`VARNAME (CA)`) %>% 
+#     unlist() %>% 
+#     set_names(sub("\\_.*", "", .))
+# )
 ```
 
 ### get_specs
@@ -205,9 +218,12 @@ get_dat_res <- function(data_aff_neg, data_aff_pos, data_life_sat, type, analysi
     mutate(iv = factor(.$iv, levels = c("soc_med_yt", "soc_med_wa", "soc_med_ig", "soc_med_tw", "soc_med_fb"), labels = c("YouTube", "WhatsApp", "Instagram", "Twitter", "Facebook")))
   } else if(type == "control"){
     dat_fig_results %<>%
-      filter(iv %in% c("male", "health", "loc_cntrl_int_m", "employment_facPublic service", "act_spo", "sat_dem")) %>% 
-      mutate(iv = factor(.$iv, levels = c("male", "health", "loc_cntrl_int_m", "employment_facPublic service", "act_spo", "sat_dem"), 
-                         labels = c("Male", "Health", "Internal locus of control", "Employed public service", "Sport", "Satisfaction democracy")))
+      filter(iv %in% c("male", "health", "loc_cntrl_int_m", #"employment_facPublic service", 
+                       "act_spo", "sat_dem")) %>% 
+      mutate(iv = factor(.$iv, levels = c("male", "health", "loc_cntrl_int_m", #"employment_facPublic service", 
+                                          "act_spo", "sat_dem"), 
+                         labels = c("Male", "Health", "Internal locus of control", #"Employed public service", 
+                                    "Sport", "Satisfaction democracy")))
   }
   return(dat_fig_results)
 }
@@ -219,32 +235,41 @@ get_dat_res <- function(data_aff_neg, data_aff_pos, data_life_sat, type, analysi
 Make graph of effects
 
 ```{r}
-make_graph_res <- function(data, sesoi = NULL, legend = TRUE){
+make_graph_res <- function(data, sesoi = NULL, legend = TRUE, facet = "comm", title = NULL){
   ggplot(data, aes(x = estimate, y = iv)) + 
-  scale_color_manual(values = c("black", "grey60", "grey75", "deepskyblue", "cornflowerblue", "darkcyan", "aquamarine")) +
+  scale_color_manual(values = c("black", "grey75", "darkcyan", "deepskyblue", "cornflowerblue", "darkcyan", "aquamarine")) +
   geom_vline(xintercept = 0, lwd = .75, colour = "darkgrey") + 
   geom_errorbarh(aes(xmin = conf.low, xmax = conf.high, color = Analysis),
                 lwd = .75, height = .2, position = position_dodge(-.7)) +
   geom_point(aes(color = Analysis), size = 1.5, position = position_dodge(-.7)) +
-  {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data, dv=="Life satisfaction"), aes(xintercept=-.3), colour="darkgrey", linetype = "dashed")} + 
+    {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data, dv=="Life satisfaction"), aes(xintercept=-.3), colour="darkgrey", linetype = "dashed")} + 
     {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data, dv=="Life satisfaction"), aes(xintercept=.3), colour="darkgrey", linetype = "dashed")} + 
-  {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data, dv!="Life satisfaction"), aes(xintercept=-.15), colour="darkgrey", linetype = "dashed")} +
+    {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data, dv!="Life satisfaction"), aes(xintercept=-.15), colour="darkgrey", linetype = "dashed")} +
     {if(isTRUE(sesoi == "est")) geom_vline(data=filter(data, dv!="Life satisfaction"), aes(xintercept=.15), colour="darkgrey", linetype = "dashed")} +
-  {if(isTRUE(sesoi == "std")) geom_vline(aes(xintercept=.1), colour="darkgrey", linetype = "dashed")} + 
-  {if(isTRUE(sesoi == "std")) geom_vline(aes(xintercept=-.1), colour="darkgrey", linetype = "dashed")} +   
-    theme(
+    {if(isTRUE(sesoi == "std")) geom_vline(aes(xintercept=.1), colour="darkgrey", linetype = "dashed")} + 
+    {if(isTRUE(sesoi == "std")) geom_vline(aes(xintercept=-.1), colour="darkgrey", linetype = "dashed")} +   
+  theme(
     axis.title.y = element_blank(),
     plot.title = element_text(hjust = .5),
     panel.spacing = unit(.9, "lines"),
     text = element_text(size = 12),
-    axis.text.y = element_text(hjust = 0)
+    axis.text.y = element_text(hjust = 1)
     ) +
+  {if(!is.null(title)) ggtitle(title)} +
   {if(!isTRUE(legend)) theme(legend.position = "none")} + 
   # guides(colour = guide_legend(reverse=T)) +
-  facet_grid(rows = vars(type),
+    {if(facet == "comm")
+      facet_grid(rows = vars(comm),
              cols = vars(dv),
              scales = "free",
-             space = "free_y") 
+             space = "free_y")
+    } + 
+    {if(facet == "analysis")
+      facet_grid(rows = vars(type),
+             cols = vars(dv),
+             scales = "free",
+             space = "free_y")
+    }
 }
 ```
 
@@ -264,11 +289,18 @@ get_fs <- function(model) {
 ```
 
 # Data Wrangling
+## Load data
 
 ```{r}
-doc <- read_csv("documentation/10094_vi_de_v4_0.csv")
-d_raw <- read_csv("data/10094_da_de_v4_0.csv")
+# doc <- read_csv("documentation/10094_vi_de_v4_0.csv")
+doc <- read_csv2("data/Variable_List_w1-34.csv")
+# doc <- read_csv("documentation/W1-32_ACPP_Variablelist_V20220601.csv")
+# d_raw <- read_csv("data/10094_da_de_v4_0.csv")
+# d_raw_test <- read_csv("data/10094_da_de_v4_0.csv")
+d_raw <- read_csv("data/W1-32_ACPP_V20220601.csv")
 ```
+
+## Find names
 
 Identify the names of each item for each wave.
 
@@ -316,9 +348,19 @@ loc_cntrl_int_1 <- find_var("Psychologie: habe Leben selbst in der Hand")
 loc_cntrl_int_2 <- find_var("Psychologie: Belohnung durch Anstrengung")
 loc_cntrl_int_3 <- find_var("Psychologie: Fremdbestimmung")
 loc_cntrl_int_4 <- find_var("Psychologie: Schicksal")
+trst_media <- find_var("Vertrauen: ORF")
+trst_police <- find_var("Vertrauen: Polizei")
+trst_media <- find_var("Vertrauen: Parlament")
+trst_hlthsec <- find_var("Vertrauen: Gesundheitswesen")
+trst_gov <- find_var("Vertrauen: Bundesregierung")
+trst_army <- find_var("Vertrauen: Bundesheer")
+corona_pos <- c(
+  find_var("Corona-Diagnose: Respondent"),
+  find_var("Corona-Diagnose: Monat")
+)
 ```
 
-Select variables.
+## Select variables
 
 ```{r}
 d_wide <- d_raw %>% 
@@ -388,14 +430,21 @@ d_wide <- d_raw %>%
     loc_cntrl_int_1 = all_of(loc_cntrl_int_1),
     loc_cntrl_int_2 = all_of(loc_cntrl_int_2),
     loc_cntrl_int_3 = all_of(loc_cntrl_int_3),
-    loc_cntrl_int_4 = all_of(loc_cntrl_int_4)
+    loc_cntrl_int_4 = all_of(loc_cntrl_int_4),
+    trst_media = all_of(trst_media),
+    trst_police = all_of(trst_police),
+    trst_media = all_of(trst_media),
+    trst_hlthsec = all_of(trst_hlthsec),
+    trst_gov = all_of(trst_gov),
+    trst_army = all_of(trst_army),
+    corona_pos = all_of(corona_pos)
   )
 ```
 
 Make new documentation with selected variables.
 
 ```{r}
-doc_selected <- filter(doc, variable %in% c(
+doc_selected <- filter(doc, Variable %in% c(
   "RESPID",
   "SD_GENDER",
   "SD_ACCESS_BALCONY",
@@ -460,11 +509,19 @@ doc_selected <- filter(doc, variable %in% c(
   loc_cntrl_int_1[1],
   loc_cntrl_int_2[1],
   loc_cntrl_int_3[1],
-  loc_cntrl_int_4[1]
+  loc_cntrl_int_4[1],
+  trst_media[1],
+  trst_police[1],
+  trst_media[1],
+  trst_hlthsec[1],
+  trst_gov[1],
+  trst_army[1],
+  corona_pos[1]
   ))
+write.csv(doc_selected, "data/variables_selected.csv")
 ```
 
-Recode variables.
+## Recode variables
 
 ```{r}
 d_wide %<>%
@@ -502,13 +559,13 @@ d_wide %<>%
                      ))
 ```
 
-Make data from wide to long.
+## Make long data format
 
-```{r}
+```{r cache=T}
 d_long <-
   d_wide %>% 
   pivot_longer(
-    cols = health...W1:loc_cntrl_int_4...W9,
+    cols = health...W1:corona_pos...W32,
     names_to = "item",
     values_to = "value"
   ) %>% 
@@ -516,7 +573,7 @@ d_long <-
   pivot_wider(names_from = "item", values_from = "value")
 ```
 
-Recode values.
+## Recode values
 
 ```{r}
 # recode such that higher values imply more strength / align with wording
@@ -541,106 +598,187 @@ d_long %<>%
   )
 ```
 
-Order dataset. First id, then wave.
+## Order dataset
 
 ```{r}
 d_long %<>%
   arrange(id, wave)
+
+# create backup bc comp takes long
+d_long_backup <- d_long
 ```
 
-# Impute data
+## Impute data
+
+Next we impute data. Note that the actual imputation below is deactivated and loaded from memory to save time.
+
+### Prep
 
 Determine amount of missingness per respondent per wave. Because calculation takes long, this chunk is loaded from memory.
 
-```{r eval=TRUE, cache=TRUE}
-vars_used <- c("life_sat", "aff_pos_1", "aff_pos_2", "aff_pos_3", "aff_neg_1", "aff_neg_2", "aff_neg_3", "aff_neg_4", "aff_neg_5", "aff_neg_6", "soc_med_read", "soc_med_like_share", "soc_med_post", "soc_med_fb", "soc_med_ig", "soc_med_wa", "soc_med_yt", "soc_med_tw", "age", "male", "born_aus", "born_aus_prnts", "edu_fac", "employment_fac", "health", "res_vienna", "acc_bal", "acc_gar", "home_sqm", "med_txt_kro", "med_txt_sta", "med_txt_pre", "med_txt_oes", "med_txt_kur", "med_txt_slz", "med_txt_son", "med_vid_orf", "med_vid_pri", "risk_prop", "loc_cntrl_int_1", "loc_cntrl_int_2", "loc_cntrl_int_3", "loc_cntrl_int_4", "act_wrk", "act_spo", "act_frn", "act_sho", "act_pet", "sat_dem")
+```{r}
+vars_used <- c("life_sat", "aff_pos_1", "aff_pos_2", "aff_pos_3", "aff_neg_1", "aff_neg_2", "aff_neg_3", "aff_neg_4", "aff_neg_5", "aff_neg_6", "soc_med_read", "soc_med_like_share", "soc_med_post", "soc_med_fb", "soc_med_ig", "soc_med_wa", "soc_med_yt", "soc_med_tw", "age", "male", "born_aus", "born_aus_prnts", "edu_fac", "employment_fac", "health", "res_vienna", "acc_bal", "acc_gar", "home_sqm", "med_txt_kro", "med_txt_sta", "med_txt_pre", "med_txt_oes", "med_txt_kur", "med_txt_slz", "med_txt_son", "med_vid_orf", "med_vid_pri", "risk_prop", "loc_cntrl_int_1", "loc_cntrl_int_2", "loc_cntrl_int_3", "loc_cntrl_int_4", "act_wrk", "act_spo", "act_frn", "act_sho", "act_pet", "sat_dem", "trst_media", "trst_police", "trst_media", "trst_hlthsec", "trst_gov", "trst_army", "corona_pos") # only include vars measured at _all_ points
+```
 
-# filter respondents with more than 50% missing data
-d_long_filt <- 
+Filter respondents with more than 50% missing data -- only needed for analyses as originally preregistered (see additional analyses).
+
+```{r eval=T}
+d_long_50 <- 
   d_long %>% 
   mutate(na_perc = rowSums(is.na(select(., all_of(vars_used))) / ncol(select(., all_of(vars_used))))) %>% 
   filter(na_perc < .5)
+write_csv(d_long_50, "data/data_50.csv")
+```
 
-# impute missing data
-# exclude social media use data, because they were measured only on selected waves and would lead to the imputation of too much missing data
-vars_excl <- c("na_perc", "soc_med_read", "soc_med_like_share", "soc_med_post", "soc_med_fb", "soc_med_ig", "soc_med_wa", "soc_med_yt", "soc_med_tw")
-incl_ma <- d_long_filt %>% 
+Exclude social media use data, because they were measured only on selected waves.
+
+```{r}
+vars_excl <- c("soc_med_read", "soc_med_like_share", "soc_med_post", "soc_med_fb", "soc_med_ig", "soc_med_wa", "soc_med_yt", "soc_med_tw")
+incl_ma <- d_long %>% 
   mutate(across(.cols = everything(), .fns = is.na))
 incl_ma[vars_excl] <- FALSE
 
-d_long_imp <- mice(d_long_filt, 
+# now also for data where 50% missing excluded
+incl_ma_50 <- d_long_50 %>% 
+  mutate(across(.cols = everything(), .fns = is.na))
+incl_ma_50[vars_excl] <- FALSE
+```
+
+### Single imputation
+
+For analyses as originally preregistered (see additional analyses), hence only participants who provided more than 50% of all data.
+
+```{r imputation-single-50, eval=F, cache=T}
+d_long_50_imp <- mice(d_long_50, 
+                   method = "pmm", # use predictive mean matching
+                   m = 1, maxit = 30, # only 1 imputation
+                   where = incl_ma_50,
+                   seed = 180719, print = FALSE)
+d_long_50_imp <- mice::complete(d_long_50_imp)
+write_csv(d_long_50_imp, "data/data_50_imputed.csv")
+```
+
+Because CFAs aren't evaluated with multiple imputation, impute single data-set. Missing data was imputed for everyone.
+
+```{r imputation-single-100, eval=F, cache=T}
+d_long_100_imp <- mice(d_long, 
                    method = "pmm", # use predictive mean matching
                    m = 1, maxit = 30, # only 1 imputation
                    where = incl_ma,
                    seed = 180719, print = FALSE)
-d_long_imp <- mice::complete(d_long_imp)
-write_csv(d_long_imp, "data/data_imputed.csv")
+d_long_100_imp <- mice::complete(d_long_100_imp)
+write_csv(d_long_100_imp, "data/data_100_imputed.csv")
 ```
 
+### Multiple Imputation
 
-```{r eval=TRUE, cache=TRUE}
+Now, multiple imputation of data-sets (5 data sets, 5 iterations), used for the final analyses.
+
+```{r imputation-mult, eval=F, cache=T}
 # impute missing data with multiple imputation
-d_long_mim_mice <- mice(d_long_filt, 
+d_long_mim_mice <- mice(d_long, 
                    method = "pmm", # use predictive mean matching
                    m = 5, maxit = 5, # 5 imputations, 5 iterations
                    where = incl_ma,
                    seed = 180719, print = FALSE)
 d_long_mim <- mice::complete(d_long_mim_mice, action = "long", include = TRUE)
+write_csv(d_long_mim, "data/data_100_mim.csv")
 ```
 
-```{r eval=FALSE}
+```{r eval=T}
 # to further increase speed, you can also load the imputed data from the directory
-d_long_imp <- read_csv("data/data_imputed.csv")
+# d_long_imp <- read_csv("data/data_imputed.csv")
+# d_long_mim <- read_csv("data/data_imputed_mim.csv")
+# d_long_imp <- read_csv("data/data_imputed_50.csv")  # data where people with >50% missing data were filtered
+# d_long_mim <- read_csv("data/data_imputed_mim_50.csv")  # data where people with >50% missing data were filtered
+d_long_50_imp <- read_csv("data/data_50_imputed.csv") # data where all people were included
+d_long_100_imp <- read_csv("data/data_100_imputed.csv") # data where all people were included
+d_long_100_mim <- read_csv("data/data_100_mim.csv") # data where all people were included
 ```
 
-# Create within-between data
+## Create within-between data
 
-Create means for scales
+First, create means for scales. Then, create mean values for each person (between), and unique changes per wave (within).
 
 ```{r}
-d_long_imp %<>%
+d_long_mim <-
+  d_long_100_mim %>% 
   mutate(aff_pos_m = rowMeans(select(., aff_pos_1 : aff_pos_3)),
          aff_neg_m = rowMeans(select(., aff_neg_1 : aff_neg_6)),
          loc_cntrl_int_m = rowMeans(select(., loc_cntrl_int_1 : loc_cntrl_int_4)))
+
+d_long_mim %<>%
+  group_by(id) %>% 
+  mutate_at(vars(health:corona_pos, loc_cntrl_int_m), funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %>% 
+  ungroup()
+
+d_long_mim_mice <- as.mids(d_long_mim)
 ```
 
-Create mean values for each person (between), and unique changes per wave (within).
+```{r}
+d_long_100_imp <-
+  d_long_100_imp %>% 
+  mutate(aff_pos_m = rowMeans(select(., aff_pos_1 : aff_pos_3)),
+         aff_neg_m = rowMeans(select(., aff_neg_1 : aff_neg_6)),
+         loc_cntrl_int_m = rowMeans(select(., loc_cntrl_int_1 : loc_cntrl_int_4)))
+
+d_long_100_imp %<>%
+  group_by(id) %>% 
+  mutate_at(vars(health:corona_pos, loc_cntrl_int_m), funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %>% 
+  ungroup()
+```
+
+And because later we want to rerun the results as originally preregistered, we'll now do the same for analyses without filtered data.
 
 ```{r}
-d_long_imp %<>% 
+d_long_50_imp <-
+  d_long_50_imp %>% 
+  mutate(aff_pos_m = rowMeans(select(., aff_pos_1 : aff_pos_3)),
+         aff_neg_m = rowMeans(select(., aff_neg_1 : aff_neg_6)),
+         loc_cntrl_int_m = rowMeans(select(., loc_cntrl_int_1 : loc_cntrl_int_4)))
+
+d_long_50_imp %<>% 
   group_by(id) %>% 
-  mutate_at(vars(health:loc_cntrl_int_4, loc_cntrl_int_m), funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %>% 
+  mutate_at(vars(health:corona_pos, loc_cntrl_int_m), 
+            funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %>% 
   ungroup()
 ```
 
 And because later we want to rerun the results without imputed data, now the same for data without imputation.
 
 ```{r}
-d_long %<>%
+d_long_50 %<>% 
   mutate(aff_pos_m = rowMeans(select(., aff_pos_1 : aff_pos_3)),
          aff_neg_m = rowMeans(select(., aff_neg_1 : aff_neg_6)),
          loc_cntrl_int_m = rowMeans(select(., loc_cntrl_int_1 : loc_cntrl_int_4)))
 
-d_long %<>% 
+d_long_50 %<>% 
   group_by(id) %>% 
-  mutate_at(vars(health:loc_cntrl_int_4, loc_cntrl_int_m), funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %>% 
+  mutate_at(vars(health:corona_pos, loc_cntrl_int_m), funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %>% 
   ungroup()
 ```
 
-And now the same for the multiple imputed data
+And now the same for the standardized data set.
 
 ```{r}
-d_long_mim %<>%
+# first standardize
+d_long_mim_std <-
+  d_long_100_mim %>% 
+  group_by(.imp) %>% 
+  mutate_at(vars(gender:corona_pos, -id, -wave, -gender, -male, -born_aus, -born_aus_prnts, -edu_fac, -employment_fac, -res_vienna, -acc_bal, -acc_gar), ~ c(scale(.))) %>% 
+  ungroup()
+
+d_long_mim_std %<>%
   mutate(aff_pos_m = rowMeans(select(., aff_pos_1 : aff_pos_3)),
          aff_neg_m = rowMeans(select(., aff_neg_1 : aff_neg_6)),
          loc_cntrl_int_m = rowMeans(select(., loc_cntrl_int_1 : loc_cntrl_int_4)))
 
-d_long_mim %<>% 
-  group_by(id) %>% 
-  mutate_at(vars(health:loc_cntrl_int_4, loc_cntrl_int_m), funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %>% 
+d_long_mim_std %<>%
+  group_by(id) %>%
+  mutate_at(vars(health:corona_pos, loc_cntrl_int_m), funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %>%
   ungroup()
 
-d_long_mim_mice <- as.mids(d_long_mim)
+d_long_mim_mice_std <- as.mids(d_long_mim_std)
 ```
 
 # Measures
@@ -648,7 +786,7 @@ d_long_mim_mice <- as.mids(d_long_mim)
 ### Life satisfaction
 
 ```{r}
-model_life_sat <- lmer(life_sat ~ (1 | id) + (1 | wave), d_long_imp)
+model_life_sat <- lmer(life_sat ~ (1 | id) + (1 | wave), d_long_100_imp)
 summary(model_life_sat)
 ```
 
@@ -658,8 +796,8 @@ Positive affect was measured as a scale. We hence first inspect factorial validi
 
 We first test assumption of multivariate normality.
 
-```{r eval=FALSE}
-mardia(d_long_imp %>% select(aff_pos_1, aff_pos_2, aff_pos_3))
+```{r eval=F}
+mardia(d_long_100_imp %>% select(aff_pos_1, aff_pos_2, aff_pos_3))
 ```
 
 Assumption of multivariate normal distribution was violated; hence, robust estimator will be used.
@@ -669,50 +807,51 @@ Assumption of multivariate normal distribution was violated; hence, robust estim
 model <- "
 aff_pos =~ a1*aff_pos_1 + a2*aff_pos_2 + a3*aff_pos_3
 "
-cfa_aff_pos <- cfa(model, d_long_imp, group = "wave", estimator = "MLM")
+cfa_aff_pos <- cfa(model, d_long_100_imp, group = "wave", estimator = "MLM")
+cfa_aff_pos_50 <- cfa(model, d_long_50_imp, group = "wave", estimator = "MLM")
 summary(cfa_aff_pos, standardized = TRUE, fit = TRUE, estimates = FALSE)
 ```
 
 The data fit the model very well, `r td::fit_txt(cfa_aff_pos)`.
-Let's next inspect reliability
+Let's next inspect reliability.
 
 ```{r}
 rel_aff_pos <- get_rel(cfa_aff_pos)
-rel_aff_pos
 ```
 
-The average reliability across all waves was omega = `r rel_aff_pos`, hence good.
+The average reliability across all waves was omega = `r rel_aff_pos[[1]]`, hence good.
 
 Let's next expect the development across waves.
 
 ```{r}
-model_aff_pos <- lmer(aff_pos_m ~ (1 | id) + (1 | wave), d_long_imp)
+model_aff_pos <- lmer(aff_pos_m ~ (1 | id) + (1 | wave), d_long_100_imp)
 summary(model_aff_pos)
 ```
 
 Let's now export factor scores.
 
 ```{r}
-d_long_imp$aff_pos_fs <- get_fs(cfa_aff_pos)
+d_long_50_imp$aff_pos_fs <- get_fs(cfa_aff_pos_50)
 ```
 
 ### Negative affect
 
-Negative affect was measured as a scale. We hence inspect factorial validty using CFA.
+Negative affect was measured as a scale. We hence inspect factorial validity using CFA.
 
-We first test assumption of multivariate normality. (Warning, as these analyses take long and might require additional working memory, they're deactived currently.)
+We first test assumption of multivariate normality. (Warning, as these analyses take long and require much working memory, they're deactivated currently.)
 
 ```{r eval=FALSE}
-mardia(d_long_imp %>% select(aff_neg_1, aff_neg_2, aff_neg_3, aff_neg_4, aff_neg_5, aff_neg_6))
+mardia(d_long_100_imp %>% select(aff_neg_1, aff_neg_2, aff_neg_3, aff_neg_4, aff_neg_5, aff_neg_6))
 ```
 
-Assumption of multivariate normal distributino was violated; hence, robust estimator will be used.
+Assumption of multivariate normal distribution was violated; hence, robust estimator will be used.
 
 ```{r}
 model <- "
 aff_neg =~ a1*aff_neg_1 + a2*aff_neg_2 + a3*aff_neg_3 + a4*aff_neg_4 + a5*aff_neg_5 + a6*aff_neg_6
 "
-cfa_aff_neg <- cfa(model, d_long_imp, group = "wave", estimator = "MLM")
+cfa_aff_neg <- cfa(model, d_long_100_imp, group = "wave", estimator = "MLM")
+cfa_aff_neg_50 <- cfa(model, d_long_50_imp, group = "wave", estimator = "MLM")
 summary(cfa_aff_neg, standardized = TRUE, fit = TRUE, estimates = FALSE)
 ```
 
@@ -722,41 +861,43 @@ Let's next inspect reliability.
 
 ```{r}
 rel_aff_neg <- get_rel(cfa_aff_neg)
-rel_aff_neg
 ```
 
-The average reliability across all waves was omega = `r rel_aff_neg`, hence good.
+The average reliability across all waves was omega = `r rel_aff_neg[[1]]`, hence good.
 
 ```{r}
-model_aff_neg <- lmer(aff_neg_m ~ (1 | id) + (1 | wave), d_long_imp)
+model_aff_neg <- lmer(aff_neg_m ~ (1 | id) + (1 | wave), d_long_100_imp)
 summary(model_aff_neg)
 ```
 
 Let's now export factor scores.
 
 ```{r}
-d_long_imp$aff_neg_fs <- get_fs(cfa_aff_neg)
+d_long_50_imp$aff_neg_fs <- get_fs(cfa_aff_neg_50)
 ```
 
 ## Social media use
+
+Social media use (and channels) were measured at waves 1, 2, 8, 17, 23, 28, and for everyone who was newly recruited during the study at the first wave.
+
 ### Reading
 
 ```{r}
-model_soc_med_read <- lmer(soc_med_read ~ (1 | id) + (1 | wave), d_long_imp)
+model_soc_med_read <- lmer(soc_med_read ~ (1 | id) + (1 | wave), d_long_100_imp)
 summary(model_soc_med_read)
 ```
 
 ### Liking & sharing
 
 ```{r}
-model_soc_med_like_share <- lmer(soc_med_like_share ~ (1 | id) + (1 | wave), d_long_imp)
+model_soc_med_like_share <- lmer(soc_med_like_share ~ (1 | id) + (1 | wave), d_long_100_imp)
 summary(model_soc_med_like_share)
 ```
 
 ### Posting
 
 ```{r}
-model_soc_med_post <- lmer(soc_med_post ~ (1 | id) + (1 | wave), d_long_imp)
+model_soc_med_post <- lmer(soc_med_post ~ (1 | id) + (1 | wave), d_long_100_imp)
 summary(model_soc_med_post)
 ```
 
@@ -764,21 +905,21 @@ summary(model_soc_med_post)
 ### Facebook
 
 ```{r}
-model_soc_med_fb <- lmer(soc_med_fb ~ (1 | id) + (1 | wave), d_long_imp)
+model_soc_med_fb <- lmer(soc_med_fb ~ (1 | id) + (1 | wave), d_long_100_imp)
 summary(model_soc_med_fb)
 ```
 
 ### Twitter
 
 ```{r}
-model_soc_med_tw <- lmer(soc_med_tw ~ (1 | id) + (1 | wave), d_long_imp)
+model_soc_med_tw <- lmer(soc_med_tw ~ (1 | id) + (1 | wave), d_long_100_imp)
 summary(model_soc_med_tw)
 ```
 
 Interestingly, lme4 throws a warning, likely because there is too little variance across waves, while little variation measure itself. Let's inspect the raw means.
 
 ```{r}
-soc_med_tw_m <- d_long_imp %>% group_by(wave) %>% summarise(value = mean(soc_med_tw, na.rm = T))
+soc_med_tw_m <- d_long_100_imp %>% group_by(wave) %>% summarise(value = mean(soc_med_tw, na.rm = T))
 soc_med_tw_m
 ```
 
@@ -787,39 +928,42 @@ Inspecting the means shows that the data are intact, only that the estimation di
 ### Instagram
 
 ```{r}
-model_soc_med_ig <- lmer(soc_med_ig ~ (1 | id) + (1 | wave), d_long_imp)
+model_soc_med_ig <- lmer(soc_med_ig ~ (1 | id) + (1 | wave), d_long_100_imp)
 summary(model_soc_med_ig)
 ```
 
 ### WhatsApp
 
 ```{r}
-model_soc_med_wa <- lmer(soc_med_wa ~ (1 | id) + (1 | wave), d_long_imp)
+model_soc_med_wa <- lmer(soc_med_wa ~ (1 | id) + (1 | wave), d_long_100_imp)
 summary(model_soc_med_wa)
 ```
 
 ### YouTube
 
 ```{r}
-model_soc_med_yt <- lmer(soc_med_yt ~ (1 | id) + (1 | wave), d_long_imp)
+model_soc_med_yt <- lmer(soc_med_yt ~ (1 | id) + (1 | wave), d_long_100_imp)
 summary(model_soc_med_yt)
 ```
 
 ## Locus of control
 
-The only other variable that was measured as a scale was Locus of Control. Below I hence report the scale's factorial validity.
+The only other variable that was measured as a scale was Locus of Control. Below I hence report the scale's factorial validity. Waves for which not a sufficient number of respondents took part were excluded.
 
-```{r}
+```{r eval=T}
 model <- "
 loc_cntrl_int =~ a1*loc_cntrl_int_1 + a2*loc_cntrl_int_2 + a3*loc_cntrl_int_3 + a4*loc_cntrl_int_4
 # loc_cntrl_int_1 ~~ loc_cntrl_int_2
 loc_cntrl_int_3 ~~ loc_cntrl_int_4
 "
-cfa_loc_cntrl_int <- cfa(model, filter(d_long_imp, wave != 20), group = "wave")
+# cfa_loc_cntrl_int <- cfa(model, filter(d_long_imp, wave != 20), group = "wave")
+cfa_loc_cntrl_int <- cfa(model, filter(d_long_100_imp, wave != 20,  wave != 26, wave != 27, wave != 29, wave != 31, wave != 32), group = "wave")
 summary(cfa_loc_cntrl_int, standardized = TRUE, fit = TRUE, estimates = FALSE)
 ```
 
 The data fit the model very well, `r td::fit_txt(cfa_loc_cntrl_int)`.
+
+The model didn't converge, likely for reasons of complexity, which is why the fit indices cannot be reported here.
 
 ## Figure
 
@@ -907,268 +1051,393 @@ tab_desc_dat <- rbind(
     "Instagram" = get_specs(model_soc_med_ig),
     "WhatsApp" = get_specs(model_soc_med_wa),
     "YouTube" = get_specs(model_soc_med_yt)
-    )
-kable(tab_desc_dat)
+    ) %>%
+  as.data.frame()
+tab_desc_dat
 ```
 
 # Analyses
-## Preregistered
+
+Before running the analyses, let's briefly check multicollinearity.
+
+```{r}
+d_long_100_imp %>% 
+  filter(wave == 1) %>% 
+  select(soc_med_read, soc_med_post, soc_med_like_share) %>% 
+  cor(use = "pairwise.complete.obs")
+```
+
+Shows that communication types aren't collinear.
+
+```{r}
+d_long_100_imp %>% 
+  filter(wave == 1) %>% 
+  select(soc_med_fb, soc_med_ig, soc_med_tw, soc_med_wa, soc_med_yt) %>% 
+  cor(use = "pairwise.complete.obs")
+```
+
+Shows that communication channels aren't collinear.
+
+## Publication
 ### Life satisfaction
 
 ```{r}
-model_life_sat_lmer <- lmerTest::lmer(life_sat ~
+model_life_sat_lmer_pub <- with(d_long_mim_mice, exp =  
+                                lmerTest::lmer(life_sat ~
                                         (1 | id) + (1 | wave) + 
                                         soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
                                         soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
                                         soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
                                         soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
-                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac + health_b + 
-                                        res_vienna + acc_bal + acc_gar + home_sqm + 
-                                        # hh_income_b + # large dropout (900 obs)
-                                        # hh_adults + # too much dropout
-                                        # hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + hh_oldfam + hh_outfam + hh_partner + 
-                                        # home_owner + # too much dropout
+                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
+                                        res_vienna + acc_bal + acc_gar + home_sqm + corona_pos +
+                                        hh_income_b +
+                                        hh_adults +
+                                        hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + hh_oldfam + hh_outfam + hh_partner +
+                                        home_owner +
                                         med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
                                         med_vid_orf_b + med_vid_pri_b + 
                                         risk_prop_b + loc_cntrl_int_m_b + 
                                         act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
                                         act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
-                                        sat_dem_w + sat_dem_b 
-                                      , data = d_long_imp)
-summary(model_life_sat_lmer)
+                                        sat_dem_w + sat_dem_b + 
+                                        health_w + health_b
+                                      ))
+model_life_sat_lmer_pub <- summary(pool(model_life_sat_lmer_pub), conf.int = TRUE)
+model_life_sat_lmer_pub %>% 
+  as.data.frame %>% 
+  select(term, estimate, `2.5 %`, `97.5 %`, p.value) %>% 
+  mutate(p.value = td::my_round(p.value, "p"))
 ```
 
 ### Positive Affect
 
 ```{r}
-model_aff_pos_lmer <- lmerTest::lmer(aff_pos_fs ~ 
+model_aff_pos_lmer_pub <- with(d_long_mim_mice, exp =  
+                           lmerTest::lmer(aff_pos_m ~ 
                                         (1 | id) + (1 | wave) + 
-                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
                                         soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
                                         soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
                                         soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
-                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac + health_b + 
-                                        res_vienna + acc_bal + acc_gar + home_sqm + 
+                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
+                                        res_vienna + acc_bal + acc_gar + home_sqm + corona_pos +
+                                        hh_income_b +
+                                        hh_adults +
+                                        hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + hh_oldfam + hh_outfam + hh_partner +
+                                        home_owner +
                                         med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
                                         med_vid_orf_b + med_vid_pri_b + 
                                         risk_prop_b + loc_cntrl_int_m_b + 
                                         act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
                                         act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
-                                        sat_dem_w + sat_dem_b 
-                                      , data = d_long_imp)
-summary(model_aff_pos_lmer)
+                                        sat_dem_w + sat_dem_b + 
+                                        health_w + health_b
+                                        ))
+model_aff_pos_lmer_pub <- summary(pool(model_aff_pos_lmer_pub), conf.int = TRUE)
+model_aff_pos_lmer_pub %>% 
+  as.data.frame %>% 
+  select(term, estimate, `2.5 %`, `97.5 %`, p.value) %>% 
+  mutate(p.value = td::my_round(p.value, "p"))
 ```
 
 ### Negative Affect
 
 ```{r}
-model_aff_neg_lmer <- lmerTest::lmer(aff_neg_fs ~ 
+model_aff_neg_lmer_pub <- with(d_long_mim_mice, exp =  
+                               lmerTest::lmer(aff_neg_m ~ 
                                         (1 | id) + (1 | wave) + 
-                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
                                         soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
                                         soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
                                         soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
-                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac + health_b + 
-                                        res_vienna + acc_bal + acc_gar + home_sqm + 
+                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
+                                        res_vienna + acc_bal + acc_gar + home_sqm + corona_pos +
+                                        hh_income_b +
+                                        hh_adults +
+                                        hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + hh_oldfam + hh_outfam + hh_partner +
+                                        home_owner +
                                         med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
                                         med_vid_orf_b + med_vid_pri_b + 
                                         risk_prop_b + loc_cntrl_int_m_b + 
                                         act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
                                         act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
-                                        sat_dem_w + sat_dem_b 
-                                      , data = d_long_imp)
-summary(model_aff_neg_lmer)
+                                        sat_dem_w + sat_dem_b + 
+                                        health_w + health_b
+                                        ))
+model_aff_neg_lmer_pub <- summary(pool(model_aff_neg_lmer_pub), conf.int = TRUE)
+model_aff_neg_lmer_pub %>% 
+  as.data.frame %>% 
+  select(term, estimate, `2.5 %`, `97.5 %`, p.value) %>% 
+  mutate(p.value = td::my_round(p.value, "p"))
 ```
 
 ## Without control variables
-### Life Satisfaction
+### Life satisfaction
 
 ```{r}
-model_life_sat_lmer_nco <- lmerTest::lmer(life_sat ~ 
-                            (1 | id) + (1 | wave) + 
-                            soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
-                            soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
-                            soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
-                            soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b,
-                data = d_long_imp)
-summary(model_life_sat_lmer_nco)
+model_life_sat_lmer_nco <- with(d_long_mim_mice, exp =  
+                                lmerTest::lmer(life_sat ~
+                                        (1 | id) + (1 | wave) + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
+                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b
+                                      ))
+model_life_sat_lmer_nco <- summary(pool(model_life_sat_lmer_nco), conf.int = TRUE)
+model_life_sat_lmer_nco %>% 
+  as.data.frame %>% 
+  select(term, estimate, `2.5 %`, `97.5 %`, p.value) %>% 
+  mutate(p.value = td::my_round(p.value, "p"))
 ```
 
 ### Positive Affect
 
 ```{r}
-model_aff_pos_lmer_nco <- lmerTest::lmer(aff_pos_fs ~ 
+model_aff_pos_lmer_nco <- with(d_long_mim_mice, exp =  
+                           lmerTest::lmer(aff_pos_m ~ 
                                         (1 | id) + (1 | wave) + 
-                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
                                         soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
                                         soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
                                         soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b
-                                      , data = d_long_imp)
-summary(model_aff_pos_lmer_nco)
+                                        ))
+model_aff_pos_lmer_nco <- summary(pool(model_aff_pos_lmer_nco), conf.int = TRUE)
+model_aff_pos_lmer_nco %>% 
+  as.data.frame %>% 
+  select(term, estimate, `2.5 %`, `97.5 %`, p.value) %>% 
+  mutate(p.value = td::my_round(p.value, "p"))
 ```
 
 ### Negative Affect
 
 ```{r}
-model_aff_neg_lmer_nco <- lmerTest::lmer(aff_neg_fs ~ 
+model_aff_neg_lmer_nco <- with(d_long_mim_mice, exp =  
+                               lmerTest::lmer(aff_neg_m ~ 
                                         (1 | id) + (1 | wave) + 
-                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
                                         soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
                                         soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
                                         soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b
-                                      , data = d_long_imp)
-summary(model_aff_neg_lmer_nco)
+                                        ))
+model_aff_neg_lmer_nco <- summary(pool(model_aff_neg_lmer_nco), conf.int = TRUE)
+model_aff_neg_lmer_nco %>% 
+  as.data.frame %>% 
+  select(term, estimate, `2.5 %`, `97.5 %`, p.value) %>% 
+  mutate(p.value = td::my_round(p.value, "p"))
 ```
 
 ## Standardized results
-
-First, create standardized dataset.
-
-```{r}
-d_long_std <- d_long_imp %>% 
-  mutate(across(c(-id, -wave, -gender, -male, -born_aus, -born_aus_prnts, -edu_fac, -employment_fac, -res_vienna, -acc_bal, -acc_gar), scale))
-```
 
 Then let's rerun the analyses.
 
 ### Life satisfaction
 
 ```{r}
-model_life_sat_lmer_std <- lmerTest::lmer(life_sat ~
+model_life_sat_lmer_std <- with(d_long_mim_mice_std, exp =  
+                                lmerTest::lmer(life_sat ~
                                         (1 | id) + (1 | wave) + 
                                         soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
                                         soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
                                         soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
                                         soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
-                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac + health_b + 
-                                        res_vienna + acc_bal + acc_gar + home_sqm + 
+                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
+                                        res_vienna + acc_bal + acc_gar + home_sqm + corona_pos +
+                                        hh_income_b +
+                                        hh_adults +
+                                        hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + hh_oldfam + hh_outfam + hh_partner +
+                                        home_owner +
                                         med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
                                         med_vid_orf_b + med_vid_pri_b + 
                                         risk_prop_b + loc_cntrl_int_m_b + 
                                         act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
                                         act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
-                                        sat_dem_w + sat_dem_b 
-                                      , data = d_long_std)
-summary(model_life_sat_lmer_std)
+                                        sat_dem_w + sat_dem_b + 
+                                        health_w + health_b
+                                      ))
+model_life_sat_lmer_std <- summary(pool(model_life_sat_lmer_std), conf.int = TRUE)
+model_life_sat_lmer_std %>% 
+  as.data.frame %>% 
+  select(term, estimate, `2.5 %`, `97.5 %`, p.value) %>% 
+  mutate(p.value = td::my_round(p.value, "p"))
 ```
 
-### Positive affect
+### Positive Affect
 
 ```{r}
-model_aff_pos_lmer_std <- lmerTest::lmer(aff_pos_fs ~ 
+model_aff_pos_lmer_std <- with(d_long_mim_mice_std, exp =  
+                           lmerTest::lmer(aff_pos_m ~ 
                                         (1 | id) + (1 | wave) + 
-                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
                                         soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
                                         soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
                                         soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
-                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac + health_b + 
-                                        res_vienna + acc_bal + acc_gar + home_sqm + 
+                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
+                                        res_vienna + acc_bal + acc_gar + home_sqm + corona_pos +
+                                        hh_income_b +
+                                        hh_adults +
+                                        hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + hh_oldfam + hh_outfam + hh_partner +
+                                        home_owner +
                                         med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
                                         med_vid_orf_b + med_vid_pri_b + 
                                         risk_prop_b + loc_cntrl_int_m_b + 
                                         act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
                                         act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
-                                        sat_dem_w + sat_dem_b 
-                                      , data = d_long_imp)
-summary(model_aff_pos_lmer_std)
+                                        sat_dem_w + sat_dem_b + 
+                                        health_w + health_b
+                                        ))
+model_aff_pos_lmer_std <- summary(pool(model_aff_pos_lmer_std), conf.int = TRUE)
+model_aff_pos_lmer_std %>% 
+  as.data.frame %>% 
+  select(term, estimate, `2.5 %`, `97.5 %`, p.value) %>% 
+  mutate(p.value = td::my_round(p.value, "p"))
 ```
 
 ### Negative Affect
 
 ```{r}
-model_aff_neg_lmer_std <- lmerTest::lmer(aff_neg_fs ~ 
+model_aff_neg_lmer_std <- with(d_long_mim_mice_std, exp =  
+                               lmerTest::lmer(aff_neg_m ~ 
                                         (1 | id) + (1 | wave) + 
-                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w + 
+                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
                                         soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
                                         soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
                                         soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
-                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac + health_b + 
-                                        res_vienna + acc_bal + acc_gar + home_sqm + 
+                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
+                                        res_vienna + acc_bal + acc_gar + home_sqm + corona_pos +
+                                        hh_income_b +
+                                        hh_adults +
+                                        hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + hh_oldfam + hh_outfam + hh_partner +
+                                        home_owner +
                                         med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
                                         med_vid_orf_b + med_vid_pri_b + 
                                         risk_prop_b + loc_cntrl_int_m_b + 
                                         act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
                                         act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
-                                        sat_dem_w + sat_dem_b 
-                                      , data = d_long_imp)
-summary(model_aff_neg_lmer_std)
+                                        sat_dem_w + sat_dem_b + 
+                                        health_w + health_b
+                                        ))
+model_aff_neg_lmer_std <- summary(pool(model_aff_neg_lmer_std), conf.int = TRUE)
+model_aff_neg_lmer_std %>% 
+  as.data.frame %>% 
+  select(term, estimate, `2.5 %`, `97.5 %`, p.value) %>% 
+  mutate(p.value = td::my_round(p.value, "p"))
 ```
 
 # Figures
 
-## Activities
+## Within
 
 ```{r warning=FALSE}
 # get data
-dat_fig_results_activity <- get_dat_res(model_aff_neg_lmer, model_aff_pos_lmer, model_life_sat_lmer, 
-                                        type = "activity", analysis = "regular")
-dat_fig_results_activity_nco <- get_dat_res(model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, 
-                                            type = "activity", analysis = "no controls")
-dat_fig_results_activity_std <- get_dat_res(model_aff_neg_lmer_std, model_aff_pos_lmer_std, model_life_sat_lmer_std, 
-                                            type = "activity", analysis = "standardized")
+dat_fig_results_activity_pub <- get_dat_res(model_aff_neg_lmer_pub, model_aff_pos_lmer_pub, model_life_sat_lmer_pub, 
+                                        type = "activity", analysis = "Regular")
+dat_fig_results_channel_pub <- get_dat_res(model_aff_neg_lmer_pub, model_aff_pos_lmer_pub, model_life_sat_lmer_pub, 
+                                        type = "channels", analysis = "Regular")
+dat_fig_results_within_pub <- rbind(cbind(dat_fig_results_activity_pub, comm = "Activity"), 
+                                cbind(dat_fig_results_channel_pub, comm = "Channel")) %>% 
+  filter(type == "within")
 
-dat_fig_results_activity <- rbind(
-  dat_fig_results_activity, 
-  dat_fig_results_activity_nco,
-  dat_fig_results_activity_std
+dat_fig_results_activity_nco <- get_dat_res(model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, 
+                                        type = "activity", analysis = "No controls")
+dat_fig_results_channel_nco <- get_dat_res(model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, 
+                                        type = "channels", analysis = "No controls")
+dat_fig_results_within_nco <- rbind(cbind(dat_fig_results_activity_nco, comm = "Activity"), 
+                                cbind(dat_fig_results_channel_nco, comm = "Channel")) %>% 
+  filter(type == "within")
+
+dat_fig_results_activity_std <- get_dat_res(model_aff_neg_lmer_std, model_aff_pos_lmer_std, model_life_sat_lmer_std, 
+                                        type = "activity", analysis = "standardized")
+dat_fig_results_channel_std <- get_dat_res(model_aff_neg_lmer_std, model_aff_pos_lmer_std, model_life_sat_lmer_std, 
+                                        type = "channels", analysis = "standardized")
+dat_fig_results_within_std <- rbind(cbind(dat_fig_results_activity_std, comm = "Activity"), 
+                                cbind(dat_fig_results_channel_std, comm = "Channel")) %>% 
+  filter(type == "within")
+
+dat_fig_results_within <- rbind(
+  dat_fig_results_within_pub, 
+  dat_fig_results_within_nco,
+  dat_fig_results_within_std
 ) %>% 
-  mutate(Analysis = factor(Analysis, levels = c("regular", "no controls", "standardized")))
+  mutate(Analysis = factor(Analysis, levels = c("Regular", "No controls", "standardized")))
 
 # make figure
-fig_results_activity <- make_graph_res(
-  data = dat_fig_results_activity,
-  sesoi = "est"
+fig_results_within <- make_graph_res(
+  data = filter(dat_fig_results_within, Analysis != "standardized"),
+  sesoi = "est",
+  facet = "comm"
+  # , title = "Within-person effects of COVID-19 related social media use on well-being"
   )
-fig_results_activity
+fig_results_within
 
 # safe figure
-ggsave("figures/fig_results_activity.png", 
+ggsave("figures/fig_results_within.png", 
        width = 7, height = 4,
-       plot = fig_results_activity)
+       plot = fig_results_within)
 ```
 
-## Channels
+## Between
 
 ```{r warning=FALSE}
 # get data
-dat_fig_results_channels <- get_dat_res(model_aff_neg_lmer, model_aff_pos_lmer, model_life_sat_lmer, 
-                                        type = "channels", analysis = "regular")
-dat_fig_results_channels_nco <- get_dat_res(model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, 
-                                            type = "channels", analysis = "no controls")
-dat_fig_results_channels_std <- get_dat_res(model_aff_neg_lmer_std, model_aff_pos_lmer_std, model_life_sat_lmer_std, 
-                                            type = "channels", analysis = "standardized")
+dat_fig_results_activity_pub <- get_dat_res(model_aff_neg_lmer_pub, model_aff_pos_lmer_pub, model_life_sat_lmer_pub, 
+                                        type = "activity", analysis = "Regular")
+dat_fig_results_channel_pub <- get_dat_res(model_aff_neg_lmer_pub, model_aff_pos_lmer_pub, model_life_sat_lmer_pub, 
+                                        type = "channels", analysis = "Regular")
+dat_fig_results_between_pub <- rbind(cbind(dat_fig_results_activity_pub, comm = "Activity"), 
+                                cbind(dat_fig_results_channel_pub, comm = "Channel")) %>% 
+  filter(type == "between")
 
-dat_fig_results_channels <- rbind(
-  dat_fig_results_channels, 
-  dat_fig_results_channels_nco,
-  dat_fig_results_channels_std
+dat_fig_results_activity_nco <- get_dat_res(model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, 
+                                        type = "activity", analysis = "No controls")
+dat_fig_results_channel_nco <- get_dat_res(model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, 
+                                        type = "channels", analysis = "No controls")
+dat_fig_results_between_nco <- rbind(cbind(dat_fig_results_activity_nco, comm = "Activity"), 
+                                cbind(dat_fig_results_channel_nco, comm = "Channel")) %>% 
+  filter(type == "between")
+
+dat_fig_results_activity_std <- get_dat_res(model_aff_neg_lmer_std, model_aff_pos_lmer_std, model_life_sat_lmer_std, 
+                                        type = "activity", analysis = "standardized")
+dat_fig_results_channel_std <- get_dat_res(model_aff_neg_lmer_std, model_aff_pos_lmer_std, model_life_sat_lmer_std, 
+                                        type = "channels", analysis = "standardized")
+dat_fig_results_between_std <- rbind(cbind(dat_fig_results_activity_std, comm = "Activity"), 
+                                cbind(dat_fig_results_channel_std, comm = "Channel")) %>% 
+  filter(type == "between")
+
+dat_fig_results_between <- rbind(
+  dat_fig_results_between_pub, 
+  dat_fig_results_between_nco,
+  dat_fig_results_between_std
 ) %>% 
-  mutate(Analysis = factor(Analysis, levels = c("regular", "no controls", "standardized")))
+  mutate(Analysis = factor(Analysis, levels = c("Regular", "No controls", "standardized")))
 
 # make figure
-fig_results_channels <- make_graph_res(
-  data = dat_fig_results_channels,
+fig_results_between <- make_graph_res(
+  data = filter(dat_fig_results_between, Analysis != "standardized"),
   sesoi = "est"
+  # , title = "Between-person relations of COVID-19 related social media use and well-being"
   )
-fig_results_channels
+fig_results_between
 
 # safe figure
-ggsave("figures/fig_results_channels.png", 
+ggsave("figures/fig_results_between.png", 
        width = 7, height = 4,
-       plot = fig_results_channels)
+       plot = fig_results_between)
 ```
 
 ## Selected control variables
 
 Standardized, to allow for better comparison across differently scaled variables.
 
-```{r warning=FALSE}
+```{r warning=F, cache=T}
 # make figure
 fig_results_control_std <- make_graph_res(
   get_dat_res(model_aff_neg_lmer_std, model_aff_pos_lmer_std, model_life_sat_lmer_std, 
               type = "control", analysis = "standardized"),
   sesoi = "std",
-  legend = FALSE
+  legend = FALSE,
+  facet = "analysis"
+  # , title = "Results of selected covariates"
   )
 fig_results_control_std
 
@@ -1176,6 +1445,29 @@ fig_results_control_std
 ggsave("figures/fig_results_control_std.png", 
        width = 7, height = 4,
        plot = fig_results_control_std)
+```
+
+# Tables
+
+Table of within-person effects
+
+```{r}
+tab_within <- dat_fig_results_within
+
+tab_within_std <-
+  tab_within %>%  
+  filter(Analysis == "standardized") %>% 
+  select(std = estimate)
+
+tab_within <-
+  tab_within %>% 
+  filter(Analysis == "Regular") %>% 
+  cbind(tab_within_std) %>% 
+  select(dv, iv, estimate, conf.low, conf.high, std, p.value) %>% 
+  mutate(p.value = td::my_round(p.value, "p")) %>% 
+  arrange(dv)
+
+tab_within
 ```
 
 ```{r}

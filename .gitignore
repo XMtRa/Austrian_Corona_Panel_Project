@@ -3,7 +3,14 @@
 .RData
 .Ruserdata
 .DS_Store
-title_page.*
-data/
+analyses_additional_cache/*
+# analyses_additional_files/*
 analyses_cache/*
+archive/*
+data/
+figures/archive/*
 manuscript_cache/*
+manuscript_ica.*
+manuscript_ica_cache/*
+manuscript_ica_files/*
+title_page/*

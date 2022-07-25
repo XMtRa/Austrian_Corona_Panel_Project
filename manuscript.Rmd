@@ -1,5 +1,5 @@
 ---
-title             : "Analyzing the effects of COVID-19 related social media use on well-being"
+title             : "The effects of COVID-19 related social media use on well-being"
 shorttitle        : "COVID-19 related social media use and well-being"
 
 author: 
@@ -13,8 +13,7 @@ affiliation:
   - id            : "1"
     institution   : ""
 
-
-abstract          : "In times of crisis such as the Corona pandemic citizens need to stay informed about recent events, political decisions, or mandatory protection measures. To this end, many people use various types of media, and increasingly social media. However, because social media are particularly engaging, some find it hard to disconnect. In this preregistered study, I investigated whether using social media for COVID-19 related reasons affected psychological well-being. To answer this question I analyzed data from the Austrian Corona Panel Project, which consists of 3,018 participants. Well-being was measured at all 24 waves, and communication at five specific waves. I ran three random effects within between models, controlling for several stable and varying confounders. Results showed that the effects of COVID-19 related social media use on well-being were very small, arguably too small to matter. Fears that social media use during times of crisis critically impairs well-being are not supported."
+abstract          : "In times of crisis such as the COVID-19 pandemic citizens need to stay informed about recent events, political decisions, or mandatory protection measures. To this end, many people use various types of media, and increasingly social media. However, because social media are particularly engaging, some find it hard to disconnect. In this preregistered study, I investigated whether using social media for COVID-19 related reasons affected psychological well-being. To answer this question I analyzed data from the Austrian Corona Panel Project, which consists of 3,485 participants. Well-being was measured at all 32 waves, and communication at six specific waves. I ran three random effects within between models, controlling for several stable and varying confounders. Results showed that the effects of COVID-19 related social media use on well-being were very small, arguably too small to matter. Fears that social media use during times of crisis critically impairs well-being are not supported."
 keywords          : "COVID-19, well-being, social media, news use, panel study."
 
 bibliography      : 
@@ -30,22 +29,35 @@ linenumbers       : yes
 mask              : yes
 draft             : no
 
-documentclass     : "apa6"
-classoption       : "man"
-output            :
-  papaja::apa6_pdf:
-    latex_engine  : xelatex
-# output            : papaja::apa6_docx
 header-includes:
-  - \usepackage{endnotes}
-  - \setlength{\parskip}{0em}
-  - \raggedbottom
-  - \note{\clearpage}
+  - |
+    \makeatletter
+    \renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
+      {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+      {-1em}%
+      {\normalfont\normalsize\bfseries\typesectitle}}
+    
+    \renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{1em}%
+      {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+      {-\z@\relax}%
+      {\normalfont\normalsize\bfseries\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
+    \makeatother
+    \usepackage{endnotes}
+    \setlength{\parskip}{0em}
+    \raggedbottom
+    \note{\clearpage}
+
+csl               : "`r system.file('rmd', 'apa7.csl', package = 'papaja')`"
+documentclass     : "apa7"
+# output            :
+#   papaja::apa6_pdf:
+#     latex_engine  : xelatex
+# output            : papaja::apa6_docx
+output            : html_document
 ---
 
 ```{r analysis-preferences, include=F, cache=F}
-# Seed for random number generation
-set.seed(42)
+set.seed(170819) # Seed for random number generation
 knitr::opts_chunk$set(cache.extra = knitr::rand_seed,
                       cache=T, echo=F)
 ```
@@ -59,11 +71,11 @@ knitr::opts_chunk$set(cache.extra = knitr::rand_seed,
 # load packages
 packages <- c("devtools", "english", "ggplot2", "gridExtra", "kableExtra", 
               "lavaan", "lme4", "lmerTest",
-              "magrittr", "semPlot", "tidyverse")
-lapply(c(packages, "papaja", "td"), library, character.only = TRUE)
+              "magrittr", "papaja", "semPlot", "tidyverse")
+lapply(c(packages, "td"), library, character.only = TRUE)
 
 # load workspace created from analyses.rmd to use results
-load("data/workspace_2.RData")
+load("data/workspace_1.RData")
 ```
 
 During the COVID-19 pandemic, 
@@ -84,7 +96,7 @@ A study with 6,233 people from Germany conducted during the pandemic found that 
 
 As a result, with this study I want to build on this research and investigate whether or not COVID-19 related social media use affected well-being during the pandemic.
 To this end, I analyzed a large-scale panel study from the Austrian Corona Panel Project [@kittelAustrianCoronaPanel2020]. 
-The panel consists of 24 waves and has an overall sample size of `r nrow(d_wide) %>% prettyNum(big.mark = ",")` participants.
+The panel consists of **32** waves and has an overall sample size of **`r nrow(d_wide) %>% prettyNum(big.mark = ",")` participants**.
 <!-- At least 1,500 participants took part per wave, and the sample is representative of the Austrian population. -->
 The panel study collected a large number of psychological and demographic variables.
 <!-- Being able to control for many confounding third variables, both stable and varying, together with the longitudinal design, this creates a unique opportunity  -->
@@ -108,19 +120,23 @@ Together, this should provide an encompassing perspective on potential media eff
 The hierarchical taxonomy of computer-mediated communication differentiates six levels of how people engage with digital technology.
 First, the device (e.g., smartphone); second, the type of application (e.g., social networking site); third, the branded application (e.g., Twitter); fourth, the feature (e.g., status post); fifth, the interaction (e.g., one-to-many); and sixth, the message (e.g., content) [@meierComputermediatedCommunicationSocial2020a].
 Whereas the first four levels focus on the communication _channel_, the last two address the communication _type_.
-To measure social media use for the consumption of COVID-19 related news and topics, I here employ both the channel and the type of communication perspective, which together should offer a nuanced understanding of communication.
+**Differentiating different communication channels and communication types is important, because the effects on well-being likely differ across communication channels and communication types.**
+**Whereas active social media use such as chatting is routinely linked to improved well-being, passive use such as reading is considered more negative [@dienlinImpactDigitalTechnology2020].**
+Similarly, branded apps are separate entities with potentially divergent effects. 
+For example, @waterlooNormsOnlineExpressions2018 found that it's more adequate to express negative emotions on WhatsApp than on Twitter or on Instagram. 
+**Especially during a pandemic, it makes sense to analyze if users engage with COVID-19 related content on Instagram, where communication is more positive, or on Facebook, where communication is more critical.**
 
+**In this study, to measure the effects of social media use focused on COVID-19 related news and topics, I adopt both the channel and the type of communication perspective.**
+**Together, this should offer a nuanced and comprehensive understanding of communication.**
 First, I investigate how well-being is affected by different types of communication affect, namely active and passive use.
 Defining what constitutes active and what passive use is not always clear, and different understandings are currently discussed [@ellisonWhyWeDon2020; @meierComputermediatedCommunicationSocial2020a].
 Reading is generally considered as passive and writing as active, while there are also specific behaviors such as such liking or sharing content that fall somewhere in-between [@meierDoesPassiveSocial2022].
 In this study, I hence distinguish (a) _reading_ (passive), (b) _posting_ (active), and (c) _liking and sharing_ COVID-19 related posts (both active and passive).
 Second, I analyze how using the most prominent branded applications affects well-being, and whether this effect changes across applications.
-Branded apps are separate entities with potentially divergent effects. 
-Twitter might have a different effect as compared to WhatsApp because of their respective affordances.
-For example, @waterlooNormsOnlineExpressions2018 found that it's more adequate to express negative emotions on WhatsApp than on Twitter or on Instagram. 
-The branded applications investigated here are Facebook, Twitter, Instagram, WhatsApp, and YouTube.
-Worth noting, this study is not about _general_ social media use during times of COVID, but on social media use _focused_ on COVID-19 related content. 
-Examples of such media use include posting thoughts about the pandemic or retweeting COVID-19 related news.
+The branded applications investigated here are Facebook, Twitter, Instagram, WhatsApp, and YouTube---which were, at the time of writing, the most relevant social media apps.
+
+**Worth noting, this study is not about _general_ social media use during times of COVID, but on social media use _focused_ on COVID-19 related content.** 
+**For example, posting thoughts about the pandemic, reading posts and comments, or retweeting COVID-19 related news.**
 
 ## Theorizing Social Media Effects on Well-Being
 
@@ -137,22 +153,26 @@ Only very specific events and factors such as unemployment, disability, or death
 
 Can media use be such a factor?
 In advance, there doesn't seem to be a clear winner, and it's likely that both positive and negative effects cancel each other out.
-Empirically, social media use on average oes not have a strong effect on well-being [@meierComputermediatedCommunicationSocial2020a].
-According to the Differential Susceptibility to Media Effects Model [@valkenburgDifferentialSusceptibilityMedia2013], the effects of media use differ across individuals. 
+Empirically, social media use on average does not have a strong effect on well-being [@meierComputermediatedCommunicationSocial2020a].
+According to the Differential Susceptibility to Media Effects Model [@valkenburgDifferentialSusceptibilityMedia2013], the effects of media use differ across individuals **and content**.
 Whereas for some media are beneficial, for others they are harmful.
+**Whereas some content provides opportunities (education, advice), other content creates risks (misinformation, hate). [@livingstoneEuropeanResearchChildren2018].**
+Social media can impair well-being when causing embarrassment, stress, or disinformation, and they can improve well-being when providing connectedness, information, or entertainment [@buchiDigitalWellbeingTheory2021].
 On average, however, effects are often small or negligible.
-But also when focusing on individual users, social media can have both positive and negative effects on well-being [@buchiDigitalWellbeingTheory2021].
-They can impair well-being when causing embarrassment, stress, or disinformation, and they can improve well-being when providing connectedness, information, or entertainment [@buchiDigitalWellbeingTheory2021].
 
-Two of the most prominent media effect theories argue against strong negative impacts.
-First, uses and gratifications theory states that people explicitly and rationally chose specific media because of their respective benefits [@katzUsesGratificationsResearch1973]. 
-If those benefits don't exist, they will spend their time elsewhere.
-And social media offer copiuos benefits. 
-Most prominently, they help find relevant information, maintain and foster relationships, express one's personality, and entertain oneself [@pelletierOneSizeDoesn2020].
-The second major theory that needs to be listed here is mood management theory [@zillmannMoodManagementCommunication1988].
-Users implicitly learn what media help them balance their mood and affect.
-For example, when bored people use social media to entertain themselves.
-Using experience sampling of well-being and logs of social media use, a study with 82 participants from Italy found that after episodes of social media use, levels of positive affect increased significantly [@marcianoDynamicsAdolescentsSmartphone2022].
+**Two of the most prominent media effect theories argue (indirectly) against strong average negative impacts.**
+**According to mood management theory [@zillmannMoodManagementCommunication1988], using media substantially affects people's moods.**
+**Effects can be stimulating or overwhelming, relaxing or boring.**
+**After some time, users implicitly learn what media help them balance their mood and affect according to their own situational needs [@zillmannMoodManagementCommunication1988].**
+**Those media that eventually become part of one's media repertoire are hence, on average, beneficial for users and their moods.**
+**Using experience sampling of well-being and logs of social media use, a study with 82 participants from Italy found that after episodes of social media use, levels of positive affect increased significantly [@marcianoDynamicsAdolescentsSmartphone2022].**
+
+**While mood management theory considers media use mainly driven by implicit learning experiences, uses and gratifications theory upholds that the process is more explicit and rational [@katzUsesGratificationsResearch1973].**
+**Users select those media that they expect to have a desired effect, for example on mood, knowledge, or entertainment.** 
+**If those beneficial media effects do not exist or if they are not expected, people will spend their time elsewhere.**
+**And social media offer several beneficial effects, explaining why they are used that much.**
+**They help find relevant information, maintain and foster relationships, express one's personality, and entertain oneself [@pelletierOneSizeDoesn2020].**
+**In conclusion, because people spend so much time on social media consuming COVID-19 related content, according to both mood management theory and uses and gratifications theory we wouldn't expect to find strong average negative effects.**
 
 But people can also misjudge media affects and are often overly optimistic [@metzgerComparativeOptimismPrivacy2017].
 And precisely because social media have so many positive consequences, one can ask if this is not where the actual problem lies.
@@ -162,7 +182,7 @@ It is therefore often asked whether social media are addictive, and users someti
 However, a recently published meta-analysis found that the two most prominent measures of addiction, the Bergen Facebook Addiction Scale and the Bergen Social Media Addiction Scale, have only small relations to well-being [@duradoniWellbeingSocialMedia2020]. 
 In addition, the general idea of labeling excessive social and new media use as addiction was criticized, arguing that social media represent new regular behaviors that should not be pathologized [@galerHowMuchToo2018; @vanrooijWeakScientificBasis2018].
 
-Because media effects can differ across situations [@valkenburgDifferentialSusceptibilityMedia2013], I now briefly focus on the effects of COVID-19 related social media use specifically.
+**Because media effects can differ across users, situations, and content [@livingstoneEuropeanResearchChildren2018; @valkenburgDifferentialSusceptibilityMedia2013], I now briefly focus on the effects of COVID-19 related social media use specifically.**
 First, one could assume a _direct_ negative effect on well-being, and especially on positive or negative affect, which are more volatile and fluctuating.
 Dangers, inequalities, corruption---these were the headlines during the pandemic across many countries worldwide.
 If one learns about such events, the initial reaction might be shock, fear, or dismay.
@@ -170,6 +190,7 @@ Consuming such news can be depressing [@dornemannHowGoodBad2021], perhaps even c
 <!-- So, just like being hit by a hammer hurts and we don't need any "mediating mechanism", this could be the case here as well. -->
 That said, because not all news was negative, and because many people showed solidarity and compassion, there was also positive and uplifting content, potentially compensating for the negative effects [@dornemannHowGoodBad2021].
 A study with 2.057 respondents from Italy reported that during the pandemic virtual community and social connectedness even increased during the pandemic [@guazziniSecondWaveAnalysis2022].
+**In Finland, in a sample of 735 participants, levels of loneliness did not decrease during the pandemic, and people who engaged more on social media showed less loneliness [@latikkaLonelinessPsychologicalDistress2022].**
 <!-- However, in light of a worldwide pandemic with millions of deaths, the negative direct effect seems more plausible. -->
 
 There could also be _indirect_ effects.
@@ -177,9 +198,11 @@ When browsing social media for Covid-19 related news, many users reported being 
 During the pandemic social media use was at an all-time high in the US [@statistaAverageDailyTime2021].
 Although it is most likely that moderate social media use is not detrimental [@orbenTeenagersScreensSocial2020], overuse, however, might be more critical, and several studies have shown more pronounced negative effects for extreme users [@przybylskiLargescaleTestGoldilocks2017].
 To explain, overuse could impair well-being if it replaces meaningful or functional activities such as meeting others, working, actively relaxing, or exercising.
-So if a society collectively overuses social media during a pandemic, there might be potential for negative effects.
+**Another potentially negative mechanism at play are problematic social comparison processes. During the pandemic, several users shared how they successfully dealt with challenges such as physical distancing. In a study with 1131 residents from Wuhan in China [@yuePassiveSocialMedia2022], people who spent more time in quarantine also spent more time on social media. Those, who spent more time on social media also engaged in more upward social comparison, which was related to increased levels of stress.**
+<!-- Therefore, if a society collectively overuses social media during a pandemic, there is potential for negative effects. -->
 <!-- If overuse replaces such activities it's reasonable to assume that it's also detrimental. -->
-On the other hand, one can make the case that overuse might even be beneficial, especially in times of a pandemic.
+
+On the other hand, one can make the case that using social media for COVID-19 related reasons might even be beneficial, especially in times of a pandemic.
 Exchanging COVID-19 related messages with friends via WhatsApp might replace the in-person contact one would have otherwise, but which is literally impossible at the time.
 In situations where meaningful and functional activities are prohibited, using social media to exchange about COVID-19 related topics might not be the worst idea.
 Besides, given that nowadays a large number of experts, scientists, and politicians converse directly on social media, one can get first-hand high quality information on current developments.
@@ -220,6 +243,9 @@ Although there is substantial _variation_ of media effects for individual users,
 <!-- At least, there does not seem to be a case where we should expect a clear deviation to the negative, despite anecdotes of doomscrolling. -->
 
 In conclusion, in light of the theoretical considerations and empirical studies presented above, I expect that COVID-19 related communication on social media doesn't affect well-being in a meaningful or relevant way.
+**This general hypothesis will be analyzed specifically for the communication types of (a) time spent reading, (b) liking and sharing, and (c) actively posting COVID-19 related content.**
+**In addition, I will analyze how well-being is influenced by spending time on five prominent social media apps, including (a) Facebook, (b) Instagram, (c) Twitter, (d) WhatsApp, and (e) YouTube.** 
+**Three different well-being indicators will be differentiated: life satisfaction, positive affect, and negative affect.**
 
 > Hypothesis: The within-person effects of all types of COVID-19 related social media use on all types of well-being indicators---while controlling for several stable and varying covariates such as sociodemographic variables and psychological dispositions---will be trivial.
 
@@ -258,7 +284,9 @@ So if satisfaction is measured on a 7-point scale, we would state that a four un
 The hypothesis explicitly states a causal effect.
 In non-experimental studies, longitudinal designs can help investigate causality.
 Using longitudinal designs alone, however, is not sufficient for establishing correct causal statements [@rohrerTheseAreNot2021].
-In addition, we for example also need to control for confounding third variables, and importantly also for _varying_ third variables.
+In addition, we for example also need to control for confounding third variables.
+**Importantly, when analyzing longitudinal (within-person) relationships and effects, it is important to control for _varying_ third variables.**
+**Non-varying third variables only help control non-varying (between-person) relations.**
 
 To illustrate, consider the following example.
 Imagine that a person suddenly starts using social media much more than usual, and then after some time  becomes less satisfied with their life.
@@ -272,7 +300,7 @@ Obviously, we can never be entirely sure to have included all confounders, which
 In addition, when determining the overall causal effect, we need to make sure _not_ to control for mediating variables [@rohrerThinkingClearlyCorrelations2018], for doing so would bias our assessment of the causal effect.
 Complicating matters further, it is often unclear if a variable is a mediator or a confounder.[^collider]
 However, despite all these caveats, when controlling for relevant variables (that aren't mediators), we can be much more certain that we measured causality correctly.
-The aim should therefore be to collect as many varying and nonvarying confounders as possible (which I believe is seldom done in our field), while knowing that absolute certainty regarding causality cannot be reached.
+The aim should therefore be to collect as many varying and non-varying confounders as possible (which I believe is seldom done in our field), while knowing that absolute certainty regarding causality cannot be reached.
 
 [^collider]: In addition, there also exist colliders, which I don't discuss here and which complicate the issue even further [@rohrerThinkingClearlyCorrelations2018].
 
@@ -286,7 +314,7 @@ In this study, I hence plan to control for the following variables, which either
 gender, age, education, Austria country of birth, Austria country of birth of parents, text-based news consumption, video-based news consumption, residency Vienna, household size, health, living space, access to garden, access to balcony, employment, work hours per week, being in home-office, household income, outdoor activities, satisfaction with democracy, disposition to take risks, and locus of control.[^explore]
 <!-- I will not control for variables such as trust in institutions or trust in media, because these variables might be influenced by social media use to a meaningful extent. -->
 
-[^explore]: The dataset includes many other variables that one could also potentially control for, and I invite interested readers to download the and explore potential interesting relationships.
+[^explore]: The data-set includes many other variables that one could also potentially control for, and I invite interested readers to download the and explore potential interesting relationships.
 
 Next to including covariates, it's now increasingly understood that causal effects should be analyzed from an internal, within-person perspective [@hamakerWhyResearchersShould2014].
 If a specific person changes their media diet, we need to measure how this behavior affects _their own_ well-being.
@@ -300,15 +328,16 @@ Finding the right interval between cause and effect is crucial.
 For example, if we want to understand the effect of alcohol consumption on driving performance, it makes a big difference if driving performance is measured one minute, one hour, one day, or one week after consumption.
 <!-- Finding the right interval is difficult. -->
 If variables are stable, longer intervals are needed; if they fluctuate, shorter intervals.
-In the case of well-being, we need shorter intervals for affect and longer ones for life satisfaction [@dienlinImpactDigitalTechnology2020].
-Still, choosing the right interval is challenging, because especially short intervals are hard to implement in practice and often require advanced methods such as experience sampling (also known as in situ measurement or ambulant assessment) [@schnauber-stockmannMobileDevicesTools2020].
-
-In this study, I hence analyze how using social media during the last week affected their positive and negative affect during the same week.
-More precisely, if people during the last week used COVID-19 related social media more than the usually do, did they feel better or worse during that week than they usually do?
+In the case of well-being, we need shorter intervals for **the more fluctuating** positive and negative affect and longer ones for **the more stable** life satisfaction [@dienlinImpactDigitalTechnology2020].
+**Using social media can have instant effects on mood [@marcianoDynamicsAdolescentsSmartphone2022].**
+**Effects on life satisfaction often take longer to manifest, for example because media use leads to actual changes in specific behaviors, which then affect life satisfaction [@dienlinDisplacementReinforcementReciprocity2017].**
+Choosing the right interval is challenging, because especially short intervals are hard to implement in practice, often requiring advanced methods such as experience sampling (also known as in situ measurement or ambulant assessment) [@schnauber-stockmannMobileDevicesTools2020].
+In this study, I hence analyze how using social media during the last week affected positive and negative affect during the same week.
+In other words, if people during the last week engaged in more COVID-19 related social media use than the usually do, did they feel better or worse during that week than they usually do?
 Regarding life satisfaction, I implemented a longer interval.
-Namely, if people during the last week used COVID-19 related social media more than the usually do, were they at the end of the week more or less satisfied with their lives than they usually are?
+If people during the last week used COVID-19 related social media more than the usually do, were they at the end of the week more or less satisfied with their lives than they usually are?
 I hence analyze if when a person changes their social media diet, are there (a) _simultaneous_ changes in their affect and (b) _subsequent_ changes in their life satisfaction?
-When additionally controlling for both stable and varying confounders, we can then be more sure that the effect is indeed causal.
+**These relations will be controlled for varying confounders, which fosters a causal interpretation.**
 Similar approaches were implemented by other studies [@johannesNoEffectDifferent2022; @scharkowHowSocialNetwork2020], and they are considered a best practice approach toward analyzing causality [@bellFixedRandomEffects2019].
 
 # Method
@@ -326,9 +355,12 @@ The most relevant deviations are reported below, and a complete list of all chan
 
 ## Sample
 
-The data come from the Austrian Corona Panel Project [@kittelAustrianCoronaPanel2021].
-The study was conducted between March 2020 and October 2021.
-It contains 26 waves, and at the time of writing the first 24 waves were available for download.
+**The data come from the Austrian Corona Panel Project [@kittelAustrianCoronaPanel2021], which is a large-scale standalone panel study. **
+**The data are hosted on AUSSDA and are publicly available here: https://doi.org/10.11587/28KQNS.**
+**At the time of writing, the official website included a data-set consisting of 24 waves. **
+**For the analyses presented here, I was able to receive an advance version consisting of all 32 waves.**
+**The study was conducted between March 2020 and June 2022, and data collection is now officially finished.**
+**It contains 32 waves.**
 Between March 2020 and July 2020, the intervals were weekly, and afterward the intervals were monthly.
 Each wave consists of at least 1,500 respondents.
 The overall sample size was _N_ = `r d_raw %>% nrow() %>% prettyNum(big.mark = ",")`, and `r d_long %>% nrow() %>% prettyNum(big.mark = ",")` observations were collected.
@@ -389,11 +421,16 @@ All predictors were included simultaneously and in each of the three models.
 
 The factorial validity of the scales were tested with confirmatory factor analyses (CFA).
 Because Mardia’s test showed that the assumption of multivariate normality was violated, I used the more robust Satorra-Bentler scaled and mean-adjusted test statistic (MLM) as estimator.
-To avoid overfitting, I tested the scales on more liberal fit criteria (CFI > .90, TLI > .90, RMSEA <. .10, SRMR < .10) [@klinePrinciplesPracticeStructural2016].
-Finally, REWB-models cannot model latent variables.
-To increase precision, I therefore exported factor scores from the CFAs for positive and negative affect.
-Respondents who answered less than 50% of all questions were removed.
-The remaining missing responses were imputed using predictive mean matching.
+To avoid over-fitting, I tested the scales on more liberal fit criteria (CFI > .90, TLI > .90, RMSEA <. .10, SRMR < .10) [@klinePrinciplesPracticeStructural2016].
+<!-- Finally, REWB-models cannot model latent variables. -->
+<!-- To increase precision, I therefore exported factor scores from the CFAs for positive and negative affect. -->
+Mean scores were used for positive and negative affect.
+<!-- Respondents who answered less than 50% of all questions were removed. -->
+**Missing responses were imputed using multiple imputation with predictive mean matching (five iterations, five data-sets).**
+**Predictive mean matching allowed to impute also categorical variables.**
+**All variables were imputed except the media use measures, as they were not collected on each wave.**
+**All variables included in the analyses presented here were used to impute missing data.**
+**For the main analyses, results were pooled across all five data-sets.**
 
 For more information on the analyses, a complete documentation of the models and results, additional analyses (for example using multiple imputation or no imputation), see [companion website](https://XMtRA.github.io/Austrian_Corona_Panel_Project).
 
@@ -435,7 +472,7 @@ The five items were (a) Facebook, (b) Twitter, (c) Instagram, (d) Youtube, and (
 Again, the answer options were 1 (_several times per day_), 2 (_daily_), 3 (_several times per week_), 4 (_weekly_), 5 (_never_).
 Again, the items were inverted for the analyses.
 
-Social media use was measured for all participants on waves 1, 2, 8, 17, and 23. 
+Social media use was measured for all participants on waves 1, 2, 8, 17, 23, **and 28**.
 Freshly recruited respondents always answered all questions on social media use.
 
 ### Control variables
@@ -450,7 +487,7 @@ Because it lead to too much attrition in the sample, I did not control for (a) h
 
 # Results
 
-First, when looking at the variables from a descriptive perspective (Figure \@ref(fig:descriptives)), we see that all well-being measures did not change substantially across the different waves of data collection.
+First, when looking at the variables from a descriptive perspective (Figure \@ref(fig:fig-descriptives)), we see that all well-being measures did not change substantially across the different waves of data collection.
 COVID-19 related media use, however, decreased slightly at the beginning of the study and remained stable after approximately six waves.
 The initial decrease might be explained by the fact that the collection of data began at the end of March 2020, hence approximately three months after the pandemic began.
 It could be that after an initial uptick, COVID-19 related social media use was already declining at the time, returning to more normal levels.
@@ -458,87 +495,130 @@ It could be that after an initial uptick, COVID-19 related social media use was 
 ## Preregistered Analyses
 
 The study's main hypothesis was that the effects of social media use on well-being would be trivial.
-Regarding the effects of different communication _types_---that is, reading vs. sharing vs. posting---all within-person effects fell completely within the a-priori defined null region (see Figure \@ref(fig:res-activity)).
-For example, respondents who used social media more frequently than usual to read about COVID-19 related topics did not show a simultaneous change in life satisfaction (_b_ = `r dat_fig_results_activity %>% filter(dv == "Life satisfaction" & iv == "Reading" & type == "within" & Analysis == "1. regular") %>% select(estimate) %>% round(2)` [95% CI `r dat_fig_results_activity %>% filter(dv == "Life satisfaction" & iv == "Reading" & type == "within" & Analysis == "1. regular") %>% select(conf.low) %>% round(2)`, `r dat_fig_results_activity %>% filter(dv == "Life satisfaction" & iv == "Reading" & type == "within" & Analysis == "1. regular") %>% select(conf.high) %>% round(2)`]).
-All confidence intervals included zero; hence, all effects were also statistically non-significant.
+Regarding the effects of different communication _types_---that is, reading vs. sharing vs. posting---all within-person effects fell completely within the a-priori defined null region (see Figure \@ref(fig:fig-between)).
+For example, respondents who used social media more frequently than usual to read about COVID-19 related topics did not show a simultaneous change in life satisfaction (_b_ = `r dat_fig_results_within %>% filter(dv == "Life satisfaction" & iv == "Reading" & type == "within" & Analysis == "Regular") %>% select(estimate) %>% round(2)` [95% CI `r dat_fig_results_within %>% filter(dv == "Life satisfaction" & iv == "Reading" & type == "within" & Analysis == "Regular") %>% select(conf.low) %>% round(2)`, `r dat_fig_results_within %>% filter(dv == "Life satisfaction" & iv == "Reading" & type == "within" & Analysis == "Regular") %>% select(conf.high) %>% round(2)`]).
 As a result, the hypothesis was supported for all COVID-19 related types of social media communication.
+**However, two effects were statistically significantly different from zero.**
+**Users who wrote more COVID-19 related posts than usual were also slightly less satisfied with their lives as usual (_b_ = `r dat_fig_results_within %>% filter(dv == "Life satisfaction" & iv == "Posting" & type == "within" & Analysis == "Regular") %>% select(estimate) %>% round(2)` [95% CI `r dat_fig_results_within %>% filter(dv == "Life satisfaction" & iv == "Posting" & type == "within" & Analysis == "Regular") %>% select(conf.low) %>% round(2)`, `r dat_fig_results_within %>% filter(dv == "Life satisfaction" & iv == "Posting" & type == "within" & Analysis == "Regular") %>% select(conf.high) %>% round(2)`]).**
+**Users who wrote more COVID-19 related posts than usual also experienced slightly more negative affect than usual (_b_ = `r dat_fig_results_within %>% filter(dv == "Negative affect" & iv == "Posting" & type == "within" & Analysis == "Regular") %>% select(estimate) %>% round(2)` [95% CI `r dat_fig_results_within %>% filter(dv == "Negative affect" & iv == "Posting" & type == "within" & Analysis == "Regular") %>% select(conf.low) %>% round(2)`, `r dat_fig_results_within %>% filter(dv == "Negative affect" & iv == "Posting" & type == "within" & Analysis == "Regular") %>% select(conf.high) %>% round(2)`]).**
+**There was a small and statistically nonsignificant trend that reading COVID-19 related content slightly increased life satisfaction (_b_ = `r dat_fig_results_within %>% filter(dv == "Life satisfaction" & iv == "Reading" & type == "within" & Analysis == "Regular") %>% select(estimate) %>% round(2)` [95% CI `r dat_fig_results_within %>% filter(dv == "Life satisfaction" & iv == "Reading" & type == "within" & Analysis == "Regular") %>% select(conf.low) %>% round(2)`, `r dat_fig_results_within %>% filter(dv == "Life satisfaction" & iv == "Reading" & type == "within" & Analysis == "Regular") %>% select(conf.high) %>% round(2)`], _p_ = `r dat_fig_results_within %>% filter(dv == "Life satisfaction" & iv == "Reading" & type == "within" & Analysis == "Regular") %>% select(p.value) %>% my_round("p")`).**
+**At the same time, there was also a small and statistically nonsignificant trend that reading COVID-19 related content decreased positive affect (_b_ = `r dat_fig_results_within %>% filter(dv == "Positive affect" & iv == "Reading" & type == "within" & Analysis == "Regular") %>% select(estimate) %>% round(2)` [95% CI `r dat_fig_results_within %>% filter(dv == "Positive affect" & iv == "Reading" & type == "within" & Analysis == "Regular") %>% select(conf.low) %>% round(2)`, `r dat_fig_results_within %>% filter(dv == "Positive affect" & iv == "Reading" & type == "within" & Analysis == "Regular") %>% select(conf.high) %>% round(2)`], _p_ = `r dat_fig_results_within %>% filter(dv == "Positive affect" & iv == "Reading" & type == "within" & Analysis == "Regular") %>% select(p.value) %>% my_round("p")`).**
 
-Regarding between-person relations, about which no hypotheses were formulated, only three effects did not include zero.
-Respondents who across all waves used social media more frequently than others to read about COVID-19 related posts reported slightly lower levels of positive affect than others (_b_ `r dat_fig_results_activity %>% filter(dv == "Positive affect" & iv == "Reading" & type == "between" & Analysis == "1. regular") %>% select(estimate) %>% my_round("b_txt")` [95% CI `r dat_fig_results_activity %>% filter(dv == "Positive affect" & iv == "Reading" & type == "between" & Analysis == "1. regular") %>% select(conf.high) %>% my_round("b")`, `r dat_fig_results_activity %>% filter(dv == "Positive affect" & iv == "Reading" & type == "between" & Analysis == "1. regular") %>% select(conf.low) %>% my_round("b")`]).
-Respondents who across all waves used social media more frequently than others to write COVID-19 related posts reported higher levels of negative affect than others (_b_ `r dat_fig_results_activity %>% filter(dv == "Negative affect" & iv == "Posting" & type == "between" & Analysis == "1. regular") %>% select(estimate) %>% my_round("b_txt")` [95% CI `r dat_fig_results_activity %>% filter(dv == "Negative affect" & iv == "Posting" & type == "between" & Analysis == "1. regular") %>% select(conf.high) %>% my_round("b")`, `r dat_fig_results_activity %>% filter(dv == "Negative affect" & iv == "Posting" & type == "between" & Analysis == "1. regular") %>% select(conf.low) %>% my_round("b")`]).
-Interestingly, respondents who across all waves used social media more frequently than others to write COVID-19 related posts also reported slightly higher levels of positive affect than others (_b_ `r dat_fig_results_activity %>% filter(dv == "Positive affect" & iv == "Posting" & type == "between" & Analysis == "1. regular") %>% select(estimate) %>% my_round("b_txt")` [95% CI `r dat_fig_results_activity %>% filter(dv == "Positive affect" & iv == "Posting" & type == "between" & Analysis == "1. regular") %>% select(conf.high) %>% my_round("b")`, `r dat_fig_results_activity %>% filter(dv == "Positive affect" & iv == "Posting" & type == "between" & Analysis == "1. regular") %>% select(conf.low) %>% my_round("b")`]).
-However, note that the effect were still completely inside of the null region, hence not large enough to be considered practically relevant.
-
-Note that when comparing the results with and without control variables, the results differed.
-For example, on the between-person level, one effect stopped being significant if controlled for additional variables.
-Actively posting on social media was significantly (though not meaningfully) related to decreased life satisfaction.
-However, when controlling for potential confounders, the effect became virtually zero (see Figure \@ref(fig:res-channels)).
-
-Regarding the COVID-19 related use of social media _channels_, the results were comparable (see Figure \@ref(fig:res-channels)).
+Regarding the COVID-19 related use of social media _channels_, the results were comparable (see Figure \@ref(fig:fig-within)).
 Changes in the frequency of using different social media channels to attain information regarding COVID-19 were unrelated to meaningful changes in well-being.
-For example, respondents who used Facebook more frequently than usual to learn about COVID-19 did not show a simultaneous change in well-being (_b_ = `r dat_fig_results_channels %>% filter(dv == "Life satisfaction" & iv == "Facebook" & type == "within" & Analysis == "1. regular") %>% select(estimate) %>% round(2)` [95% CI `r dat_fig_results_channels %>% filter(dv == "Life satisfaction" & iv == "Facebook" & type == "within" & Analysis == "1. regular") %>% select(conf.low) %>% round(2)`, `r dat_fig_results_channels %>% filter(dv == "Life satisfaction" & iv == "Facebook" & type == "within" & Analysis == "1. regular") %>% select(conf.high) %>% round(2)`]).
-Only two effects differed substantially from zero.
-Respondents who used Instagram more frequently than usual to attain COVID-19 related news reported slightly _higher_ levels of life satisfaction than usual (_b_ = `r dat_fig_results_channels %>% filter(dv == "Life satisfaction" & iv == "Instagram" & type == "within" & Analysis == "1. regular") %>% select(estimate) %>% my_round("b")` [95% CI `r dat_fig_results_channels %>% filter(dv == "Life satisfaction" & iv == "Instagram" & type == "within" & Analysis == "1. regular") %>% select(conf.low) %>% my_round("b")`, `r dat_fig_results_channels %>% filter(dv == "Life satisfaction" & iv == "Instagram" & type == "within" & Analysis == "1. regular") %>% select(conf.high) %>% my_round("b")`]).
-Respondents who used Twitter more frequently than usual to attain COVID-19 related news reported slightly _lower_ levels of life satisfaction than usual (_b_ = `r dat_fig_results_channels %>% filter(dv == "Life satisfaction" & iv == "Twitter" & type == "within" & Analysis == "1. regular") %>% select(estimate) %>% round(2)` [95% CI `r dat_fig_results_channels %>% filter(dv == "Life satisfaction" & iv == "Twitter" & type == "within" & Analysis == "1. regular") %>% select(conf.low) %>% round(2)`, `r dat_fig_results_channels %>% filter(dv == "Life satisfaction" & iv == "Twitter" & type == "within" & Analysis == "1. regular") %>% select(conf.high) %>% my_round("b")`]).
-However, both effects were still completely inside of the null region, hence not large enough to be considered meaningful.
+For example, respondents who used Facebook more frequently than usual to learn about COVID-19 did not show a simultaneous change in well-being (_b_ = `r dat_fig_results_within %>% filter(dv == "Life satisfaction" & iv == "Facebook" & type == "within" & Analysis == "Regular") %>% select(estimate) %>% round(2)` [95% CI `r dat_fig_results_within %>% filter(dv == "Life satisfaction" & iv == "Facebook" & type == "within" & Analysis == "Regular") %>% select(conf.low) %>% round(2)`, `r dat_fig_results_within %>% filter(dv == "Life satisfaction" & iv == "Facebook" & type == "within" & Analysis == "Regular") %>% select(conf.high) %>% round(2)`]).
 In sum, the hypothesis was supported also for the COVID-19 related use of important social media channels.
+**However, two effects differed substantially from zero.**
+**Respondents who used Instagram more frequently than usual to attain COVID-19 related news reported slightly _lower_ levels of negative affect than usual (_b_ = `r dat_fig_results_within %>% filter(dv == "Negative affect" & iv == "Instagram" & type == "within" & Analysis == "Regular") %>% select(estimate) %>% my_round("b")` [95% CI `r dat_fig_results_within %>% filter(dv == "Negative affect" & iv == "Instagram" & type == "within" & Analysis == "Regular") %>% select(conf.low) %>% my_round("b")`, `r dat_fig_results_within %>% filter(dv == "Negative affect" & iv == "Instagram" & type == "within" & Analysis == "Regular") %>% select(conf.high) %>% my_round("b")`]).**
+**Respondents who used YouTube more frequently than usual to attain COVID-19 related news reported slightly _higher_ levels of negative affect than usual (_b_ = `r dat_fig_results_within %>% filter(dv == "Negative affect" & iv == "YouTube" & type == "within" & Analysis == "Regular") %>% select(estimate) %>% round(2)` [95% CI `r dat_fig_results_within %>% filter(dv == "Negative affect" & iv == "YouTube" & type == "within" & Analysis == "Regular") %>% select(conf.low) %>% round(2)`, `r dat_fig_results_within %>% filter(dv == "Negative affect" & iv == "YouTube" & type == "within" & Analysis == "Regular") %>% select(conf.high) %>% my_round("b")`]).**
+**However, both effects were still completely inside of the null region, hence not large enough to be considered meaningful.**
 
-In terms of between-person relations---which, again, weren't included in the hypotheses---no relations crossed the null region or fell outside of it.
-Only one relation did not include zero, was hence statistically significant. 
-Respondents who across all waves used YouTube more frequently than others for COVID-19 related reasons reported marginally _higher_ levels of life satisfaction (_b_ = `r dat_fig_results_channels %>% filter(dv == "Life satisfaction" & iv == "YouTube" & type == "between" & Analysis == "1. regular") %>% select(estimate) %>% round(2)` [95% CI `r dat_fig_results_channels %>% filter(dv == "Life satisfaction" & iv == "YouTube" & type == "between" & Analysis == "1. regular") %>% select(conf.low) %>% my_round("b_txt")`, `r dat_fig_results_channels %>% filter(dv == "Life satisfaction" & iv == "YouTube" & type == "between" & Analysis == "1. regular") %>% select(conf.high) %>% my_round("b")`]).
-However, please note that this effect again was not large enough to be considered practically relevant.
-
-Again, note that when comparing the results with and without control variables, the results differed.
-Especially on the between-person level, altogether five effects stopped being significant if they were controlled for additional variables.
-For example, using Instagram was significantly (though not meaningfully) related to increased life satisfaction.
-However, when controlling for additional covariates, the effect became virtually zero (see Figure \@ref(fig:res-channels)).
+**For an overview of all within-person effects, see Table \@ref(tab:tab-within) and Figure \@ref(fig:fig-within).**
 
 ## Exploratory Analyses
 
 In what follows, I briefly report some exploratory analyses that weren't preregistered.
-First, to contextualize the results reported above and to see if the results included any meaningful effects at all, I also looked at the effect sizes of selected (cherry-picked) covariates.
+
+### Between-person relations
+
+For between-person relations, no a-priori hypotheses were formulated.
+Results showed that no relation crossed or was completely outside of the SESOI.
+Four relations were statistically significant.
+**Respondents who across all waves used social media more frequently than others to read about COVID-19 related posts reported slightly lower levels of positive affect than others (_b_ `r dat_fig_results_between %>% filter(dv == "Positive affect" & iv == "Reading" & type == "between" & Analysis == "Regular") %>% select(estimate) %>% my_round("b_txt")` [95% CI `r dat_fig_results_between %>% filter(dv == "Positive affect" & iv == "Reading" & type == "between" & Analysis == "Regular") %>% select(conf.high) %>% my_round("b")`, `r dat_fig_results_between %>% filter(dv == "Positive affect" & iv == "Reading" & type == "between" & Analysis == "Regular") %>% select(conf.low) %>% my_round("b")`]).**
+**Respondents who across all waves used social media more frequently than others to write COVID-19 related posts reported sligthly higher levels of negative affect than others (_b_ `r dat_fig_results_between %>% filter(dv == "Negative affect" & iv == "Posting" & type == "between" & Analysis == "Regular") %>% select(estimate) %>% my_round("b_txt")` [95% CI `r dat_fig_results_between %>% filter(dv == "Negative affect" & iv == "Posting" & type == "between" & Analysis == "Regular") %>% select(conf.high) %>% my_round("b")`, `r dat_fig_results_between %>% filter(dv == "Negative affect" & iv == "Posting" & type == "between" & Analysis == "Regular") %>% select(conf.low) %>% my_round("b")`]).**
+**At the same time, respondents who across all waves used social media more frequently than others to write COVID-19 related posts also reported slightly higher levels of positive affect (_b_ `r dat_fig_results_between %>% filter(dv == "Positive affect" & iv == "Posting" & type == "between" & Analysis == "Regular") %>% select(estimate) %>% my_round("b_txt")` [95% CI `r dat_fig_results_between %>% filter(dv == "Positive affect" & iv == "Posting" & type == "between" & Analysis == "Regular") %>% select(conf.high) %>% my_round("b")`, `r dat_fig_results_between %>% filter(dv == "Positive affect" & iv == "Posting" & type == "between" & Analysis == "Regular") %>% select(conf.low) %>% my_round("b")`]).**
+**Finally, respondents who across all waves used YouTube more frequently than others also reported slightly higher levels of life satisfaction than others (_b_ `r dat_fig_results_between %>% filter(dv == "Life satisfaction" & iv == "YouTube" & type == "between" & Analysis == "Regular") %>% select(estimate) %>% my_round("b_txt")` [95% CI `r dat_fig_results_between %>% filter(dv == "Life satisfaction" & iv == "YouTube" & type == "between" & Analysis == "Regular") %>% select(conf.high) %>% my_round("b")`, `r dat_fig_results_between %>% filter(dv == "Life satisfaction" & iv == "YouTube" & type == "between" & Analysis == "Regular") %>% select(conf.low) %>% my_round("b")`]).**
+<!-- However, note that the effect were still completely inside of the null region, hence not large enough to be considered practically relevant. -->
+
+Note that when comparing the results with and without control variables, the results differed.
+For example, on the between-person level, one effect stopped being significant if controlled for additional variables.
+Actively posting on social media was significantly (though not meaningfully) related to decreased life satisfaction.
+However, when controlling for potential confounders, the effect became virtually zero.
+
+For an overview of all between-person relations, see Figure \@ref(fig:fig-between).
+
+### Covariates
+
+To contextualize the results reported above and to see if the results included any meaningful effects at all, I also looked at the effect sizes of the covariates.
 Because each variable had different response options, we would actually need to define a SESOI for each variable, which for reasons of scope I cannot implement here. 
 Therefore, I report the results of the standardized scales,
 which allows for a better comparison across the differently scaled variables.
-For what it's worth, as a rough estimate for the SESOI we can build on the typical convention that small effects start at _r_ = |.10|.
-The results showed that several effects fell outside of the SESOI, were hence considered meaningful.
+As a rough estimate for the SESOI we can build on the typical convention that small effects start at _r_ = |.10|.
+The results showed that several effects crossed or fell outside of the SESOI, were hence considered meaningful.
 This includes for example internal locus of control, health, satisfaction with democracy, or exercising.
-For an overview, see Figure \@ref(fig:res-control).
+For an overview, see Figure \@ref(fig:fig-control).
+
+### Robustness-check
 
 To find out whether my inferences were robust across legitimate (though arguably inferior) alternative analyses, I reran the analyses also using standardized estimates, mean scores instead of factor scores, and with a data set where missing data were not imputed.
 The results were virtually the same.
-For example, all within-person standardized COVID-19 related types of social media use or channels were significantly smaller than $\beta$ = |.05|, again supporting that effects were tiny.
-The additional analyses are reported in Figure 3 and Figure 4, and in the [companion website](https://XMtRA.github.io/Austrian_Corona_Panel_Project/analyses_additional.html).
+For example, all within-person standardized COVID-19 related types of social media use or channels were significantly smaller than $\beta$ = |.05|, again supporting that effects were negligible.
+The results of the standardized analyses are reported in Table \@ref(tab:tab-within).
+The additional analyses are reported on the [companion website](https://XMtRA.github.io/Austrian_Corona_Panel_Project/analyses_additional.html).
 
 # Discussion
 
 In this study I analyzed the effects of COVID-19 related social media use on well-being.
-The data come from a panel study with 24 waves and are largely representative of the Austrian population.
+The data come from a panel study with 32 waves and are largely representative of the Austrian population.
 In a random effects model I separated between person relations from within-person effects and controlled for a large number of both stable and varying covariates, thereby aiming to assess causality.
-The results showed that within-person effects were trivial.
+The results showed that some statistically significant negative within-person effects existed, but that they were **very small and likely** trivial.
 People who used social media more than usual to learn about COVID-19 didn't show meaningful changes in their well-being.
 
 The results imply that COVID-19 related social media use doesn't seem to be particularly relevant for well-being.
-Other factors among the third variables that were measured revealed larger effects or relations, suggesting that well-being is determined by alternative aspects such as health, satisfaction with democracy, locus of control, or exercising.
-According to this study, popular fears that "doomscrolling" or overusing social media during times of crises are not supported.
+Other factors among the third variables that were measured revealed larger effects or relations, suggesting that well-being is rather determined by alternative aspects such as health, satisfaction with democracy, locus of control, or exercising.
+According to this study, popular fears that "doomscrolling" or overusing social media during times of crises is detrimental are not supported.
+
+**That said, several preliminary and subtle trends can be observed.**
+**First, overall the results do suggest that effects of COVID-19 related social media use on well-being rather tend to take place in the negative as opposed to the positive spectrum.**
+**For example, people who wrote more COVID-19 related posts than usual reported slightly lower levels of life satisfaction than usual.**
+**Similarly, people who wrote more COVID-19 related posts than usual also reported slightly more negative affect.**
+**When writing posts and comments on social media, people explicitly and more deeply engage with COVID-19 related content.**
+**Unfortunately, in general online tonality is often more extreme, negative, or aggressive, which potentially affects their authors.**
+**Note that I controlled for whether or not participants had an corona infection during a specific wave, which rules out the potential explanation that having an infection was the root cause of increased communication and reduced well-being.**
+
+**The potential explanation that tonality might be a relevant factor at play here is also supported by the second trend.**
+**People, who during the pandemic spend more time on Instagram than usual, also experienced less negative affect than usual.**
+**Instagram is well-known for its positivity bias [@waterlooNormsOnlineExpressions2018].**
+**Content is generally post positive, uplifting, and (self-)flattering.**
+**It seems the often-criticized positivity bias on Instagram might have been somewhat beneficial in times of the pandemic.**
+**The critique that the positivity bias necessarily leads to envy and negative feelings is one-sided, because positive content can also inspire and motivate users [@meierInstagramInspirationHow2020], which could be especially helpful in times of lockdown and home-office.**
+**To provide a concrete example, Instagram was successfully used as an interactive communication channel for first year students to have a better start into their new degree, effectively complementing alternative learning platform tools [@yeTurningInformationDissipation2020].**
+
+**Similarly, people who spent more time on YouTube than usual also reported slightly more negative affect than usual.** 
+**Communication on YouTube is often found to be more negative and less polite compared to other SNSs [@halpernSocialMediaCatalyst2013].**
+**YouTube is also routinely linked to mis- and disinformation.**
+**Of the 69 most viewed videos on YouTube on COVID-19, 19 (27.5%) contained nonfactual information [@liYouTubeSourceInformation2020].**
+**Consuming more negative and misleading information might hence be a potential explanation for the slightly increased levels of negative affect.**
 
 On the one hand, the results are not aligned with several recent studies analyzing similar or closely related research questions.
 This includes a study by @bendauAssociationsCOVID19Related2021, which showed negative relations between social media and well-being [but see @bradleyStressMoodSmartphone2021; or @sewallObjectivelyMeasuredDigital2021].
 However, note that @bendauAssociationsCOVID19Related2021 analyzed cross-sectional data on a between-person level while not controlling for third variables, which is not optimal for investigating causal effects.
-On the other hand, the results are well-aligned with many seminal Communication theories such as the uses and gratifications model [@katzUsesGratificationsResearch1973].
+On the other hand, the results are well-aligned with **mood management theory [@zillmannMoodManagementCommunication1988]** or the uses and gratifications approach [@katzUsesGratificationsResearch1973]. 
 If effects were indeed profoundly negative on average, then people likely wouldn't spend so much time on social media.
 Likewise, recent studies and meta-analyses analyzing the effects of social media use from a more general perspective or from a somewhat different angle. 
 These studies have found that the effects of various types of social media use on several well-being indicators are small at best, often too small to matter [@meierComputermediatedCommunicationSocial2020a; @orbenTeenagersScreensSocial2020; @fergusonThisMetaanalysisScreen2021], which echoes the results obtained here.
 
-If anything, two preliminary and subtle trends can be observed.
-First, in terms of media channels, using Twitter more than usual was related to slightly decreased levels of life satisfaction.
-Twitter is considered to have more negative affordances and tonality as compared to other networks such as Instagram [@waterlooNormsOnlineExpressions2018], which might help explain the results.
-Instagram, on the other hand, was related to slightly increased levels of life satisfaction.
-To speculate, the often-criticized positivity bias on Instagram might have been somewhat beneficial in times of the pandemic.
-The critique that the positivity bias necessarily leads to envy and negative feelings is unrealistic and myopic, because positive content can also inspire and motivate users [@meierInstagramInspirationHow2020], which could be especially helpful in times of lockdown and home-office.
-Second, of all the three COVID-19 related social media activities, people who read about the pandemic more than others showed slightly decreased levels of positive affect, and people who actively posted about the pandemic more than others showed slightly increased levels of negative affect.
-On the other hand, however, people who posted more about COVID-19 also showed slightly higher levels of positive affects, so taken together the results are ambivalent.
-But future research might elaborate on these specific relations to probe their stability and relevance.
+**The results showed that it makes sense to analyze different communication types and communication channels, and that active and passive communication showed different results.**
+**Liking and sharing content did not show any within-person effects. **
+**Such rather low-key active behaviors do not seem to affect well-being at all.**
+**Regarding passive use, reading COVID-19 related posts is more ambivalent; results showed some weak trends towards a positive effect on life satisfaction, but a negative affect on mood.**
+**It might be that reading and informing oneself about COVID-19 on social media might be helpful in the long term, but more negative for short-term affect.**
+**Finally, proactively engaging via writing posts, the most active form of communication analyzed here, showed only negative effects on well-being.**
+**Together, the results support the findings from @valkenburgAssociationsActivePassive2022, who could not confirm the claim that active use is good, versus passive is bad.**
+**Focusing on communication channels, YouTube seems to be more negative, whereas Instagram is likely more positive.**
+**Again, these are only very small effects.**
+**Future research might elaborate on these specific relations to probe their stability and relevance.**
+
+**From a more political and societal perspective, I believe the results imply that it does makes sense critically to reflect upon COVID-19 related social media use.** 
+**In terms of concrete recommendations, on average it might be slightly beneficial to post less actively about COVID-19 on social media and to spent less time on YouTube.**
+**Potential positive effects, however, will for many users likely not be noticeable.**
+**Results allow to reject a positive effect: Writing more posts on social media will likely not increase well-being.**
+**At all events, engaging in COVID 19-related social media use should, on average, not be a cause for concern.**
+
+<!-- First, in terms of media channels, using Twitter more than usual was related to slightly decreased levels of life satisfaction. -->
+<!-- Twitter is considered to have more negative affordances and tonality as compared to other networks such as Instagram [@waterlooNormsOnlineExpressions2018], which might help explain the results. -->
+<!-- Second, of all the three COVID-19 related social media activities, people who read about the pandemic more than others showed slightly decreased levels of positive affect, and people who actively posted about the pandemic more than others showed slightly increased levels of negative affect. -->
+<!-- On the other hand, however, people who posted more about COVID-19 also showed slightly higher levels of positive affects, so taken together the results are ambivalent. -->
 
 <!-- Finally, another interesting observation is that life satisfaction was remarkably stable. -->
 <!-- Hence, even in times of a pandemic, it seems that such broad assessment of life vary only mildly. -->
@@ -548,11 +628,14 @@ But future research might elaborate on these specific relations to probe their s
 
 The current study analyzed whether changes in media use were related to changes in well-being, while controlling for several potential confounders. 
 Together, this allowed for an improved perspective on assessing causality.
-That said, causality necessitates temporal order, and the cause needs to precede the effect.
-Regarding media use, such effects often happen immediately or shortly after use, necessitating intervals in the hours, minutes, or even seconds.
+**However, the opposite effect is also plausible, namely that well-being affects media use [@zillmannMoodManagementCommunication1988].**
+**While controlling for potential confounders can support claims of causality, the procedure implemented here cannot prove causality.**
+Causality necessitates temporal order, and the cause needs to precede the effect.
+**The challenge is that** regarding media use, such effects often happen immediately or shortly after use, necessitating intervals in the hours, minutes, or even seconds.
 In many cases only experience sampling studies asking users in the very moment can produce such knowledge.
 However, even then we don't know for certain if we actually measured the right interval.
-Effects depend on the intensity of use or the length of the interval, and to borrow the words from @rohrerTheseAreNot2021, there is no such thing as "the" effect of social media use on well-being.
+Effects depend on the intensity of use or the length of the interval.
+To borrow the words from @rohrerTheseAreNot2021, there is no such thing as "the" effect of social media use on well-being.
 Hence, to document how effects unfold, future research needs to employ different study designs probing different time lags.
 In addition, more thought needs to be invested in what relevant stable and varying factors we should include as control variables, and I hope this study provides a first step into this direction.
 
@@ -582,8 +665,9 @@ That said, because this is a comparatively large study largely representative of
 ## Conclusion
 
 In this study, COVID-19 related social media use didn't meaningfully affect several indicators of well-being, including life satisfaction, positive affect, and negative affect.
-However, factors other than social media use were meaningfully related to well-being, such as physical health, exercise, satisfaction with democracy, or believing that one is in control of one's life.
-If it's our aim to improve well-being, it might hence be more fruitful not to focus so much on social media but to address other, more pertinent societal problems related to health care, regular exercise, or a functioning democratic system.
+**If people wrote more COVID-19 related posts than usual, or if they spent less time on Instagram and more time on YouTube, very small but statistically significant effects were found.**
+Notably, however, factors other than social media use were more meaningfully related to well-being, such as physical health, exercise, satisfaction with democracy, or believing that one is in control of one's life.
+If it's our aim to improve well-being **during a pandemic**, it might hence be more fruitful not to focus so much on social media but to address other, more pertinent societal problems related to health care, regular exercise, or a functioning democratic system.
 
 \newpage
 
@@ -597,7 +681,7 @@ If it's our aim to improve well-being, it might hence be more fruitful not to fo
 
 \newpage
 
-```{r tab-descriptives, cache=F}
+```{r tab-descriptives, cache=F, warning=F, message=F, prompt=F}
 apa_table(tab_desc_dat,
           stub_indents = list(
             "Well-being" = c(1:3),
@@ -609,7 +693,29 @@ apa_table(tab_desc_dat,
 
 \newpage
 
-```{r sesoi, warning=F, message=F, fig.cap="Illustration of how confidence intervals are used to test a null region. Here, a trivial effect of social media use on life satisfaction is defined as ranging from b = -.25 to b = .25", fig.width=6, fig.height=2}
+```{r tab-within, cache=F, warning=F, message=F, prompt=F}
+tab_within %<>%
+  select(Predictor = iv,
+         b = estimate,
+         `Lower level` = conf.low,
+         `Higher level` = conf.high,
+         beta = "std",
+         p = "p.value")
+apa_table(tab_within,
+          align = c("l", "r", "r", "r", "r", "r"),
+          stub_indents = list(
+            "Life satisfaction" = c(1:8),
+            "Positive affect" = c(9:16),
+            "Negative affect" = c(17:24)),
+          caption = "Overview of all within-person effects.",
+          col_spanners = list(`Confidence interval` = c(3, 4)),
+          font_size = "footnotesize"
+          )
+```
+
+\newpage
+
+```{r sesoi, warning=F, message=F, fig.cap="Using confidence intervals to test a null region. Note. Here, a trivial effect of social media use on life satisfaction is defined as ranging from b = -.25 to b = .25", fig.width=6, fig.height=2, warning=F, message=F, prompt=F}
 # make table with data
 d_plot <- tribble(
   ~name, ~type, ~Effect, ~ll, ~ul,
@@ -641,28 +747,28 @@ plot
 
 \newpage
 
-```{r descriptives, fig.cap="Development of well-being and media use measures across the pandemic. Values obtained from mixed effect models, with participants and waves as grouping factors and without additional predictors.", out.width = "\\textwidth", cache=F, warning=F, message=F, prompt=FALSE}
-# print(fig_desc)
+```{r fig-descriptives, fig.cap="Well-being and media use across the 32 waves. Note. Values obtained from mixed effect models, with participants and waves as grouping factors and without additional predictors.", out.width = "\\textwidth", cache=F, warning=F, message=F, prompt=F}
+# fig_desc
 knitr::include_graphics("figures/fig_descriptives.png")
 ```
 
 \newpage
 
-```{r res-activity, fig.cap="The effects of various types of social media use on three indicators of well-being. The black estimates show the effects controlled for a large number of covariates (see text; preregistered); the grey estimates are without control variables (exploratory). The SESOI was b = |0.30| for life satisfaction and b = |0.15| for affect. Hence, all of the reported effects are not considered meaningful.", out.width = "\\textwidth", cache=F, warning=F, message=F, fig.width=6, fig.height=3}
-fig_results_activity
-# knitr::include_graphics("figures/fig_results_activity.png")
+```{r fig-within, fig.cap="Within-person effects of COVID-19 related social media use on well-being. Note. The black estimates show the effects controlled for a large number of covariates (see text; preregistered); the grey estimates are without control variables (exploratory). The SESOI was b = |0.30| for life satisfaction and b = |0.15| for affect. Hence, all of the reported effects are not considered meaningful.", out.width = "\\textwidth", cache=F, warning=F, message=F, fig.width=6, fig.height=4}
+fig_results_within
+# knitr::include_graphics("figures/fig_results_within.png")
 ```
 
 \newpage
 
-```{r res-channels, fig.cap="The effects of using various social media applications on three indicators of well-being. The black estimates show the effects controlled for a large number of covariates (see text; preregistered); the grey estimates are without control variables (exploratory). The SESOI was b = |0.30| for life satisfaction and b = |0.15| for affect. Hence, all of the reported effects are not considered meaningful.", out.width = "\\textwidth", cache=F, warning=F, message=F, fig.width=6, fig.height=4}
-# knitr::include_graphics("figures/fig_results_channels.png")
-fig_results_channels
+```{r fig-between, fig.cap="Between-person relations between COVID-19 related social media use and well-being. Note. The black estimates show the effects controlled for a large number of covariates (see text; preregistered); the grey estimates are without control variables (exploratory). The SESOI was b = |0.30| for life satisfaction and b = |0.15| for affect. Hence, all of the reported effects are not considered meaningful.", out.width = "\\textwidth", cache=F, warning=F, message=F, fig.width=6, fig.height=4}
+fig_results_between
+# knitr::include_graphics("figures/fig_results_between.png")
 ```
 
 \newpage
 
-```{r res-control, fig.cap="Results of selected covariates. All variables were standardize except 'Male'  and ‘Employed in public service', because there were measured on a binary scale.", out.width = "\\textwidth", cache=F, warning=F, message=F, fig.width=6, fig.height=3}
+```{r fig-control, fig.cap = "Results of selected covariates. Note. All variables standardized except 'Male'.", out.width = "\\textwidth", cache=F, warning=F, message=F, fig.width=6, fig.height=4}
 fig_results_control_std
 # knitr::include_graphics("figures/fig_results_control_std.png")
 ```

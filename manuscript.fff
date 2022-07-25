@@ -3,25 +3,33 @@
 
 \centering
 \includegraphics{manuscript_files/figure-latex/sesoi-1.pdf}
-\caption{\label{fig:sesoi}Illustration of how confidence intervals are used to test a null region. Here, a trivial effect of social media use on life satisfaction is defined as ranging from b = -.25 to b = .25}
+\caption{\label{fig:sesoi}Using confidence intervals to test a null region. Note. Here, a trivial effect of social media use on life satisfaction is defined as ranging from b = -.25 to b = .25}
 \end{figure*}
+\efloatseparator
+ 
 \begin{figure*}[hbt]
 \ifnextchar[{\eatarg}{}
 
-\includegraphics[width=\textwidth]{figures/fig_descriptives} \caption{Development of well-being and media use measures across the pandemic. Values obtained from mixed effect models, with participants and waves as grouping factors and without additional predictors.}\label{fig:descriptives}
+\includegraphics[width=\textwidth]{figures/fig_descriptives} \caption{Well-being and media use across the 32 waves. Note. Values obtained from mixed effect models, with participants and waves as grouping factors and without additional predictors.}\label{fig:fig-descriptives}
 \end{figure*}
+\efloatseparator
+ 
 \begin{figure*}[hbt]
 \ifnextchar[{\eatarg}{}
 
-\includegraphics[width=\textwidth]{manuscript_files/figure-latex/res-activity-1} \caption{The effects of various types of social media use on three indicators of well-being. The black estimates show the effects controlled for a large number of covariates (see text; preregistered); the grey estimates are without control variables (exploratory). The SESOI was b = |0.30| for life satisfaction and b = |0.15| for affect. Hence, all of the reported effects are not considered meaningful.}\label{fig:res-activity}
+\includegraphics[width=\textwidth]{manuscript_files/figure-latex/fig-within-1} \caption{Within-person effects of COVID-19 related social media use on well-being. Note. The black estimates show the effects controlled for a large number of covariates (see text; preregistered); the grey estimates are without control variables (exploratory). The SESOI was b = |0.30| for life satisfaction and b = |0.15| for affect. Hence, all of the reported effects are not considered meaningful.}\label{fig:fig-within}
 \end{figure*}
+\efloatseparator
+ 
 \begin{figure*}[hbt]
 \ifnextchar[{\eatarg}{}
 
-\includegraphics[width=\textwidth]{manuscript_files/figure-latex/res-channels-1} \caption{The effects of using various social media applications on three indicators of well-being. The black estimates show the effects controlled for a large number of covariates (see text; preregistered); the grey estimates are without control variables (exploratory). The SESOI was b = |0.30| for life satisfaction and b = |0.15| for affect. Hence, all of the reported effects are not considered meaningful.}\label{fig:res-channels}
+\includegraphics[width=\textwidth]{manuscript_files/figure-latex/fig-between-1} \caption{Between-person relations between COVID-19 related social media use and well-being. Note. The black estimates show the effects controlled for a large number of covariates (see text; preregistered); the grey estimates are without control variables (exploratory). The SESOI was b = |0.30| for life satisfaction and b = |0.15| for affect. Hence, all of the reported effects are not considered meaningful.}\label{fig:fig-between}
 \end{figure*}
+\efloatseparator
+ 
 \begin{figure*}[hbt]
 \ifnextchar[{\eatarg}{}
 
-\includegraphics[width=\textwidth]{manuscript_files/figure-latex/res-control-1} \caption{Results of selected covariates. All variables were standardize except 'Male'  and ‘Employed in public service', because there were measured on a binary scale.}\label{fig:res-control}
+\includegraphics[width=\textwidth]{manuscript_files/figure-latex/fig-control-1} \caption{Results of selected covariates. Note. All variables standardized except 'Male'.}\label{fig:fig-control}
 \end{figure*}

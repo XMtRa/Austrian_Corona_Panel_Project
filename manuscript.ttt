@@ -12,21 +12,76 @@
  & \multicolumn{1}{c}{sd} & \multicolumn{1}{c}{min} & \multicolumn{1}{c}{max} & \multicolumn{1}{c}{mean}\\
 \midrule
 Well-being &  &  &  & \\
-\ \ \ Life satisfaction & 1.68 & 6.38 & 6.81 & 6.59\\
-\ \ \ Positive affect & 0.57 & 3.05 & 3.28 & 3.15\\
-\ \ \ Negative affect & 0.39 & 1.66 & 1.81 & 1.73\\
+\ \ \ Life satisfaction & 1.67 & 6.29 & 6.77 & 6.54\\
+\ \ \ Positive affect & 0.58 & 3.05 & 3.29 & 3.14\\
+\ \ \ Negative affect & 0.41 & 1.71 & 1.86 & 1.79\\
 Social media use &  &  &  & \\
-\ \ \ Read & 1.03 & 2.10 & 2.92 & 2.43\\
-\ \ \ Like \& share & 0.87 & 1.61 & 1.92 & 1.78\\
-\ \ \ Posting & 0.63 & 1.33 & 1.46 & 1.39\\
+\ \ \ Read & 1.02 & 2.01 & 2.93 & 2.37\\
+\ \ \ Like \& share & 0.85 & 1.62 & 1.96 & 1.77\\
+\ \ \ Posting & 0.62 & 1.32 & 1.66 & 1.43\\
 Social media channel &  &  &  & \\
-\ \ \ Facebook & 0.96 & 2.34 & 2.68 & 2.45\\
-\ \ \ Twitter & 0.52 & 1.16 & 1.72 & 1.37\\
-\ \ \ Instagram & 0.83 & 1.84 & 2.66 & 2.09\\
-\ \ \ WhatsApp & 1.23 & 2.28 & 2.62 & 2.45\\
-\ \ \ YouTube & 0.88 & 1.77 & 2.30 & 2.00\\
+\ \ \ Facebook & 0.97 & 2.22 & 2.67 & 2.40\\
+\ \ \ Twitter & 0.53 & 1.16 & 2.19 & 1.43\\
+\ \ \ Instagram & 0.84 & 1.90 & 2.51 & 2.12\\
+\ \ \ WhatsApp & 1.23 & 2.31 & 2.63 & 2.44\\
+\ \ \ YouTube & 0.88 & 1.80 & 2.24 & 2.01\\
 \bottomrule
 \end{tabular}
+
+\end{threeparttable}
+\end{center}
+
+\end{table*}
+\efloatseparator
+ 
+\begin{table*}[hbt]
+\ifnextchar[{\eatarg}{}
+[tbp]
+
+\begin{center}
+\begin{threeparttable}
+
+\caption{\label{tab:tab-within}Overview of all within-person effects.}
+
+\footnotesize{
+
+\begin{tabular}{lrrrrr}
+\toprule
+ &  & \multicolumn{2}{c}{Confidence interval}  &  &\\
+\cmidrule(r){3-4}
+Predictor & \multicolumn{1}{c}{b} & \multicolumn{1}{c}{Lower level} & \multicolumn{1}{c}{Higher level} & \multicolumn{1}{c}{beta} & \multicolumn{1}{c}{p}\\
+\midrule
+Life satisfaction &  &  &  &  & \\
+\ \ \ Reading & 0.04 & -0.01 & 0.09 & 0.03 & .078\\
+\ \ \ Liking \& Sharing & 0.01 & -0.05 & 0.07 & 0.01 & .676\\
+\ \ \ Posting & -0.13 & -0.21 & -0.05 & -0.05 & .002\\
+\ \ \ Facebook & -0.04 & -0.09 & 0.02 & -0.03 & .167\\
+\ \ \ Instagram & 0.05 & -0.01 & 0.11 & 0.03 & .103\\
+\ \ \ WhatsApp & -0.01 & -0.05 & 0.04 & -0.01 & .735\\
+\ \ \ YouTube & 0.02 & -0.04 & 0.08 & 0.01 & .579\\
+\ \ \ Twitter & -0.07 & -0.16 & 0.02 & -0.03 & .133\\
+Positive affect &  &  &  &  & \\
+\ \ \ Reading & -0.02 & -0.03 & 0.00 & -0.02 & .078\\
+\ \ \ Liking \& Sharing & 0.00 & -0.02 & 0.02 & 0.00 & .975\\
+\ \ \ Posting & -0.02 & -0.05 & 0.01 & -0.02 & .150\\
+\ \ \ Facebook & 0.01 & -0.01 & 0.02 & 0.01 & .554\\
+\ \ \ Instagram & 0.00 & -0.02 & 0.03 & 0.01 & .670\\
+\ \ \ WhatsApp & 0.00 & -0.02 & 0.01 & 0.00 & .893\\
+\ \ \ YouTube & 0.01 & -0.01 & 0.03 & 0.02 & .183\\
+\ \ \ Twitter & 0.02 & -0.02 & 0.05 & 0.01 & .335\\
+Negative affect &  &  &  &  & \\
+\ \ \ Reading & 0.00 & -0.01 & 0.01 & 0.00 & .790\\
+\ \ \ Liking \& Sharing & 0.01 & -0.01 & 0.02 & 0.01 & .281\\
+\ \ \ Posting & 0.03 & 0.01 & 0.05 & 0.02 & .008\\
+\ \ \ Facebook & 0.00 & -0.01 & 0.01 & 0.00 & .913\\
+\ \ \ Instagram & -0.02 & -0.03 & 0.00 & -0.02 & .047\\
+\ \ \ WhatsApp & 0.00 & -0.01 & 0.01 & 0.00 & .651\\
+\ \ \ YouTube & 0.02 & 0.00 & 0.03 & 0.02 & .031\\
+\ \ \ Twitter & 0.02 & -0.01 & 0.04 & 0.02 & .137\\
+\bottomrule
+\end{tabular}
+
+}
 
 \end{threeparttable}
 \end{center}
