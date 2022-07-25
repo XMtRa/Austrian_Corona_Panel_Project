@@ -82,20 +82,20 @@ During the COVID-19 pandemic,
 numerous events unfolded in quick succession and several open questions emerged.
 How dangerous is the virus? 
 Is it spreading in my region? 
-How is it transmitted, and how can I protect myself?
+How is it transmitted and how can I protect myself?
 Because for many it was (and at the time of writing still is) a matter of life or death, people aimed to stay informed regarding the latest developments.
 Governments around the world implemented safety measures, such as wearing masks, keeping physical distance, or enforcing lockdowns.
 In this extraordinary situation, many people heavily relied on media to obtain relevant information, and especially social media were at an all time high [@statistaAverageDailyTime2021].
 
 Some people actually couldn't stop using social media to learn about COVID-19 related news.
-A new phenomenon emerged, termed "doomscrolling":
+A new phenomenon termed "doomscrolling" emerged:
 Users were glued to their screens and found it hard to pursue other relevant activities such as working, taking a break, or looking after their children [@kleinDarklySoothingCompulsion2021].
-It was asked whether using social media for COVID-19 related reasons is helpful, or whether it creates an additional burden on mental health [@sandstromDoomscrollingCOVIDNews2021].
+It was increasingly asked whether using social media for COVID-19 related reasons is helpful or whether it creates an additional burden on mental health [@sandstromDoomscrollingCOVIDNews2021].
 These concerns seem justified: 
 A study with 6,233 people from Germany conducted during the pandemic found that "[f]requency, duration and diversity of media exposure were positively associated with more symptoms of depression" [@bendauAssociationsCOVID19Related2021, p. 283].
 
-As a result, with this study I want to build on this research and investigate whether or not COVID-19 related social media use affected well-being during the pandemic.
-To this end, I analyzed a large-scale panel study from the Austrian Corona Panel Project [@kittelAustrianCoronaPanel2020]. 
+As a result, with this study I want to build on this research and investigate whether or not COVID-19 related social media use meaningfully affected well-being during the pandemic.
+To this end, I analyzed a large-scale **stand-alone** panel study from the Austrian Corona Panel Project [@kittelAustrianCoronaPanel2020]. 
 The panel consists of **32** waves and has an overall sample size of **`r nrow(d_wide) %>% prettyNum(big.mark = ",")` participants**.
 <!-- At least 1,500 participants took part per wave, and the sample is representative of the Austrian population. -->
 The panel study collected a large number of psychological and demographic variables.
@@ -104,14 +104,14 @@ I explicitly aimed to investigate the causal effects of COVID-19 related social 
 
 ## Understanding Well-being and Media Use
 
-The underlying theories that guided the selection of variables for my analysis are the two-continua model of mental health [@greenspoonIntegrationSubjectiveWellbeing2001] and the hierarchical taxonomy of computer-mediated communication [@meierComputermediatedCommunicationSocial2020a].
+**Two underlying theories guided the selection of variables for my analysis, the two-continua model of mental health [@greenspoonIntegrationSubjectiveWellbeing2001] and the hierarchical taxonomy of computer-mediated communication [@meierComputermediatedCommunicationSocial2020a].**
 According to the two-continua model, mental health consists of (a) psychopathology and (b) well-being.
 <!-- Because the aim of this study is better to understand typical users and everyday contexts, my focus will be on well-being. -->
 Well-being can be differentiated into subjective and psychological well-being [@dienerAdvancesOpenQuestions2018].
 Whereas subjective well-being emphasizes hedonic aspects such as happiness and joy, psychological well-being addresses eudaimonic aspects such as fulfillment and meaning.
-Subjective well-being is primarily about achieving positive affect and avoiding negative affect.
+Subjective well-being is primarily about achieving positive and avoiding negative affect.
 One of the most prominent indicators of well-being is life satisfaction.
-In my view, because it represents a general appraisal of one's life, life satisfaction is best thought of as a meta concept that combines psychological and subjective well-being.
+In my view, because it represents a general appraisal of one's life, life satisfaction is best thought of as a meta concept combining psychological and subjective well-being.
 Notably, life satisfaction is stable and fluctuates only little, whereas it's the exact opposite for affect [@dienlinImpactDigitalTechnology2020].
 <!-- Everyone can feel bad on any given day, but whether or not one feels generally comfortable in one's life rather changes across years. -->
 To capture well-being in this study I thus build on life satisfaction, positive affect, and negative affect.
@@ -121,10 +121,11 @@ The hierarchical taxonomy of computer-mediated communication differentiates six 
 First, the device (e.g., smartphone); second, the type of application (e.g., social networking site); third, the branded application (e.g., Twitter); fourth, the feature (e.g., status post); fifth, the interaction (e.g., one-to-many); and sixth, the message (e.g., content) [@meierComputermediatedCommunicationSocial2020a].
 Whereas the first four levels focus on the communication _channel_, the last two address the communication _type_.
 **Differentiating different communication channels and communication types is important, because the effects on well-being likely differ across communication channels and communication types.**
-**Whereas active social media use such as chatting is routinely linked to improved well-being, passive use such as reading is considered more negative [@dienlinImpactDigitalTechnology2020].**
-Similarly, branded apps are separate entities with potentially divergent effects. 
-For example, @waterlooNormsOnlineExpressions2018 found that it's more adequate to express negative emotions on WhatsApp than on Twitter or on Instagram. 
+**Whereas active social media use such as chatting is routinely linked to improved well-being, passive use such as reading is often considered more negative [@dienlinImpactDigitalTechnology2020].**
+**Similarly, branded apps are separate communication entities with potentially divergent effects and affordances.**
+**For example, @waterlooNormsOnlineExpressions2018 found that it's more adequate to express negative emotions on WhatsApp than on Twitter or on Instagram.**
 **Especially during a pandemic, it makes sense to analyze if users engage with COVID-19 related content on Instagram, where communication is more positive, or on Facebook, where communication is more critical.**
+**First studies suggest that Instagram use was indeed more beneficial for well-being than Facebook use [@masciantonioDonPutAll2021].**
 
 **In this study, to measure the effects of social media use focused on COVID-19 related news and topics, I adopt both the channel and the type of communication perspective.**
 **Together, this should offer a nuanced and comprehensive understanding of communication.**
