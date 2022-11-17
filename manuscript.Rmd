@@ -49,11 +49,11 @@ header-includes:
 
 csl               : "`r system.file('rmd', 'apa7.csl', package = 'papaja')`"
 documentclass     : "apa7"
-# output            :
-#   papaja::apa6_pdf:
-#     latex_engine  : xelatex
+output            :
+  papaja::apa6_pdf:
+    latex_engine  : xelatex
 # output            : papaja::apa6_docx
-output            : html_document
+# output            : html_document
 ---
 
 ```{r analysis-preferences, include=F, cache=F}

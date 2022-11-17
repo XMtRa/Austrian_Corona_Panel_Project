@@ -3,7 +3,7 @@
 
 \centering
 \includegraphics{manuscript_files/figure-latex/sesoi-1.pdf}
-\caption{\label{fig:sesoi}Using confidence intervals to test a null region. Note. Here, a trivial effect of social media use on life satisfaction is defined as ranging from b = -.25 to b = .25}
+\caption{\label{fig:sesoi}Using confidence intervals to test a null region. Note. Here, a trivial effect of social media use on life satisfaction is defined as ranging from b = -.30 to b = .30}
 \end{figure*}
 \efloatseparator
  
