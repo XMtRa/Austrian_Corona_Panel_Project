@@ -52,6 +52,7 @@ documentclass     : "apa7"
 output            :
   papaja::apa6_pdf:
     latex_engine  : xelatex
+# documentclass     : "apa6"
 # output            : papaja::apa6_docx
 # output            : html_document
 ---
