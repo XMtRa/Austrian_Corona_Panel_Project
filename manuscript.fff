@@ -24,12 +24,5 @@
 \begin{figure*}[hbt]
 \ifnextchar[{\eatarg}{}
 
-\includegraphics[width=\textwidth]{manuscript_files/figure-latex/fig-between-1} \caption{Between-person relations between COVID-19 related social media use and well-being. Note. The black estimates show the effects controlled for a large number of covariates (see text; preregistered); the grey estimates are without control variables (exploratory). The SESOI was b = |0.30| for life satisfaction and b = |0.15| for affect. Hence, all of the reported effects are not considered meaningful.}\label{fig:fig-between}
-\end{figure*}
-\efloatseparator
- 
-\begin{figure*}[hbt]
-\ifnextchar[{\eatarg}{}
-
 \includegraphics[width=\textwidth]{manuscript_files/figure-latex/fig-control-1} \caption{Results of selected covariates. Note. All variables standardized except 'Male'.}\label{fig:fig-control}
 \end{figure*}

@@ -13,7 +13,7 @@
 
 <title>Additional analyses</title>
 
-<script src="site_libs/header-attrs-2.13/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
@@ -149,11 +149,15 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.tab('show');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
   // Navbar adjustments
   var navHeight = $(".navbar").first().height() + 15;
@@ -182,8 +186,8 @@ $(document).ready(function () {
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -191,16 +195,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -339,6 +336,9 @@ div.tocify {
   <a href="manuscript.html">Manuscript</a>
 </li>
 <li>
+  <a href="analyses_setup.html">Setup</a>
+</li>
+<li>
   <a href="analyses.html">Analyses</a>
 </li>
 <li>
@@ -399,16 +399,10 @@ div.tocify {
 analyses.</li>
 <li>To see a good overview of the results, I recommend you directly go
 down to the Figures section.</li>
-<li>But if you’re interested in how the analyses were executed, just tag
-along.</li>
+<li>But if you’re interested in how the analyses were executed, see
+below.</li>
 <li>To see the code, click on button “Code”. Alternatively, you can
 download the rmd file from the github repo.</li>
-<li>To execute the code, first download the actual data from AUSSDA (<a
-href="https://doi.org/10.11587/28KQNS"
-class="uri">https://doi.org/10.11587/28KQNS</a>), save as .csv, then run
-analysis.rmd, then this file</li>
-<li>Note that this paper uses an advance version consisting of 32 waves,
-which is at the time of writing not officially published.</li>
 </ul>
 <div id="set-up" class="section level1">
 <h1>Set-up</h1>
@@ -426,12 +420,12 @@ packages &lt;- c(&quot;broom.mixed&quot;, &quot;brms&quot;, &quot;devtools&quot;
 lapply(c(packages, &quot;td&quot;), library, character.only = TRUE)
 
 # load workspace
-load(&quot;data/workspace_1.RData&quot;)</code></pre>
+load(&quot;data/workspace_2.RData&quot;)</code></pre>
 </div>
 <div id="with-additional-covariates" class="section level1">
 <h1>With additional covariates</h1>
-<p>These models include additional covariates that weren’t
-preregistered. These are:</p>
+<p>These models include additional covariates that weren’t preregistered
+and weren’t included for theoretical reasons. These are:</p>
 <ul>
 <li>Trust in ORF</li>
 <li>Trust in police</li>
@@ -440,1008 +434,478 @@ preregistered. These are:</p>
 <li>Trust in government</li>
 <li>Trust in army</li>
 </ul>
-<div id="life-satisfaction" class="section level2">
+<div id="life-satisfaction" class="section level3">
+<h3>Life satisfaction</h3>
+<pre class="r"><code>model_life_sat_lmer_add &lt;- &quot;
+  life_sat ~ 
+    (1 | id) + (1 | wave) + 
+    soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
+    soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+    soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+    soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
+    age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
+    res_vienna + acc_bal + acc_gar + home_sqm + 
+    corona_pos_b + corona_pos_w +
+    work_h_b + work_h_w +
+    work_homeoff_b +  work_homeoff_w +
+    hh_income_b + hh_income_w +
+    hh_adults + hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + 
+    hh_oldfam + hh_outfam + hh_partner +
+    home_owner +
+    med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
+    med_vid_orf_b + med_vid_pri_b + 
+    med_txt_kro_w + med_txt_sta_w + med_txt_pre_w + med_txt_oes_w + med_txt_kur_w + med_txt_slz_w + med_txt_son_w + 
+    med_vid_orf_w + med_vid_pri_w + 
+    risk_prop_b + risk_prop_w + 
+    act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
+    act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
+    sat_dem_w + sat_dem_b + 
+    health_w + health_b +
+    loc_cntrl_int_m_w + loc_cntrl_int_m_b +
+    trst_media_w + trst_police_w + trst_media_w + trst_hlthsec_w + trst_gov_w + trst_army_w + 
+    trst_media_b + trst_police_b + trst_media_b + trst_hlthsec_b + trst_gov_b + trst_army_b
+&quot;
+
+fit_life_sat_lmer_add &lt;- with(d_long_100_mim_mice, 
+                              exp = lmerTest::lmer(model_life_sat_lmer_add))
+fit_life_sat_lmer_add &lt;- summary(pool(fit_life_sat_lmer_add), conf.int = TRUE)
+print_res(fit_life_sat_lmer_add)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["term"],"name":[1],"type":["fct"],"align":["left"]},{"label":["estimate"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["2.5 %"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["97.5 %"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"(Intercept)","2":"-6.25121","3":"-7.19452","4":"-5.3079","5":"< .001"},{"1":"soc_med_read_w","2":"0.02655","3":"-0.00899","4":"0.0621","5":".116"},{"1":"soc_med_like_share_w","2":"-0.02362","3":"-0.07934","4":"0.0321","5":".326"},{"1":"soc_med_post_w","2":"-0.03979","3":"-0.10117","4":"0.0216","5":".160"},{"1":"soc_med_fb_w","2":"0.00042","3":"-0.03835","4":"0.0392","5":".979"},{"1":"soc_med_ig_w","2":"0.00879","3":"-0.01120","4":"0.0288","5":".351"},{"1":"soc_med_wa_w","2":"-0.00545","3":"-0.03307","4":"0.0222","5":".646"},{"1":"soc_med_yt_w","2":"0.02470","3":"-0.02079","4":"0.0702","5":".223"},{"1":"soc_med_tw_w","2":"-0.02112","3":"-0.09081","4":"0.0486","5":".467"},{"1":"soc_med_read_b","2":"0.11732","3":"-0.12150","4":"0.3561","5":".321"},{"1":"soc_med_like_share_b","2":"-0.15916","3":"-0.39960","4":"0.0813","5":".193"},{"1":"soc_med_post_b","2":"0.05664","3":"-0.23575","4":"0.3490","5":".702"},{"1":"soc_med_fb_b","2":"0.00549","3":"-0.13733","4":"0.1483","5":".939"},{"1":"soc_med_ig_b","2":"-0.23755","3":"-0.36684","4":"-0.1083","5":"< .001"},{"1":"soc_med_wa_b","2":"0.12982","3":"-0.00684","4":"0.2665","5":".063"},{"1":"soc_med_yt_b","2":"0.40589","3":"0.21021","4":"0.6016","5":"< .001"},{"1":"soc_med_tw_b","2":"0.03447","3":"-0.20968","4":"0.2786","5":".779"},{"1":"age","2":"0.01315","3":"0.00583","4":"0.0205","5":"< .001"},{"1":"male","2":"-0.17728","3":"-0.28483","4":"-0.0697","5":".001"},{"1":"born_aus","2":"-0.10842","3":"-0.21201","4":"-0.0048","5":".040"},{"1":"born_aus_prnts","2":"-0.01125","3":"-0.05005","4":"0.0276","5":".568"},{"1":"edu_facBachelor","2":"-0.00464","3":"-0.16854","4":"0.1593","5":".955"},{"1":"edu_facHigh school","2":"0.06828","3":"-0.04442","4":"0.1810","5":".229"},{"1":"edu_facMaster","2":"-0.07365","3":"-0.22427","4":"0.0770","5":".331"},{"1":"edu_facMiddle school","2":"0.12944","3":"-0.01484","4":"0.2737","5":".078"},{"1":"edu_facNo degree","2":"0.63950","3":"0.25800","4":"1.0210","5":".002"},{"1":"edu_facPhD","2":"0.10659","3":"-0.17198","4":"0.3852","5":".453"},{"1":"edu_facState college","2":"-0.10700","3":"-0.27818","4":"0.0642","5":".218"},{"1":"edu_facTechnical school","2":"0.05236","3":"-0.04765","4":"0.1524","5":".300"},{"1":"edu_facVocational school","2":"0.12339","3":"-0.02542","4":"0.2722","5":".101"},{"1":"employment_facIncapacitated","2":"-0.97033","3":"-1.75251","4":"-0.1882","5":".022"},{"1":"employment_facIndustrie","2":"-1.42143","3":"-1.68767","4":"-1.1552","5":"< .001"},{"1":"employment_facParental Leave","2":"-1.01025","3":"-1.30735","4":"-0.7131","5":"< .001"},{"1":"employment_facPublic service","2":"-1.26923","3":"-1.53613","4":"-1.0023","5":"< .001"},{"1":"employment_facRetired","2":"-1.34494","3":"-1.65049","4":"-1.0394","5":"< .001"},{"1":"employment_facSelf-employed","2":"-1.74307","3":"-2.05653","4":"-1.4296","5":"< .001"},{"1":"employment_facStudent","2":"-1.23617","3":"-1.59378","4":"-0.8786","5":"< .001"},{"1":"employment_facUnemployed","2":"-1.32839","3":"-1.56397","4":"-1.0928","5":"< .001"},{"1":"res_vienna","2":"-0.04834","3":"-0.15765","4":"0.0610","5":".374"},{"1":"acc_bal","2":"-0.04638","3":"-0.12581","4":"0.0331","5":".236"},{"1":"acc_gar","2":"-0.19774","3":"-0.30677","4":"-0.0887","5":".002"},{"1":"home_sqm","2":"0.00147","3":"0.00078","4":"0.0022","5":"< .001"},{"1":"corona_pos_b","2":"-0.30083","3":"-0.45000","4":"-0.1517","5":"< .001"},{"1":"corona_pos_w","2":"-0.01339","3":"-0.06227","4":"0.0355","5":".502"},{"1":"work_h_b","2":"-0.00384","3":"-0.01020","4":"0.0025","5":".235"},{"1":"work_h_w","2":"0.00124","3":"-0.00044","4":"0.0029","5":".131"},{"1":"work_homeoff_b","2":"0.07849","3":"-0.15136","4":"0.3083","5":".501"},{"1":"work_homeoff_w","2":"0.07606","3":"-0.09670","4":"0.2488","5":".301"},{"1":"hh_income_b","2":"0.04560","3":"0.01795","4":"0.0733","5":".002"},{"1":"hh_income_w","2":"0.08323","3":"0.06506","4":"0.1014","5":"< .001"},{"1":"hh_adults","2":"0.03751","3":"-0.00057","4":"0.0756","5":".053"},{"1":"hh_child18","2":"-0.16732","3":"-0.28704","4":"-0.0476","5":".010"},{"1":"hh_child17","2":"-0.09593","3":"-0.14028","4":"-0.0516","5":"< .001"},{"1":"hh_child14","2":"0.08966","3":"0.03939","4":"0.1399","5":".001"},{"1":"hh_child5","2":"0.01721","3":"-0.06480","4":"0.0992","5":".665"},{"1":"hh_child2","2":"0.10754","3":"-0.05388","4":"0.2690","5":".155"},{"1":"hh_oldfam","2":"0.02930","3":"-0.08811","4":"0.1467","5":".611"},{"1":"hh_outfam","2":"-0.06185","3":"-0.28682","4":"0.1631","5":".563"},{"1":"hh_partner","2":"0.11324","3":"-0.03469","4":"0.2612","5":".118"},{"1":"home_owner","2":"0.16464","3":"0.07943","4":"0.2498","5":".002"},{"1":"med_txt_kro_b","2":"0.30589","3":"0.16913","4":"0.4427","5":"< .001"},{"1":"med_txt_sta_b","2":"0.41255","3":"0.24481","4":"0.5803","5":"< .001"},{"1":"med_txt_pre_b","2":"-0.26674","3":"-0.50179","4":"-0.0317","5":".026"},{"1":"med_txt_oes_b","2":"-0.18647","3":"-0.38664","4":"0.0137","5":".067"},{"1":"med_txt_kur_b","2":"0.22406","3":"0.03219","4":"0.4159","5":".022"},{"1":"med_txt_slz_b","2":"0.05113","3":"-0.17123","4":"0.2735","5":".652"},{"1":"med_txt_son_b","2":"-0.09931","3":"-0.21097","4":"0.0123","5":".080"},{"1":"med_vid_orf_b","2":"-0.37755","3":"-0.51900","4":"-0.2361","5":"< .001"},{"1":"med_vid_pri_b","2":"0.16508","3":"0.02535","4":"0.3048","5":".021"},{"1":"med_txt_kro_w","2":"0.03080","3":"-0.01247","4":"0.0741","5":".126"},{"1":"med_txt_sta_w","2":"0.02410","3":"-0.01832","4":"0.0665","5":".208"},{"1":"med_txt_pre_w","2":"-0.03163","3":"-0.12708","4":"0.0638","5":".421"},{"1":"med_txt_oes_w","2":"0.00582","3":"-0.04973","4":"0.0614","5":".795"},{"1":"med_txt_kur_w","2":"0.01139","3":"-0.02369","4":"0.0465","5":".463"},{"1":"med_txt_slz_w","2":"-0.00660","3":"-0.09072","4":"0.0775","5":".845"},{"1":"med_txt_son_w","2":"-0.01632","3":"-0.08656","4":"0.0539","5":".562"},{"1":"med_vid_orf_w","2":"-0.05451","3":"-0.08927","4":"-0.0197","5":".009"},{"1":"med_vid_pri_w","2":"0.01025","3":"-0.02505","4":"0.0455","5":".496"},{"1":"risk_prop_b","2":"0.13860","3":"0.07937","4":"0.1978","5":"< .001"},{"1":"risk_prop_w","2":"0.06647","3":"0.04519","4":"0.0877","5":"< .001"},{"1":"act_wrk_w","2":"0.02923","3":"0.01246","4":"0.0460","5":".002"},{"1":"act_spo_w","2":"0.06501","3":"0.04177","4":"0.0882","5":"< .001"},{"1":"act_frn_w","2":"0.06251","3":"0.01829","4":"0.1067","5":".013"},{"1":"act_sho_w","2":"0.00450","3":"-0.04717","4":"0.0562","5":".836"},{"1":"act_pet_w","2":"0.01795","3":"-0.00304","4":"0.0389","5":".084"},{"1":"act_wrk_b","2":"0.01263","3":"-0.04891","4":"0.0742","5":".687"},{"1":"act_spo_b","2":"-0.09041","3":"-0.15165","4":"-0.0292","5":".004"},{"1":"act_frn_b","2":"0.04715","3":"-0.04930","4":"0.1436","5":".338"},{"1":"act_sho_b","2":"-0.12867","3":"-0.21819","4":"-0.0391","5":".005"},{"1":"act_pet_b","2":"0.05763","3":"0.02085","4":"0.0944","5":".002"},{"1":"sat_dem_w","2":"0.14520","3":"0.11533","4":"0.1751","5":"< .001"},{"1":"sat_dem_b","2":"0.14042","3":"0.05632","4":"0.2245","5":".001"},{"1":"health_w","2":"0.52334","3":"0.47478","4":"0.5719","5":"< .001"},{"1":"health_b","2":"1.00417","3":"0.86194","4":"1.1464","5":"< .001"},{"1":"loc_cntrl_int_m_w","2":"0.85420","3":"0.77316","4":"0.9352","5":"< .001"},{"1":"loc_cntrl_int_m_b","2":"2.61489","3":"2.36117","4":"2.8686","5":"< .001"},{"1":"trst_media_w","2":"0.02976","3":"0.00809","4":"0.0514","5":".015"},{"1":"trst_police_w","2":"0.04876","3":"0.01535","4":"0.0822","5":".014"},{"1":"trst_hlthsec_w","2":"0.04540","3":"0.02595","4":"0.0648","5":".001"},{"1":"trst_gov_w","2":"0.00262","3":"-0.01974","4":"0.0250","5":".785"},{"1":"trst_army_w","2":"-0.00211","3":"-0.01347","4":"0.0093","5":".697"},{"1":"trst_media_b","2":"0.04640","3":"0.00382","4":"0.0890","5":".033"},{"1":"trst_police_b","2":"0.03285","3":"-0.00353","4":"0.0692","5":".077"},{"1":"trst_hlthsec_b","2":"0.02471","3":"-0.01164","4":"0.0611","5":".182"},{"1":"trst_gov_b","2":"0.03287","3":"-0.00989","4":"0.0756","5":".132"},{"1":"trst_army_b","2":"-0.03603","3":"-0.07336","4":"0.0013","5":".058"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="positive-affect" class="section level3">
+<h3>Positive Affect</h3>
+<pre class="r"><code>model_aff_pos_lmer_add &lt;- &quot;
+  aff_pos_m ~ 
+    (1 | id) + (1 | wave) + 
+    soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
+    soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+    soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+    soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
+    age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
+    res_vienna + acc_bal + acc_gar + home_sqm + 
+    corona_pos_b + corona_pos_w +
+    work_h_b + work_h_w +
+    work_homeoff_b +  work_homeoff_w +
+    hh_income_b + hh_income_w +
+    hh_adults + hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + 
+    hh_oldfam + hh_outfam + hh_partner +
+    home_owner +
+    med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
+    med_vid_orf_b + med_vid_pri_b + 
+    med_txt_kro_w + med_txt_sta_w + med_txt_pre_w + med_txt_oes_w + med_txt_kur_w + med_txt_slz_w + med_txt_son_w + 
+    med_vid_orf_w + med_vid_pri_w + 
+    risk_prop_b + risk_prop_w + 
+    act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
+    act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
+    sat_dem_w + sat_dem_b + 
+    health_w + health_b +
+    loc_cntrl_int_m_w + loc_cntrl_int_m_b +
+    trst_media_w + trst_police_w + trst_media_w + trst_hlthsec_w + trst_gov_w + trst_army_w + 
+    trst_media_b + trst_police_b + trst_media_b + trst_hlthsec_b + trst_gov_b + trst_army_b
+&quot;
+
+fit_aff_pos_lmer_add &lt;- with(d_long_100_mim_mice, 
+                              exp = lmerTest::lmer(model_aff_pos_lmer_add))
+fit_aff_pos_lmer_add &lt;- summary(pool(fit_aff_pos_lmer_add), conf.int = TRUE)
+print_res(fit_aff_pos_lmer_add)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["term"],"name":[1],"type":["fct"],"align":["left"]},{"label":["estimate"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["2.5 %"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["97.5 %"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"(Intercept)","2":"-3.51102","3":"-3.95919","4":"-3.062851","5":"< .001"},{"1":"soc_med_read_w","2":"-0.03146","3":"-0.05194","4":"-0.010980","5":".011"},{"1":"soc_med_like_share_w","2":"0.00706","3":"-0.02097","4":"0.035085","5":".540"},{"1":"soc_med_post_w","2":"0.01279","3":"-0.02073","4":"0.046305","5":".369"},{"1":"soc_med_fb_w","2":"-0.00601","3":"-0.03528","4":"0.023259","5":".607"},{"1":"soc_med_ig_w","2":"-0.00373","3":"-0.02401","4":"0.016555","5":".654"},{"1":"soc_med_wa_w","2":"0.00885","3":"-0.01958","4":"0.037286","5":".445"},{"1":"soc_med_yt_w","2":"0.00369","3":"-0.03970","4":"0.047068","5":".828"},{"1":"soc_med_tw_w","2":"0.01066","3":"-0.00391","4":"0.025233","5":".129"},{"1":"soc_med_read_b","2":"-0.36144","3":"-0.45250","4":"-0.270390","5":"< .001"},{"1":"soc_med_like_share_b","2":"0.19073","3":"0.06738","4":"0.314079","5":".003"},{"1":"soc_med_post_b","2":"0.31782","3":"0.17235","4":"0.463297","5":"< .001"},{"1":"soc_med_fb_b","2":"-0.09653","3":"-0.17601","4":"-0.017043","5":".019"},{"1":"soc_med_ig_b","2":"-0.03595","3":"-0.11506","4":"0.043152","5":".362"},{"1":"soc_med_wa_b","2":"0.07425","3":"0.00750","4":"0.141002","5":".029"},{"1":"soc_med_yt_b","2":"0.05278","3":"-0.04316","4":"0.148709","5":".279"},{"1":"soc_med_tw_b","2":"0.05692","3":"-0.05201","4":"0.165844","5":".305"},{"1":"age","2":"0.00213","3":"-0.00211","4":"0.006373","5":".315"},{"1":"male","2":"0.11609","3":"0.06281","4":"0.169372","5":"< .001"},{"1":"born_aus","2":"0.04267","3":"-0.02131","4":"0.106645","5":".179"},{"1":"born_aus_prnts","2":"-0.04784","3":"-0.06720","4":"-0.028477","5":"< .001"},{"1":"edu_facBachelor","2":"0.05396","3":"-0.03282","4":"0.140746","5":".215"},{"1":"edu_facHigh school","2":"-0.01981","3":"-0.06974","4":"0.030118","5":".436"},{"1":"edu_facMaster","2":"0.02588","3":"-0.05547","4":"0.107229","5":".523"},{"1":"edu_facMiddle school","2":"-0.07407","3":"-0.14928","4":"0.001134","5":".053"},{"1":"edu_facNo degree","2":"-0.05207","3":"-0.22786","4":"0.123720","5":".558"},{"1":"edu_facPhD","2":"0.10415","3":"-0.03509","4":"0.243383","5":".143"},{"1":"edu_facState college","2":"0.06176","3":"-0.02142","4":"0.144945","5":".145"},{"1":"edu_facTechnical school","2":"-0.02394","3":"-0.07113","4":"0.023259","5":".319"},{"1":"edu_facVocational school","2":"-0.05546","3":"-0.12694","4":"0.016017","5":".125"},{"1":"employment_facIncapacitated","2":"-0.09314","3":"-0.27345","4":"0.087159","5":".303"},{"1":"employment_facIndustrie","2":"-0.55443","3":"-0.67555","4":"-0.433316","5":"< .001"},{"1":"employment_facParental Leave","2":"-0.14998","3":"-0.29950","4":"-0.000456","5":".049"},{"1":"employment_facPublic service","2":"-0.52714","3":"-0.66404","4":"-0.390235","5":"< .001"},{"1":"employment_facRetired","2":"-0.48910","3":"-0.61917","4":"-0.359021","5":"< .001"},{"1":"employment_facSelf-employed","2":"-0.75001","3":"-0.88520","4":"-0.614823","5":"< .001"},{"1":"employment_facStudent","2":"-0.46568","3":"-0.64155","4":"-0.289806","5":"< .001"},{"1":"employment_facUnemployed","2":"-0.30825","3":"-0.41833","4":"-0.198175","5":"< .001"},{"1":"res_vienna","2":"-0.18172","3":"-0.22985","4":"-0.133596","5":"< .001"},{"1":"acc_bal","2":"-0.06581","3":"-0.09866","4":"-0.032969","5":"< .001"},{"1":"acc_gar","2":"-0.14334","3":"-0.19405","4":"-0.092638","5":"< .001"},{"1":"home_sqm","2":"0.00088","3":"0.00062","4":"0.001143","5":"< .001"},{"1":"corona_pos_b","2":"0.04342","3":"-0.03510","4":"0.121935","5":".270"},{"1":"corona_pos_w","2":"-0.00071","3":"-0.01908","4":"0.017670","5":".923"},{"1":"work_h_b","2":"-0.00177","3":"-0.00488","4":"0.001344","5":".265"},{"1":"work_h_w","2":"-0.00024","3":"-0.00132","4":"0.000842","5":".610"},{"1":"work_homeoff_b","2":"0.05988","3":"-0.05549","4":"0.175249","5":".307"},{"1":"work_homeoff_w","2":"0.01581","3":"-0.02983","4":"0.061453","5":".421"},{"1":"hh_income_b","2":"-0.02128","3":"-0.03360","4":"-0.008962","5":"< .001"},{"1":"hh_income_w","2":"0.00981","3":"0.00018","4":"0.019433","5":".047"},{"1":"hh_adults","2":"0.00582","3":"-0.01768","4":"0.029317","5":".592"},{"1":"hh_child18","2":"-0.06970","3":"-0.14152","4":"0.002123","5":".056"},{"1":"hh_child17","2":"-0.04004","3":"-0.07623","4":"-0.003845","5":".033"},{"1":"hh_child14","2":"-0.01457","3":"-0.03600","4":"0.006857","5":".174"},{"1":"hh_child5","2":"0.01398","3":"-0.04820","4":"0.076154","5":".613"},{"1":"hh_child2","2":"0.02571","3":"-0.01945","4":"0.070871","5":".238"},{"1":"hh_oldfam","2":"-0.10897","3":"-0.19099","4":"-0.026952","5":".015"},{"1":"hh_outfam","2":"-0.09059","3":"-0.21820","4":"0.037027","5":".142"},{"1":"hh_partner","2":"-0.03372","3":"-0.09374","4":"0.026287","5":".244"},{"1":"home_owner","2":"0.06096","3":"0.01328","4":"0.108642","5":".020"},{"1":"med_txt_kro_b","2":"0.06459","3":"0.00301","4":"0.126161","5":".040"},{"1":"med_txt_sta_b","2":"-0.13893","3":"-0.23268","4":"-0.045178","5":".004"},{"1":"med_txt_pre_b","2":"0.11906","3":"-0.00416","4":"0.242284","5":".058"},{"1":"med_txt_oes_b","2":"-0.01039","3":"-0.09908","4":"0.078292","5":".817"},{"1":"med_txt_kur_b","2":"0.21785","3":"0.12201","4":"0.313697","5":"< .001"},{"1":"med_txt_slz_b","2":"0.15744","3":"0.04463","4":"0.270246","5":".006"},{"1":"med_txt_son_b","2":"-0.00492","3":"-0.05202","4":"0.042185","5":".838"},{"1":"med_vid_orf_b","2":"-0.21291","3":"-0.28510","4":"-0.140722","5":"< .001"},{"1":"med_vid_pri_b","2":"0.01522","3":"-0.05531","4":"0.085759","5":".671"},{"1":"med_txt_kro_w","2":"-0.00526","3":"-0.01044","4":"-0.000074","5":".047"},{"1":"med_txt_sta_w","2":"-0.01022","3":"-0.02248","4":"0.002046","5":".090"},{"1":"med_txt_pre_w","2":"0.00653","3":"-0.00815","4":"0.021211","5":".333"},{"1":"med_txt_oes_w","2":"-0.00147","3":"-0.01576","4":"0.012816","5":".809"},{"1":"med_txt_kur_w","2":"0.01246","3":"-0.00297","4":"0.027897","5":".096"},{"1":"med_txt_slz_w","2":"0.02072","3":"0.00056","4":"0.040875","5":".046"},{"1":"med_txt_son_w","2":"0.01293","3":"-0.00024","4":"0.026100","5":".053"},{"1":"med_vid_orf_w","2":"-0.02741","3":"-0.04387","4":"-0.010949","5":".008"},{"1":"med_vid_pri_w","2":"0.00826","3":"-0.01864","4":"0.035159","5":".453"},{"1":"risk_prop_b","2":"-0.01880","3":"-0.04707","4":"0.009461","5":".191"},{"1":"risk_prop_w","2":"0.00835","3":"0.00051","4":"0.016199","5":".041"},{"1":"act_wrk_w","2":"0.03452","3":"0.02688","4":"0.042161","5":"< .001"},{"1":"act_spo_w","2":"0.12697","3":"0.11694","4":"0.137002","5":"< .001"},{"1":"act_frn_w","2":"0.08182","3":"0.06427","4":"0.099362","5":"< .001"},{"1":"act_sho_w","2":"0.04853","3":"0.03088","4":"0.066183","5":"< .001"},{"1":"act_pet_w","2":"0.02033","3":"0.00746","4":"0.033208","5":".009"},{"1":"act_wrk_b","2":"0.01599","3":"-0.01976","4":"0.051736","5":".375"},{"1":"act_spo_b","2":"0.05555","3":"0.02610","4":"0.084993","5":"< .001"},{"1":"act_frn_b","2":"0.06387","3":"0.01335","4":"0.114389","5":".013"},{"1":"act_sho_b","2":"0.02796","3":"-0.01299","4":"0.068917","5":".181"},{"1":"act_pet_b","2":"0.01723","3":"-0.00075","4":"0.035208","5":".060"},{"1":"sat_dem_w","2":"0.01141","3":"-0.00782","4":"0.030643","5":".196"},{"1":"sat_dem_b","2":"-0.02918","3":"-0.07215","4":"0.013786","5":".183"},{"1":"health_w","2":"0.25272","3":"0.23997","4":"0.265465","5":"< .001"},{"1":"health_b","2":"0.44759","3":"0.38213","4":"0.513044","5":"< .001"},{"1":"loc_cntrl_int_m_w","2":"0.38394","3":"0.35795","4":"0.409936","5":"< .001"},{"1":"loc_cntrl_int_m_b","2":"1.63700","3":"1.52522","4":"1.748780","5":"< .001"},{"1":"trst_media_w","2":"0.00470","3":"-0.00055","4":"0.009944","5":".076"},{"1":"trst_police_w","2":"0.02259","3":"0.01345","4":"0.031734","5":"< .001"},{"1":"trst_hlthsec_w","2":"-0.00366","3":"-0.01454","4":"0.007227","5":".430"},{"1":"trst_gov_w","2":"0.00824","3":"0.00095","4":"0.015529","5":".031"},{"1":"trst_army_w","2":"-0.00398","3":"-0.01136","4":"0.003407","5":".243"},{"1":"trst_media_b","2":"0.03222","3":"0.01029","4":"0.054145","5":".004"},{"1":"trst_police_b","2":"0.03003","3":"0.01195","4":"0.048115","5":".001"},{"1":"trst_hlthsec_b","2":"0.01096","3":"-0.00650","4":"0.028430","5":".218"},{"1":"trst_gov_b","2":"-0.00704","3":"-0.02916","4":"0.015079","5":".531"},{"1":"trst_army_b","2":"-0.03319","3":"-0.05077","4":"-0.015615","5":"< .001"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="negative-affect" class="section level3">
+<h3>Negative Affect</h3>
+<pre class="r"><code>model_aff_neg_lmer_add &lt;- &quot;
+  aff_neg_m ~ 
+    (1 | id) + (1 | wave) + 
+    soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
+    soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+    soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+    soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
+    age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
+    res_vienna + acc_bal + acc_gar + home_sqm + 
+    corona_pos_b + corona_pos_w +
+    work_h_b + work_h_w +
+    work_homeoff_b +  work_homeoff_w +
+    hh_income_b + hh_income_w +
+    hh_adults + hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + 
+    hh_oldfam + hh_outfam + hh_partner +
+    home_owner +
+    med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
+    med_vid_orf_b + med_vid_pri_b + 
+    med_txt_kro_w + med_txt_sta_w + med_txt_pre_w + med_txt_oes_w + med_txt_kur_w + med_txt_slz_w + med_txt_son_w + 
+    med_vid_orf_w + med_vid_pri_w + 
+    risk_prop_b + risk_prop_w + 
+    act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
+    act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
+    sat_dem_w + sat_dem_b + 
+    health_w + health_b +
+    loc_cntrl_int_m_w + loc_cntrl_int_m_b +
+    trst_media_w + trst_police_w + trst_media_w + trst_hlthsec_w + trst_gov_w + trst_army_w + 
+    trst_media_b + trst_police_b + trst_media_b + trst_hlthsec_b + trst_gov_b + trst_army_b
+&quot;
+
+fit_aff_neg_lmer_add &lt;- with(d_long_100_mim_mice, 
+                              exp = lmerTest::lmer(model_aff_neg_lmer_add))
+fit_aff_neg_lmer_add &lt;- summary(pool(fit_aff_neg_lmer_add), conf.int = TRUE)
+print_res(fit_aff_neg_lmer_add)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["term"],"name":[1],"type":["fct"],"align":["left"]},{"label":["estimate"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["2.5 %"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["97.5 %"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"(Intercept)","2":"4.16175","3":"3.86433","4":"4.459178","5":"< .001"},{"1":"soc_med_read_w","2":"0.00096","3":"-0.00967","4":"0.011597","5":".830"},{"1":"soc_med_like_share_w","2":"0.01589","3":"0.00348","4":"0.028306","5":".020"},{"1":"soc_med_post_w","2":"0.04617","3":"0.01539","4":"0.076942","5":".013"},{"1":"soc_med_fb_w","2":"-0.00555","3":"-0.01770","4":"0.006595","5":".292"},{"1":"soc_med_ig_w","2":"-0.00349","3":"-0.01235","4":"0.005368","5":".376"},{"1":"soc_med_wa_w","2":"0.00344","3":"-0.01128","4":"0.018167","5":".566"},{"1":"soc_med_yt_w","2":"0.01271","3":"-0.01563","4":"0.041055","5":".287"},{"1":"soc_med_tw_w","2":"0.01419","3":"0.00016","4":"0.028208","5":".048"},{"1":"soc_med_read_b","2":"0.04769","3":"-0.02124","4":"0.116619","5":".170"},{"1":"soc_med_like_share_b","2":"0.13515","3":"0.06099","4":"0.209309","5":"< .001"},{"1":"soc_med_post_b","2":"0.19682","3":"0.11145","4":"0.282184","5":"< .001"},{"1":"soc_med_fb_b","2":"0.00899","3":"-0.03406","4":"0.052042","5":".681"},{"1":"soc_med_ig_b","2":"0.02554","3":"-0.01545","4":"0.066533","5":".222"},{"1":"soc_med_wa_b","2":"0.02622","3":"-0.01708","4":"0.069529","5":".234"},{"1":"soc_med_yt_b","2":"0.02365","3":"-0.03373","4":"0.081022","5":".418"},{"1":"soc_med_tw_b","2":"-0.05790","3":"-0.12806","4":"0.012254","5":".105"},{"1":"age","2":"-0.00801","3":"-0.01056","4":"-0.005452","5":"< .001"},{"1":"male","2":"-0.06035","3":"-0.09464","4":"-0.026061","5":"< .001"},{"1":"born_aus","2":"-0.02559","3":"-0.06403","4":"0.012862","5":".182"},{"1":"born_aus_prnts","2":"-0.03379","3":"-0.04579","4":"-0.021793","5":"< .001"},{"1":"edu_facBachelor","2":"-0.03968","3":"-0.09214","4":"0.012788","5":".134"},{"1":"edu_facHigh school","2":"-0.00299","3":"-0.03532","4":"0.029331","5":".855"},{"1":"edu_facMaster","2":"-0.01499","3":"-0.06266","4":"0.032673","5":".531"},{"1":"edu_facMiddle school","2":"0.01448","3":"-0.02924","4":"0.058211","5":".513"},{"1":"edu_facNo degree","2":"0.06764","3":"-0.04575","4":"0.181026","5":".238"},{"1":"edu_facPhD","2":"-0.09251","3":"-0.18711","4":"0.002088","5":".055"},{"1":"edu_facState college","2":"-0.04060","3":"-0.09091","4":"0.009702","5":".113"},{"1":"edu_facTechnical school","2":"-0.00496","3":"-0.03379","4":"0.023879","5":".736"},{"1":"edu_facVocational school","2":"0.00674","3":"-0.03237","4":"0.045848","5":".735"},{"1":"employment_facIncapacitated","2":"0.24081","3":"0.08472","4":"0.396889","5":".005"},{"1":"employment_facIndustrie","2":"0.35081","3":"0.25855","4":"0.443062","5":"< .001"},{"1":"employment_facParental Leave","2":"0.23520","3":"0.13504","4":"0.335355","5":"< .001"},{"1":"employment_facPublic service","2":"0.34221","3":"0.25528","4":"0.429147","5":"< .001"},{"1":"employment_facRetired","2":"0.36044","3":"0.28556","4":"0.435313","5":"< .001"},{"1":"employment_facSelf-employed","2":"0.42996","3":"0.31475","4":"0.545178","5":"< .001"},{"1":"employment_facStudent","2":"0.29473","3":"0.17405","4":"0.415409","5":"< .001"},{"1":"employment_facUnemployed","2":"0.18531","3":"0.10956","4":"0.261061","5":"< .001"},{"1":"res_vienna","2":"0.00762","3":"-0.02053","4":"0.035772","5":".595"},{"1":"acc_bal","2":"0.00642","3":"-0.02277","4":"0.035618","5":".641"},{"1":"acc_gar","2":"0.07601","3":"0.05122","4":"0.100787","5":"< .001"},{"1":"home_sqm","2":"-0.00035","3":"-0.00052","4":"-0.000177","5":"< .001"},{"1":"corona_pos_b","2":"0.03241","3":"-0.02780","4":"0.092623","5":".270"},{"1":"corona_pos_w","2":"-0.00692","3":"-0.02333","4":"0.009490","5":".316"},{"1":"work_h_b","2":"-0.00017","3":"-0.00224","4":"0.001888","5":".868"},{"1":"work_h_w","2":"-0.00070","3":"-0.00137","4":"-0.000043","5":".040"},{"1":"work_homeoff_b","2":"-0.00718","3":"-0.08081","4":"0.066457","5":".848"},{"1":"work_homeoff_w","2":"0.00483","3":"-0.01657","4":"0.026227","5":".615"},{"1":"hh_income_b","2":"-0.00886","3":"-0.01692","4":"-0.000804","5":".031"},{"1":"hh_income_w","2":"-0.01700","3":"-0.02378","4":"-0.010228","5":".001"},{"1":"hh_adults","2":"0.00424","3":"-0.00984","4":"0.018326","5":".524"},{"1":"hh_child18","2":"0.00020","3":"-0.02832","4":"0.028717","5":".989"},{"1":"hh_child17","2":"-0.01410","3":"-0.05459","4":"0.026403","5":".424"},{"1":"hh_child14","2":"-0.05964","3":"-0.08309","4":"-0.036194","5":"< .001"},{"1":"hh_child5","2":"-0.00914","3":"-0.03954","4":"0.021256","5":".523"},{"1":"hh_child2","2":"-0.00780","3":"-0.04818","4":"0.032579","5":".665"},{"1":"hh_oldfam","2":"-0.05005","3":"-0.11241","4":"0.012311","5":".100"},{"1":"hh_outfam","2":"0.04747","3":"-0.03306","4":"0.128001","5":".217"},{"1":"hh_partner","2":"-0.06645","3":"-0.13531","4":"0.002405","5":".056"},{"1":"home_owner","2":"-0.01917","3":"-0.04137","4":"0.003024","5":".084"},{"1":"med_txt_kro_b","2":"0.01414","3":"-0.02671","4":"0.054979","5":".496"},{"1":"med_txt_sta_b","2":"0.11791","3":"0.06057","4":"0.175252","5":"< .001"},{"1":"med_txt_pre_b","2":"-0.00348","3":"-0.07786","4":"0.070890","5":".927"},{"1":"med_txt_oes_b","2":"-0.00097","3":"-0.06373","4":"0.061790","5":".975"},{"1":"med_txt_kur_b","2":"0.01330","3":"-0.04429","4":"0.070895","5":".650"},{"1":"med_txt_slz_b","2":"0.03931","3":"-0.04260","4":"0.121224","5":".340"},{"1":"med_txt_son_b","2":"0.07210","3":"0.03469","4":"0.109516","5":"< .001"},{"1":"med_vid_orf_b","2":"0.12634","3":"0.07115","4":"0.181522","5":"< .001"},{"1":"med_vid_pri_b","2":"0.01399","3":"-0.03236","4":"0.060352","5":".551"},{"1":"med_txt_kro_w","2":"0.00238","3":"-0.01240","4":"0.017161","5":".691"},{"1":"med_txt_sta_w","2":"0.00751","3":"-0.00506","4":"0.020076","5":".189"},{"1":"med_txt_pre_w","2":"0.00658","3":"-0.01537","4":"0.028527","5":".471"},{"1":"med_txt_oes_w","2":"-0.00137","3":"-0.02768","4":"0.024934","5":".894"},{"1":"med_txt_kur_w","2":"0.00859","3":"-0.00574","4":"0.022914","5":".187"},{"1":"med_txt_slz_w","2":"0.02306","3":"0.00761","4":"0.038503","5":".011"},{"1":"med_txt_son_w","2":"-0.00272","3":"-0.02122","4":"0.015792","5":".712"},{"1":"med_vid_orf_w","2":"0.02526","3":"0.01282","4":"0.037705","5":".003"},{"1":"med_vid_pri_w","2":"0.00299","3":"-0.02238","4":"0.028357","5":".764"},{"1":"risk_prop_b","2":"-0.02881","3":"-0.04677","4":"-0.010849","5":".002"},{"1":"risk_prop_w","2":"-0.01204","3":"-0.01855","4":"-0.005524","5":".005"},{"1":"act_wrk_w","2":"0.00816","3":"0.00227","4":"0.014041","5":".011"},{"1":"act_spo_w","2":"0.03410","3":"0.02287","4":"0.045329","5":"< .001"},{"1":"act_frn_w","2":"0.02816","3":"0.01739","4":"0.038936","5":"< .001"},{"1":"act_sho_w","2":"0.04062","3":"0.02587","4":"0.055366","5":"< .001"},{"1":"act_pet_w","2":"0.03198","3":"0.02025","4":"0.043721","5":"< .001"},{"1":"act_wrk_b","2":"0.02990","3":"0.00970","4":"0.050091","5":".004"},{"1":"act_spo_b","2":"0.04365","3":"0.02260","4":"0.064706","5":"< .001"},{"1":"act_frn_b","2":"0.02283","3":"-0.00847","4":"0.054131","5":".152"},{"1":"act_sho_b","2":"0.02770","3":"-0.00044","4":"0.055836","5":".054"},{"1":"act_pet_b","2":"-0.02044","3":"-0.03210","4":"-0.008775","5":"< .001"},{"1":"sat_dem_w","2":"-0.05211","3":"-0.06503","4":"-0.039192","5":"< .001"},{"1":"sat_dem_b","2":"-0.04249","3":"-0.06985","4":"-0.015139","5":".002"},{"1":"health_w","2":"-0.21039","3":"-0.21977","4":"-0.201010","5":"< .001"},{"1":"health_b","2":"-0.25367","3":"-0.30128","4":"-0.206059","5":"< .001"},{"1":"loc_cntrl_int_m_w","2":"-0.31218","3":"-0.32982","4":"-0.294536","5":"< .001"},{"1":"loc_cntrl_int_m_b","2":"-0.92419","3":"-0.99266","4":"-0.855724","5":"< .001"},{"1":"trst_media_w","2":"0.00244","3":"-0.00234","4":"0.007224","5":".279"},{"1":"trst_police_w","2":"-0.00961","3":"-0.01535","4":"-0.003868","5":".006"},{"1":"trst_hlthsec_w","2":"-0.01268","3":"-0.01964","4":"-0.005715","5":".005"},{"1":"trst_gov_w","2":"0.00890","3":"0.00408","4":"0.013717","5":".002"},{"1":"trst_army_w","2":"0.00234","3":"-0.00203","4":"0.006700","5":".256"},{"1":"trst_media_b","2":"-0.03723","3":"-0.05127","4":"-0.023189","5":"< .001"},{"1":"trst_police_b","2":"-0.00180","3":"-0.01312","4":"0.009521","5":".755"},{"1":"trst_hlthsec_b","2":"-0.00406","3":"-0.01541","4":"0.007285","5":".482"},{"1":"trst_gov_b","2":"0.02257","3":"0.00959","4":"0.035548","5":"< .001"},{"1":"trst_army_b","2":"0.00801","3":"-0.00316","4":"0.019169","5":".160"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<div id="without-control-variables" class="section level1">
+<h1>Without control variables</h1>
+<p>Let’s inspect how results change when control variables are
+omitted.</p>
+<div id="life-satisfaction-1" class="section level2">
 <h2>Life satisfaction</h2>
-<pre class="r"><code>model_life_sat_lmer_add &lt;- with(d_long_mim_mice, exp =  
-                                lmerTest::lmer(life_sat ~
-                                        (1 | id) + (1 | wave) + 
-                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
-                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
-                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
-                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
-                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
-                                        res_vienna + acc_bal + acc_gar + home_sqm + corona_pos +
-                                        hh_income_b +
-                                        hh_adults +
-                                        hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + hh_oldfam + hh_outfam + hh_partner +
-                                        home_owner +
-                                        med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
-                                        med_vid_orf_b + med_vid_pri_b + 
-                                        risk_prop_b + loc_cntrl_int_m_b + 
-                                        act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
-                                        act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
-                                        sat_dem_w + sat_dem_b + 
-                                        health_w + health_b +
-                                        trst_media_w + trst_police_w + trst_media_w + trst_hlthsec_w + trst_gov_w + trst_army_w +
-                                        trst_media_b + trst_police_b + trst_media_b + trst_hlthsec_b + trst_gov_b + trst_army_b
-                                      ))
-model_life_sat_lmer_add &lt;- summary(pool(model_life_sat_lmer_add), conf.int = TRUE)
-model_life_sat_lmer_add %&gt;% 
-  as.data.frame %&gt;% 
-  select(term, estimate, `2.5 %`, `97.5 %`, p.value) %&gt;% 
-  mutate(p.value = td::my_round(p.value, &quot;p&quot;))</code></pre>
+<pre class="r"><code>model_life_sat_lmer_nco &lt;- &quot;
+  life_sat ~ 
+    (1 | id) + (1 | wave) + 
+    soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
+    soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+    soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+    soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b
+&quot;
+fit_life_sat_lmer_nco &lt;- with(d_long_100_mim_mice, exp = lmerTest::lmer(model_life_sat_lmer_nco))
+fit_life_sat_lmer_nco &lt;- summary(pool(fit_life_sat_lmer_nco), conf.int = TRUE)
+print_res(fit_life_sat_lmer_nco)</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["term"],"name":[1],"type":["fct"],"align":["left"]},{"label":["estimate"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["2.5 %"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["97.5 %"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"(Intercept)","2":"-3.25808","3":"-4.13612","4":"-2.3800","5":"< .001"},{"1":"soc_med_read_w","2":"0.04002","3":"-0.00908","4":"0.0891","5":".110"},{"1":"soc_med_like_share_w","2":"0.01238","3":"-0.04905","4":"0.0738","5":".693"},{"1":"soc_med_post_w","2":"-0.11406","3":"-0.19502","4":"-0.0331","5":".006"},{"1":"soc_med_fb_w","2":"-0.03476","3":"-0.08946","4":"0.0199","5":".213"},{"1":"soc_med_ig_w","2":"0.05264","3":"-0.00900","4":"0.1143","5":".094"},{"1":"soc_med_wa_w","2":"-0.00825","3":"-0.05336","4":"0.0369","5":".720"},{"1":"soc_med_yt_w","2":"0.01769","3":"-0.04314","4":"0.0785","5":".569"},{"1":"soc_med_tw_w","2":"-0.05738","3":"-0.14715","4":"0.0324","5":".210"},{"1":"soc_med_read_b","2":"-0.02368","3":"-0.09606","4":"0.0487","5":".521"},{"1":"soc_med_like_share_b","2":"-0.05106","3":"-0.13628","4":"0.0341","5":".240"},{"1":"soc_med_post_b","2":"0.05155","3":"-0.05824","4":"0.1613","5":".357"},{"1":"soc_med_fb_b","2":"0.00262","3":"-0.05095","4":"0.0562","5":".923"},{"1":"soc_med_ig_b","2":"-0.00838","3":"-0.06978","4":"0.0530","5":".789"},{"1":"soc_med_wa_b","2":"-0.04130","3":"-0.09640","4":"0.0138","5":".142"},{"1":"soc_med_yt_b","2":"0.10639","3":"0.03648","4":"0.1763","5":".003"},{"1":"soc_med_tw_b","2":"-0.00692","3":"-0.09234","4":"0.0785","5":".874"},{"1":"age","2":"0.00522","3":"-0.00179","4":"0.0122","5":".144"},{"1":"male","2":"-0.01541","3":"-0.13985","4":"0.1090","5":".808"},{"1":"born_aus","2":"-0.14751","3":"-0.37402","4":"0.0790","5":".202"},{"1":"born_aus_prnts","2":"0.03275","3":"-0.04521","4":"0.1107","5":".410"},{"1":"edu_facBachelor","2":"0.23280","3":"-0.08652","4":"0.5521","5":".153"},{"1":"edu_facHigh school","2":"0.10265","3":"-0.13921","4":"0.3445","5":".405"},{"1":"edu_facMaster","2":"-0.05308","3":"-0.32799","4":"0.2218","5":".705"},{"1":"edu_facMiddle school","2":"0.05700","3":"-0.18939","4":"0.3034","5":".650"},{"1":"edu_facNo degree","2":"1.05547","3":"0.27960","4":"1.8313","5":".008"},{"1":"edu_facPhD","2":"0.06119","3":"-0.52972","4":"0.6521","5":".839"},{"1":"edu_facState college","2":"-0.22627","3":"-0.61364","4":"0.1611","5":".252"},{"1":"edu_facTechnical school","2":"0.00036","3":"-0.18791","4":"0.1886","5":".997"},{"1":"edu_facVocational school","2":"0.13462","3":"-0.10779","4":"0.3770","5":".276"},{"1":"employment_facIncapacitated","2":"-0.22722","3":"-1.19969","4":"0.7452","5":".644"},{"1":"employment_facIndustrie","2":"-0.81026","3":"-1.26852","4":"-0.3520","5":"< .001"},{"1":"employment_facParental Leave","2":"-0.28970","3":"-0.88391","4":"0.3045","5":".338"},{"1":"employment_facPublic service","2":"-0.65317","3":"-1.12490","4":"-0.1814","5":".007"},{"1":"employment_facRetired","2":"-0.71975","3":"-1.18295","4":"-0.2566","5":".002"},{"1":"employment_facSelf-employed","2":"-1.04340","3":"-1.54489","4":"-0.5419","5":"< .001"},{"1":"employment_facStudent","2":"-0.59674","3":"-1.08799","4":"-0.1055","5":".017"},{"1":"employment_facUnemployed","2":"-1.06109","3":"-1.55994","4":"-0.5622","5":"< .001"},{"1":"res_vienna","2":"0.02375","3":"-0.13410","4":"0.1816","5":".768"},{"1":"acc_bal","2":"-0.04196","3":"-0.16567","4":"0.0818","5":".506"},{"1":"acc_gar","2":"-0.04266","3":"-0.19673","4":"0.1114","5":".587"},{"1":"home_sqm","2":"0.00075","3":"-0.00043","4":"0.0019","5":".211"},{"1":"corona_pos","2":"-0.05538","3":"-0.11369","4":"0.0029","5":".062"},{"1":"hh_income_b","2":"0.07075","3":"0.04094","4":"0.1006","5":"< .001"},{"1":"hh_adults","2":"0.07671","3":"-0.04562","4":"0.1990","5":".200"},{"1":"hh_child18","2":"-0.17389","3":"-0.40640","4":"0.0586","5":".140"},{"1":"hh_child17","2":"-0.05589","3":"-0.19001","4":"0.0782","5":".409"},{"1":"hh_child14","2":"0.02089","3":"-0.10296","4":"0.1447","5":".731"},{"1":"hh_child5","2":"0.05612","3":"-0.12504","4":"0.2373","5":".538"},{"1":"hh_child2","2":"0.07632","3":"-0.10952","4":"0.2622","5":".421"},{"1":"hh_oldfam","2":"-0.22514","3":"-0.60651","4":"0.1562","5":".229"},{"1":"hh_outfam","2":"-0.21453","3":"-0.69589","4":"0.2668","5":".375"},{"1":"hh_partner","2":"0.15174","3":"-0.20931","4":"0.5128","5":".381"},{"1":"home_owner","2":"0.07356","3":"-0.09242","4":"0.2395","5":".370"},{"1":"med_txt_kro_b","2":"0.06302","3":"0.00982","4":"0.1162","5":".020"},{"1":"med_txt_sta_b","2":"-0.00706","3":"-0.07744","4":"0.0633","5":".844"},{"1":"med_txt_pre_b","2":"0.01288","3":"-0.07824","4":"0.1040","5":".782"},{"1":"med_txt_oes_b","2":"0.02263","3":"-0.04433","4":"0.0896","5":".508"},{"1":"med_txt_kur_b","2":"0.04337","3":"-0.03102","4":"0.1178","5":".253"},{"1":"med_txt_slz_b","2":"-0.06574","3":"-0.15831","4":"0.0268","5":".164"},{"1":"med_txt_son_b","2":"-0.02699","3":"-0.08057","4":"0.0266","5":".324"},{"1":"med_vid_orf_b","2":"-0.04874","3":"-0.10769","4":"0.0102","5":".105"},{"1":"med_vid_pri_b","2":"0.02777","3":"-0.03128","4":"0.0868","5":".357"},{"1":"risk_prop_b","2":"0.07775","3":"0.03936","4":"0.1161","5":"< .001"},{"1":"loc_cntrl_int_m_b","2":"1.60700","3":"1.43951","4":"1.7745","5":"< .001"},{"1":"act_wrk_w","2":"0.05956","3":"0.01379","4":"0.1053","5":".011"},{"1":"act_spo_w","2":"-0.00614","3":"-0.06336","4":"0.0511","5":".833"},{"1":"act_frn_w","2":"0.03905","3":"-0.03052","4":"0.1086","5":".271"},{"1":"act_sho_w","2":"0.06808","3":"-0.00275","4":"0.1389","5":".060"},{"1":"act_pet_w","2":"-0.01483","3":"-0.08205","4":"0.0524","5":".664"},{"1":"act_wrk_b","2":"0.02693","3":"-0.03420","4":"0.0881","5":".388"},{"1":"act_spo_b","2":"0.07188","3":"0.00050","4":"0.1433","5":".048"},{"1":"act_frn_b","2":"0.15218","3":"0.04385","4":"0.2605","5":".006"},{"1":"act_sho_b","2":"-0.00558","3":"-0.10660","4":"0.0954","5":".914"},{"1":"act_pet_b","2":"0.03038","3":"-0.01735","4":"0.0781","5":".212"},{"1":"sat_dem_w","2":"0.09750","3":"0.03016","4":"0.1648","5":".005"},{"1":"sat_dem_b","2":"0.15500","3":"0.05022","4":"0.2598","5":".004"},{"1":"health_w","2":"0.15197","3":"0.06472","4":"0.2392","5":".002"},{"1":"health_b","2":"0.68030","3":"0.57560","4":"0.7850","5":"< .001"},{"1":"trst_media_w","2":"0.03878","3":"0.00447","4":"0.0731","5":".027"},{"1":"trst_police_w","2":"-0.01243","3":"-0.04524","4":"0.0204","5":".458"},{"1":"trst_hlthsec_w","2":"0.06543","3":"0.03655","4":"0.0943","5":"< .001"},{"1":"trst_gov_w","2":"0.01896","3":"-0.01530","4":"0.0532","5":".278"},{"1":"trst_army_w","2":"0.01712","3":"-0.01484","4":"0.0491","5":".294"},{"1":"trst_media_b","2":"0.06369","3":"0.00956","4":"0.1178","5":".021"},{"1":"trst_police_b","2":"0.04098","3":"-0.00307","4":"0.0850","5":".068"},{"1":"trst_hlthsec_b","2":"0.06196","3":"0.01834","4":"0.1056","5":".005"},{"1":"trst_gov_b","2":"-0.01345","3":"-0.06703","4":"0.0401","5":".622"},{"1":"trst_army_b","2":"-0.01380","3":"-0.05652","4":"0.0289","5":".526"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["term"],"name":[1],"type":["fct"],"align":["left"]},{"label":["estimate"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["2.5 %"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["97.5 %"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"(Intercept)","2":"7.8770","3":"7.473","4":"8.281","5":"< .001"},{"1":"soc_med_read_w","2":"0.0215","3":"-0.020","4":"0.063","5":".249"},{"1":"soc_med_like_share_w","2":"-0.0276","3":"-0.083","4":"0.028","5":".260"},{"1":"soc_med_post_w","2":"-0.1263","3":"-0.192","4":"-0.061","5":".004"},{"1":"soc_med_fb_w","2":"0.0041","3":"-0.030","4":"0.038","5":".772"},{"1":"soc_med_ig_w","2":"0.0540","3":"0.017","4":"0.091","5":".012"},{"1":"soc_med_wa_w","2":"0.0052","3":"-0.033","4":"0.043","5":".739"},{"1":"soc_med_yt_w","2":"-0.0216","3":"-0.068","4":"0.025","5":".291"},{"1":"soc_med_tw_w","2":"-0.0389","3":"-0.104","4":"0.026","5":".185"},{"1":"soc_med_read_b","2":"0.1123","3":"-0.111","4":"0.336","5":".325"},{"1":"soc_med_like_share_b","2":"-0.9907","3":"-1.309","4":"-0.672","5":"< .001"},{"1":"soc_med_post_b","2":"-0.6292","3":"-0.960","4":"-0.299","5":"< .001"},{"1":"soc_med_fb_b","2":"-0.2641","3":"-0.411","4":"-0.117","5":"< .001"},{"1":"soc_med_ig_b","2":"0.3955","3":"0.293","4":"0.498","5":"< .001"},{"1":"soc_med_wa_b","2":"0.6852","3":"0.533","4":"0.838","5":"< .001"},{"1":"soc_med_yt_b","2":"-0.5317","3":"-0.705","4":"-0.358","5":"< .001"},{"1":"soc_med_tw_b","2":"0.1277","3":"-0.149","4":"0.404","5":".363"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
-<div id="positive-affect" class="section level2">
+<div id="positive-affect-1" class="section level2">
 <h2>Positive Affect</h2>
-<pre class="r"><code>model_aff_pos_lmer_add &lt;- with(d_long_mim_mice, exp =  
-                           lmerTest::lmer(aff_pos_m ~ 
-                                        (1 | id) + (1 | wave) + 
-                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
-                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
-                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
-                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
-                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
-                                        res_vienna + acc_bal + acc_gar + home_sqm + corona_pos +
-                                        hh_income_b +
-                                        hh_adults +
-                                        hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + hh_oldfam + hh_outfam + hh_partner +
-                                        home_owner +
-                                        med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
-                                        med_vid_orf_b + med_vid_pri_b + 
-                                        risk_prop_b + loc_cntrl_int_m_b + 
-                                        act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
-                                        act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
-                                        sat_dem_w + sat_dem_b + 
-                                        health_w + health_b +
-                                        trst_media_w + trst_police_w + trst_media_w + trst_hlthsec_w + trst_gov_w + trst_army_w +
-                                        trst_media_b + trst_police_b + trst_media_b + trst_hlthsec_b + trst_gov_b + trst_army_b
-                                        ))
-model_aff_pos_lmer_add &lt;- summary(pool(model_aff_pos_lmer_add), conf.int = TRUE)
-model_aff_pos_lmer_add %&gt;% 
-  as.data.frame %&gt;% 
-  select(term, estimate, `2.5 %`, `97.5 %`, p.value) %&gt;% 
-  mutate(p.value = td::my_round(p.value, &quot;p&quot;))</code></pre>
+<pre class="r"><code>model_aff_pos_lmer_nco &lt;- &quot;
+  aff_pos_m ~ 
+    (1 | id) + (1 | wave) + 
+    soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
+    soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+    soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+    soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b
+&quot;
+fit_aff_pos_lmer_nco &lt;- with(d_long_100_mim_mice, exp = lmerTest::lmer(model_aff_pos_lmer_nco))
+fit_aff_pos_lmer_nco &lt;- summary(pool(fit_aff_pos_lmer_nco), conf.int = TRUE)
+print_res(fit_aff_pos_lmer_nco)</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["term"],"name":[1],"type":["fct"],"align":["left"]},{"label":["estimate"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["2.5 %"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["97.5 %"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"(Intercept)","2":"-1.42145","3":"-1.82846","4":"-1.01443","5":"< .001"},{"1":"soc_med_read_w","2":"-0.01591","3":"-0.03309","4":"0.00127","5":".070"},{"1":"soc_med_like_share_w","2":"0.00025","3":"-0.02149","4":"0.02199","5":".982"},{"1":"soc_med_post_w","2":"-0.01975","3":"-0.04930","4":"0.00981","5":".189"},{"1":"soc_med_fb_w","2":"0.00668","3":"-0.01234","4":"0.02571","5":".491"},{"1":"soc_med_ig_w","2":"0.00440","3":"-0.01724","4":"0.02604","5":".690"},{"1":"soc_med_wa_w","2":"-0.00092","3":"-0.01643","4":"0.01460","5":".908"},{"1":"soc_med_yt_w","2":"0.01400","3":"-0.00673","4":"0.03473","5":".185"},{"1":"soc_med_tw_w","2":"0.01643","3":"-0.01507","4":"0.04793","5":".306"},{"1":"soc_med_read_b","2":"-0.05183","3":"-0.08476","4":"-0.01890","5":".002"},{"1":"soc_med_like_share_b","2":"0.01601","3":"-0.02304","4":"0.05506","5":".421"},{"1":"soc_med_post_b","2":"0.06040","3":"0.01117","4":"0.10963","5":".016"},{"1":"soc_med_fb_b","2":"-0.00963","3":"-0.03373","4":"0.01448","5":".434"},{"1":"soc_med_ig_b","2":"-0.01757","3":"-0.04481","4":"0.00966","5":".206"},{"1":"soc_med_wa_b","2":"0.00182","3":"-0.02351","4":"0.02715","5":".888"},{"1":"soc_med_yt_b","2":"0.01327","3":"-0.01872","4":"0.04526","5":".416"},{"1":"soc_med_tw_b","2":"0.02037","3":"-0.01814","4":"0.05888","5":".300"},{"1":"age","2":"0.00219","3":"-0.00107","4":"0.00545","5":".187"},{"1":"male","2":"0.15234","3":"0.09490","4":"0.20978","5":"< .001"},{"1":"born_aus","2":"-0.01258","3":"-0.11629","4":"0.09114","5":".812"},{"1":"born_aus_prnts","2":"-0.03302","3":"-0.06960","4":"0.00355","5":".077"},{"1":"edu_facBachelor","2":"0.06877","3":"-0.07774","4":"0.21528","5":".358"},{"1":"edu_facHigh school","2":"0.00596","3":"-0.10926","4":"0.12119","5":".919"},{"1":"edu_facMaster","2":"-0.03674","3":"-0.16345","4":"0.08997","5":".570"},{"1":"edu_facMiddle school","2":"0.00395","3":"-0.10797","4":"0.11586","5":".945"},{"1":"edu_facNo degree","2":"0.24859","3":"-0.11467","4":"0.61185","5":".179"},{"1":"edu_facPhD","2":"-0.00097","3":"-0.28240","4":"0.28046","5":".995"},{"1":"edu_facState college","2":"0.18221","3":"0.00311","4":"0.36132","5":".046"},{"1":"edu_facTechnical school","2":"0.04311","3":"-0.04441","4":"0.13063","5":".334"},{"1":"edu_facVocational school","2":"0.02155","3":"-0.09238","4":"0.13547","5":".711"},{"1":"employment_facIncapacitated","2":"-0.00604","3":"-0.46168","4":"0.44959","5":".979"},{"1":"employment_facIndustrie","2":"-0.32930","3":"-0.53173","4":"-0.12686","5":".001"},{"1":"employment_facParental Leave","2":"-0.11305","3":"-0.37567","4":"0.14956","5":".398"},{"1":"employment_facPublic service","2":"-0.27937","3":"-0.49103","4":"-0.06772","5":".010"},{"1":"employment_facRetired","2":"-0.13587","3":"-0.34310","4":"0.07136","5":".199"},{"1":"employment_facSelf-employed","2":"-0.38356","3":"-0.60934","4":"-0.15777","5":"< .001"},{"1":"employment_facStudent","2":"-0.30031","3":"-0.52910","4":"-0.07152","5":".010"},{"1":"employment_facUnemployed","2":"-0.29435","3":"-0.52381","4":"-0.06489","5":".012"},{"1":"res_vienna","2":"-0.02717","3":"-0.10086","4":"0.04653","5":".470"},{"1":"acc_bal","2":"-0.04854","3":"-0.10591","4":"0.00883","5":".097"},{"1":"acc_gar","2":"-0.06013","3":"-0.12943","4":"0.00917","5":".089"},{"1":"home_sqm","2":"0.00070","3":"0.00017","4":"0.00124","5":".011"},{"1":"corona_pos","2":"0.00531","3":"-0.01811","4":"0.02874","5":".641"},{"1":"hh_income_b","2":"0.00424","3":"-0.00972","4":"0.01820","5":".552"},{"1":"hh_adults","2":"0.04012","3":"-0.00330","4":"0.08354","5":".069"},{"1":"hh_child18","2":"-0.09945","3":"-0.20577","4":"0.00686","5":".066"},{"1":"hh_child17","2":"-0.01638","3":"-0.10565","4":"0.07289","5":".693"},{"1":"hh_child14","2":"-0.02110","3":"-0.06406","4":"0.02186","5":".333"},{"1":"hh_child5","2":"-0.01796","3":"-0.12863","4":"0.09271","5":".730"},{"1":"hh_child2","2":"0.02542","3":"-0.06729","4":"0.11814","5":".585"},{"1":"hh_oldfam","2":"-0.16118","3":"-0.31134","4":"-0.01101","5":".037"},{"1":"hh_outfam","2":"-0.05331","3":"-0.26305","4":"0.15642","5":".609"},{"1":"hh_partner","2":"-0.01467","3":"-0.13396","4":"0.10463","5":".803"},{"1":"home_owner","2":"0.06005","3":"-0.00351","4":"0.12362","5":".063"},{"1":"med_txt_kro_b","2":"0.00373","3":"-0.02105","4":"0.02851","5":".768"},{"1":"med_txt_sta_b","2":"-0.02387","3":"-0.05518","4":"0.00745","5":".135"},{"1":"med_txt_pre_b","2":"0.01787","3":"-0.02326","4":"0.05899","5":".394"},{"1":"med_txt_oes_b","2":"-0.01358","3":"-0.04422","4":"0.01706","5":".385"},{"1":"med_txt_kur_b","2":"0.02734","3":"-0.00693","4":"0.06160","5":".118"},{"1":"med_txt_slz_b","2":"0.02492","3":"-0.01735","4":"0.06720","5":".248"},{"1":"med_txt_son_b","2":"0.03240","3":"0.00712","4":"0.05768","5":".012"},{"1":"med_vid_orf_b","2":"-0.03760","3":"-0.06453","4":"-0.01068","5":".006"},{"1":"med_vid_pri_b","2":"0.01338","3":"-0.01426","4":"0.04103","5":".343"},{"1":"risk_prop_b","2":"0.00933","3":"-0.00797","4":"0.02663","5":".290"},{"1":"loc_cntrl_int_m_b","2":"0.73510","3":"0.65914","4":"0.81105","5":"< .001"},{"1":"act_wrk_w","2":"0.01036","3":"-0.00734","4":"0.02805","5":".249"},{"1":"act_spo_w","2":"0.07837","3":"0.05821","4":"0.09853","5":"< .001"},{"1":"act_frn_w","2":"0.04554","3":"0.01826","4":"0.07283","5":".001"},{"1":"act_sho_w","2":"0.06257","3":"0.03778","4":"0.08737","5":"< .001"},{"1":"act_pet_w","2":"0.02907","3":"0.00378","4":"0.05435","5":".025"},{"1":"act_wrk_b","2":"0.03199","3":"0.00412","4":"0.05987","5":".025"},{"1":"act_spo_b","2":"0.15343","3":"0.12096","4":"0.18590","5":"< .001"},{"1":"act_frn_b","2":"0.11264","3":"0.06457","4":"0.16070","5":"< .001"},{"1":"act_sho_b","2":"0.06578","3":"0.01943","4":"0.11214","5":".005"},{"1":"act_pet_b","2":"0.02400","3":"0.00187","4":"0.04613","5":".034"},{"1":"sat_dem_w","2":"0.02196","3":"-0.00257","4":"0.04649","5":".079"},{"1":"sat_dem_b","2":"-0.00999","3":"-0.05723","4":"0.03726","5":".679"},{"1":"health_w","2":"0.08585","3":"0.04298","4":"0.12872","5":".001"},{"1":"health_b","2":"0.32460","3":"0.27685","4":"0.37235","5":"< .001"},{"1":"trst_media_w","2":"-0.00180","3":"-0.01495","4":"0.01135","5":".787"},{"1":"trst_police_w","2":"0.00798","3":"-0.00524","4":"0.02120","5":".234"},{"1":"trst_hlthsec_w","2":"0.00633","3":"-0.00477","4":"0.01742","5":".262"},{"1":"trst_gov_w","2":"0.00961","3":"-0.00261","4":"0.02184","5":".123"},{"1":"trst_army_w","2":"-0.00141","3":"-0.01378","4":"0.01095","5":".822"},{"1":"trst_media_b","2":"0.01349","3":"-0.01152","4":"0.03849","5":".290"},{"1":"trst_police_b","2":"0.03235","3":"0.01241","4":"0.05228","5":".001"},{"1":"trst_hlthsec_b","2":"-0.00858","3":"-0.02868","4":"0.01152","5":".403"},{"1":"trst_gov_b","2":"0.01630","3":"-0.00815","4":"0.04074","5":".191"},{"1":"trst_army_b","2":"-0.01924","3":"-0.03893","4":"0.00045","5":".055"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["term"],"name":[1],"type":["fct"],"align":["left"]},{"label":["estimate"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["2.5 %"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["97.5 %"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"(Intercept)","2":"3.9672","3":"3.74837","4":"4.18605","5":"< .001"},{"1":"soc_med_read_w","2":"-0.0471","3":"-0.07632","4":"-0.01781","5":".010"},{"1":"soc_med_like_share_w","2":"0.0070","3":"-0.01798","4":"0.03200","5":".505"},{"1":"soc_med_post_w","2":"0.0166","3":"-0.01641","4":"0.04954","5":".253"},{"1":"soc_med_fb_w","2":"-0.0030","3":"-0.02478","4":"0.01877","5":".733"},{"1":"soc_med_ig_w","2":"0.0079","3":"-0.01498","4":"0.03075","5":".411"},{"1":"soc_med_wa_w","2":"0.0187","3":"-0.00495","4":"0.04226","5":".096"},{"1":"soc_med_yt_w","2":"-0.0027","3":"-0.04931","4":"0.04399","5":".884"},{"1":"soc_med_tw_w","2":"0.0134","3":"-0.00067","4":"0.02754","5":".059"},{"1":"soc_med_read_b","2":"-0.3535","3":"-0.46830","4":"-0.23864","5":"< .001"},{"1":"soc_med_like_share_b","2":"-0.4416","3":"-0.61254","4":"-0.27056","5":"< .001"},{"1":"soc_med_post_b","2":"0.2828","3":"0.11418","4":"0.45152","5":".001"},{"1":"soc_med_fb_b","2":"-0.0786","3":"-0.15775","4":"0.00056","5":".052"},{"1":"soc_med_ig_b","2":"0.1868","3":"0.13117","4":"0.24253","5":"< .001"},{"1":"soc_med_wa_b","2":"0.1301","3":"0.05016","4":"0.21006","5":".001"},{"1":"soc_med_yt_b","2":"-0.1426","3":"-0.23852","4":"-0.04661","5":".004"},{"1":"soc_med_tw_b","2":"0.1367","3":"-0.01127","4":"0.28465","5":".070"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
-<div id="negative-affect" class="section level2">
+<div id="negative-affect-1" class="section level2">
 <h2>Negative Affect</h2>
-<pre class="r"><code>model_aff_neg_lmer_add &lt;- with(d_long_mim_mice, exp =  
-                               lmerTest::lmer(aff_neg_m ~ 
-                                        (1 | id) + (1 | wave) + 
-                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
-                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
-                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
-                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
-                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
-                                        res_vienna + acc_bal + acc_gar + home_sqm + corona_pos +
-                                        hh_income_b +
-                                        hh_adults +
-                                        hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + hh_oldfam + hh_outfam + hh_partner +
-                                        home_owner +
-                                        med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
-                                        med_vid_orf_b + med_vid_pri_b + 
-                                        risk_prop_b + loc_cntrl_int_m_b + 
-                                        act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
-                                        act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
-                                        sat_dem_w + sat_dem_b + 
-                                        health_w + health_b +
-                                        trst_media_w + trst_police_w + trst_media_w + trst_hlthsec_w + trst_gov_w + trst_army_w +
-                                        trst_media_b + trst_police_b + trst_media_b + trst_hlthsec_b + trst_gov_b + trst_army_b
-                                        ))
-model_aff_neg_lmer_add &lt;- summary(pool(model_aff_neg_lmer_add), conf.int = TRUE)
-model_aff_neg_lmer_add %&gt;% 
-  as.data.frame %&gt;% 
-  select(term, estimate, `2.5 %`, `97.5 %`, p.value) %&gt;% 
-  mutate(p.value = td::my_round(p.value, &quot;p&quot;))</code></pre>
+<pre class="r"><code>model_aff_neg_lmer_nco &lt;- &quot;
+  aff_neg_m ~ 
+    (1 | id) + (1 | wave) + 
+    soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
+    soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+    soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+    soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b
+&quot;
+fit_aff_neg_lmer_nco &lt;- with(d_long_100_mim_mice, exp = lmerTest::lmer(model_aff_neg_lmer_nco))
+fit_aff_neg_lmer_nco &lt;- summary(pool(fit_aff_neg_lmer_nco), conf.int = TRUE)
+print_res(fit_aff_neg_lmer_nco)</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["term"],"name":[1],"type":["fct"],"align":["left"]},{"label":["estimate"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["2.5 %"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["97.5 %"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"(Intercept)","2":"4.98990","3":"4.706502","4":"5.273301","5":"< .001"},{"1":"soc_med_read_w","2":"0.00218","3":"-0.010052","4":"0.014413","5":".727"},{"1":"soc_med_like_share_w","2":"0.00821","3":"-0.006851","4":"0.023273","5":".285"},{"1":"soc_med_post_w","2":"0.02529","3":"0.004967","4":"0.045611","5":".015"},{"1":"soc_med_fb_w","2":"-0.00098","3":"-0.014337","4":"0.012369","5":".885"},{"1":"soc_med_ig_w","2":"-0.01603","3":"-0.031408","4":"-0.000656","5":".041"},{"1":"soc_med_wa_w","2":"-0.00253","3":"-0.013593","4":"0.008535","5":".654"},{"1":"soc_med_yt_w","2":"0.01673","3":"0.001568","4":"0.031892","5":".031"},{"1":"soc_med_tw_w","2":"0.01625","3":"-0.006641","4":"0.039139","5":".164"},{"1":"soc_med_read_b","2":"0.00665","3":"-0.016746","4":"0.030040","5":".577"},{"1":"soc_med_like_share_b","2":"0.01822","3":"-0.008885","4":"0.045330","5":".188"},{"1":"soc_med_post_b","2":"0.06388","3":"0.028572","4":"0.099191","5":"< .001"},{"1":"soc_med_fb_b","2":"0.00671","3":"-0.010792","4":"0.024212","5":".452"},{"1":"soc_med_ig_b","2":"0.00012","3":"-0.019704","4":"0.019942","5":".991"},{"1":"soc_med_wa_b","2":"0.01050","3":"-0.007500","4":"0.028497","5":".253"},{"1":"soc_med_yt_b","2":"-0.00505","3":"-0.027661","4":"0.017556","5":".661"},{"1":"soc_med_tw_b","2":"0.00181","3":"-0.025885","4":"0.029510","5":".898"},{"1":"age","2":"-0.00844","3":"-0.010627","4":"-0.006248","5":"< .001"},{"1":"male","2":"-0.10105","3":"-0.142124","4":"-0.059977","5":"< .001"},{"1":"born_aus","2":"-0.05406","3":"-0.128587","4":"0.020465","5":".155"},{"1":"born_aus_prnts","2":"-0.01269","3":"-0.038803","4":"0.013432","5":".341"},{"1":"edu_facBachelor","2":"-0.08205","3":"-0.187113","4":"0.023023","5":".126"},{"1":"edu_facHigh school","2":"-0.01360","3":"-0.091699","4":"0.064489","5":".733"},{"1":"edu_facMaster","2":"-0.00564","3":"-0.095835","4":"0.084555","5":".902"},{"1":"edu_facMiddle school","2":"-0.01365","3":"-0.092706","4":"0.065411","5":".735"},{"1":"edu_facNo degree","2":"0.09120","3":"-0.164760","4":"0.347160","5":".485"},{"1":"edu_facPhD","2":"0.07681","3":"-0.120472","4":"0.274091","5":".445"},{"1":"edu_facState college","2":"-0.08536","3":"-0.211661","4":"0.040932","5":".185"},{"1":"edu_facTechnical school","2":"-0.08148","3":"-0.143192","4":"-0.019767","5":".010"},{"1":"edu_facVocational school","2":"-0.04486","3":"-0.124402","4":"0.034680","5":".269"},{"1":"employment_facIncapacitated","2":"0.08914","3":"-0.233957","4":"0.412235","5":".584"},{"1":"employment_facIndustrie","2":"0.12995","3":"-0.030997","4":"0.290904","5":".112"},{"1":"employment_facParental Leave","2":"0.04664","3":"-0.168583","4":"0.261870","5":".666"},{"1":"employment_facPublic service","2":"0.13658","3":"-0.024717","4":"0.297884","5":".096"},{"1":"employment_facRetired","2":"0.16797","3":"0.002478","4":"0.333461","5":".047"},{"1":"employment_facSelf-employed","2":"0.23856","3":"0.065237","4":"0.411879","5":".007"},{"1":"employment_facStudent","2":"0.17241","3":"-0.015957","4":"0.360785","5":".072"},{"1":"employment_facUnemployed","2":"0.18794","3":"0.013480","4":"0.362405","5":".035"},{"1":"res_vienna","2":"-0.04793","3":"-0.099561","4":"0.003700","5":".069"},{"1":"acc_bal","2":"-0.01679","3":"-0.057791","4":"0.024202","5":".422"},{"1":"acc_gar","2":"-0.04592","3":"-0.094919","4":"0.003074","5":".066"},{"1":"home_sqm","2":"-0.00027","3":"-0.000632","4":"0.000088","5":".138"},{"1":"corona_pos","2":"-0.00593","3":"-0.017876","4":"0.006006","5":".330"},{"1":"hh_income_b","2":"-0.01485","3":"-0.024604","4":"-0.005086","5":".003"},{"1":"hh_adults","2":"-0.02286","3":"-0.048582","4":"0.002859","5":".081"},{"1":"hh_child18","2":"0.01090","3":"-0.058520","4":"0.080318","5":".754"},{"1":"hh_child17","2":"0.01285","3":"-0.023453","4":"0.049146","5":".488"},{"1":"hh_child14","2":"-0.02617","3":"-0.060936","4":"0.008599","5":".135"},{"1":"hh_child5","2":"-0.00221","3":"-0.056593","4":"0.052170","5":".936"},{"1":"hh_child2","2":"0.03574","3":"-0.060124","4":"0.131595","5":".432"},{"1":"hh_oldfam","2":"0.06829","3":"-0.015144","4":"0.151719","5":".107"},{"1":"hh_outfam","2":"0.12893","3":"-0.018393","4":"0.276262","5":".084"},{"1":"hh_partner","2":"-0.00526","3":"-0.088574","4":"0.078059","5":".899"},{"1":"home_owner","2":"-0.02307","3":"-0.063485","4":"0.017341","5":".261"},{"1":"med_txt_kro_b","2":"-0.00040","3":"-0.018187","4":"0.017396","5":".965"},{"1":"med_txt_sta_b","2":"0.02708","3":"0.004739","4":"0.049413","5":".018"},{"1":"med_txt_pre_b","2":"0.00588","3":"-0.023316","4":"0.035069","5":".693"},{"1":"med_txt_oes_b","2":"-0.00697","3":"-0.028847","4":"0.014905","5":".532"},{"1":"med_txt_kur_b","2":"0.00119","3":"-0.023215","4":"0.025597","5":".924"},{"1":"med_txt_slz_b","2":"0.01946","3":"-0.010763","4":"0.049688","5":".207"},{"1":"med_txt_son_b","2":"-0.00721","3":"-0.024728","4":"0.010313","5":".420"},{"1":"med_vid_orf_b","2":"0.03153","3":"0.012304","4":"0.050765","5":".001"},{"1":"med_vid_pri_b","2":"-0.00924","3":"-0.029216","4":"0.010745","5":".364"},{"1":"risk_prop_b","2":"-0.02111","3":"-0.033677","4":"-0.008534","5":".001"},{"1":"loc_cntrl_int_m_b","2":"-0.55417","3":"-0.608352","4":"-0.499992","5":"< .001"},{"1":"act_wrk_w","2":"-0.00460","3":"-0.016429","4":"0.007230","5":".446"},{"1":"act_spo_w","2":"0.01543","3":"0.000038","4":"0.030830","5":".049"},{"1":"act_frn_w","2":"0.01610","3":"-0.002769","4":"0.034976","5":".094"},{"1":"act_sho_w","2":"0.01316","3":"-0.005722","4":"0.032038","5":".171"},{"1":"act_pet_w","2":"0.05699","3":"0.037644","4":"0.076335","5":"< .001"},{"1":"act_wrk_b","2":"0.01168","3":"-0.008287","4":"0.031651","5":".251"},{"1":"act_spo_b","2":"0.03804","3":"0.015187","4":"0.060889","5":".001"},{"1":"act_frn_b","2":"0.05166","3":"0.016858","4":"0.086472","5":".004"},{"1":"act_sho_b","2":"0.03863","3":"0.005702","4":"0.071555","5":".022"},{"1":"act_pet_b","2":"0.01853","3":"0.003031","4":"0.034027","5":".019"},{"1":"sat_dem_w","2":"-0.02259","3":"-0.039269","4":"-0.005913","5":".008"},{"1":"sat_dem_b","2":"-0.06569","3":"-0.099337","4":"-0.032039","5":"< .001"},{"1":"health_w","2":"-0.09430","3":"-0.111056","4":"-0.077541","5":"< .001"},{"1":"health_b","2":"-0.30449","3":"-0.337660","4":"-0.271321","5":"< .001"},{"1":"trst_media_w","2":"0.00058","3":"-0.008402","4":"0.009559","5":".899"},{"1":"trst_police_w","2":"-0.00470","3":"-0.013045","4":"0.003637","5":".269"},{"1":"trst_hlthsec_w","2":"-0.01221","3":"-0.020206","4":"-0.004215","5":".003"},{"1":"trst_gov_w","2":"0.00192","3":"-0.006836","4":"0.010676","5":".667"},{"1":"trst_army_w","2":"0.00156","3":"-0.006806","4":"0.009931","5":".714"},{"1":"trst_media_b","2":"0.00579","3":"-0.011991","4":"0.023572","5":".523"},{"1":"trst_police_b","2":"-0.01625","3":"-0.030541","4":"-0.001969","5":".026"},{"1":"trst_hlthsec_b","2":"-0.00753","3":"-0.021819","4":"0.006756","5":".301"},{"1":"trst_gov_b","2":"0.00808","3":"-0.009279","4":"0.025431","5":".362"},{"1":"trst_army_b","2":"0.00651","3":"-0.007258","4":"0.020270","5":".354"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["term"],"name":[1],"type":["fct"],"align":["left"]},{"label":["estimate"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["2.5 %"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["97.5 %"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"(Intercept)","2":"0.0372","3":"-0.08295","4":"0.1573","5":".543"},{"1":"soc_med_read_w","2":"-0.0015","3":"-0.01215","4":"0.0091","5":".741"},{"1":"soc_med_like_share_w","2":"0.0220","3":"0.00481","4":"0.0391","5":".021"},{"1":"soc_med_post_w","2":"0.1043","3":"0.07552","4":"0.1331","5":"< .001"},{"1":"soc_med_fb_w","2":"-0.0110","3":"-0.02066","4":"-0.0013","5":".033"},{"1":"soc_med_ig_w","2":"-0.0132","3":"-0.02845","4":"0.0021","5":".077"},{"1":"soc_med_wa_w","2":"0.0097","3":"-0.00392","4":"0.0233","5":".126"},{"1":"soc_med_yt_w","2":"0.0277","3":"0.00064","4":"0.0548","5":".047"},{"1":"soc_med_tw_w","2":"0.0339","3":"0.01841","4":"0.0495","5":".002"},{"1":"soc_med_read_b","2":"0.1191","3":"0.05219","4":"0.1860","5":"< .001"},{"1":"soc_med_like_share_b","2":"0.2459","3":"0.14539","4":"0.3464","5":"< .001"},{"1":"soc_med_post_b","2":"0.4554","3":"0.35304","4":"0.5578","5":"< .001"},{"1":"soc_med_fb_b","2":"0.0874","3":"0.04458","4":"0.1302","5":"< .001"},{"1":"soc_med_ig_b","2":"0.0214","3":"-0.01040","4":"0.0532","5":".187"},{"1":"soc_med_wa_b","2":"-0.0619","3":"-0.10838","4":"-0.0154","5":".009"},{"1":"soc_med_yt_b","2":"0.1016","3":"0.04970","4":"0.1535","5":"< .001"},{"1":"soc_med_tw_b","2":"0.0687","3":"-0.01033","4":"0.1477","5":".088"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
 </div>
 <div id="preregistered" class="section level1">
 <h1>Preregistered</h1>
-<p>Several changes were introduced during peer review (multiple
-imputation, imputation of all participants, inclusion of all variables).
-In what follows, please find the results as originally planned (but with
-some necessary deviations; for example not preregistered all variables
-could be included).</p>
+<p>Some changes were introduced because of feedback from colleagues
+(multiple imputation, imputation of all participants, inclusion of all
+variables). In what follows, please find the results as originally
+planned (but with some necessary deviations; for example not all
+preregistered variables could be included).</p>
 <ul>
 <li>Use data-set in which participants with &gt;50% data were
 removed.</li>
 <li>Also use factor scores (possible without multiple imputation).</li>
 </ul>
-<p>Because no multiple imputation was used, output looks
+<p>Note that because here no multiple imputation was used, output looks
 differently.</p>
-<div id="life-satisfaction-1" class="section level2">
+<div id="life-satisfaction-2" class="section level2">
 <h2>Life satisfaction</h2>
-<pre class="r"><code>model_life_sat_lmer_pre &lt;- lmerTest::lmer(life_sat ~
-                                        (1 | id) + (1 | wave) + 
-                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
-                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
-                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
-                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
-                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
-                                        res_vienna + acc_bal + acc_gar + home_sqm + corona_pos +
-                                        med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
-                                        med_vid_orf_b + med_vid_pri_b + 
-                                        risk_prop_b + loc_cntrl_int_m_b + 
-                                        act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
-                                        act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
-                                        sat_dem_w + sat_dem_b + 
-                                        health_w + health_b 
-                                      , data = d_long_50_imp)
-summary(model_life_sat_lmer_pre)</code></pre>
-<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
-## Formula: life_sat ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +      soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
-##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b + age + male + born_aus + born_aus_prnts +      edu_fac + employment_fac + res_vienna + acc_bal + acc_gar +  
-##     home_sqm + corona_pos + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b +      med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b +      med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_m_b +  
-##     act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w +      act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +      sat_dem_w + sat_dem_b + health_w + health_b
-##    Data: d_long_50_imp
-## 
-## REML criterion at convergence: 39249
-## 
-## Scaled residuals: 
-##    Min     1Q Median     3Q    Max 
-## -4.589 -0.373  0.132  0.524  4.281 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  id       (Intercept) 1.2713   1.128   
-##  wave     (Intercept) 0.0128   0.113   
-##  Residual             3.1547   1.776   
-## Number of obs: 9208, groups:  id, 3164; wave, 28
-## 
-## Fixed effects:
-##                                  Estimate   Std. Error           df t value             Pr(&gt;|t|)    
-## (Intercept)                    -3.1167564    0.4153920 3059.0697009   -7.50    0.000000000000081 ***
-## soc_med_read_w                  0.0445683    0.0249839 6307.1633516    1.78              0.07449 .  
-## soc_med_like_share_w            0.0089179    0.0311955 6454.5730909    0.29              0.77499    
-## soc_med_post_w                 -0.1168775    0.0410407 6471.4453019   -2.85              0.00442 ** 
-## soc_med_fb_w                   -0.0351513    0.0277296 6492.3535996   -1.27              0.20497    
-## soc_med_ig_w                    0.0466812    0.0314070 6518.0217861    1.49              0.13724    
-## soc_med_wa_w                   -0.0113479    0.0230026 6509.2882197   -0.49              0.62180    
-## soc_med_yt_w                    0.0189053    0.0306554 6486.5760026    0.62              0.53745    
-## soc_med_tw_w                   -0.0622701    0.0457892 6542.8213104   -1.36              0.17390    
-## soc_med_read_b                 -0.0274559    0.0372314 3464.2527477   -0.74              0.46091    
-## soc_med_like_share_b           -0.0499549    0.0438125 3609.4288933   -1.14              0.25428    
-## soc_med_post_b                  0.0255112    0.0558996 3731.0560727    0.46              0.64815    
-## soc_med_fb_b                    0.0000103    0.0273449 3194.3913338    0.00              0.99970    
-## soc_med_ig_b                   -0.0085344    0.0309722 3367.1347474   -0.28              0.78291    
-## soc_med_wa_b                   -0.0262227    0.0284260 3037.1056084   -0.92              0.35635    
-## soc_med_yt_b                    0.0866030    0.0358590 3247.0810034    2.42              0.01579 *  
-## soc_med_tw_b                   -0.0313524    0.0435765 3244.9282133   -0.72              0.47190    
-## age                             0.0078002    0.0032342 3031.5389838    2.41              0.01593 *  
-## male                           -0.0000601    0.0632044 2855.7293358    0.00              0.99924    
-## born_aus                       -0.1139370    0.1156554 3218.0794243   -0.99              0.32463    
-## born_aus_prnts                  0.0328780    0.0396874 2927.9449988    0.83              0.40750    
-## edu_facBachelor                 0.2985166    0.1650722 3005.3399597    1.81              0.07064 .  
-## edu_facHigh school              0.1128146    0.1243924 3201.4627128    0.91              0.36451    
-## edu_facMaster                   0.0590877    0.1410136 2767.6187520    0.42              0.67523    
-## edu_facMiddle school            0.0365695    0.1249044 3195.3657227    0.29              0.76971    
-## edu_facNo degree                0.9731123    0.3852683 2335.1634864    2.53              0.01161 *  
-## edu_facPhD                      0.0472819    0.3057400 2536.7465256    0.15              0.87711    
-## edu_facState college           -0.1280932    0.2006502 3093.1879081   -0.64              0.52327    
-## edu_facTechnical school         0.0171610    0.0966264 2999.9516471    0.18              0.85905    
-## edu_facVocational school        0.1063559    0.1246217 2777.0780686    0.85              0.39349    
-## employment_facIncapacitated    -0.5740126    0.4309992 3073.5582887   -1.33              0.18302    
-## employment_facIndustrie        -0.8613510    0.2240860 2999.0735404   -3.84              0.00012 ***
-## employment_facParental Leave   -0.2770772    0.2822583 3087.9433167   -0.98              0.32635    
-## employment_facPublic service   -0.7044710    0.2306132 2996.3182420   -3.05              0.00227 ** 
-## employment_facRetired          -0.8052802    0.2271856 2848.8553446   -3.54              0.00040 ***
-## employment_facSelf-employed    -1.0805962    0.2492180 2918.6890493   -4.34    0.000015004714916 ***
-## employment_facStudent          -0.7568656    0.2429593 3163.0004666   -3.12              0.00185 ** 
-## employment_facUnemployed       -1.2100158    0.2510893 2917.3275010   -4.82    0.000001516088395 ***
-## res_vienna                      0.0557178    0.0794549 2764.5508441    0.70              0.48321    
-## acc_bal                        -0.0099119    0.0630490 2904.2091402   -0.16              0.87509    
-## acc_gar                         0.0157078    0.0738242 2905.1007788    0.21              0.83152    
-## home_sqm                        0.0016798    0.0005356 3540.6176053    3.14              0.00173 ** 
-## corona_pos                     -0.0751500    0.0218102 7909.3231505   -3.45              0.00057 ***
-## med_txt_kro_b                   0.0791662    0.0271729 2694.3616927    2.91              0.00360 ** 
-## med_txt_sta_b                   0.0019651    0.0341712 3007.2538274    0.06              0.95414    
-## med_txt_pre_b                   0.0407175    0.0459386 3186.8144926    0.89              0.37550    
-## med_txt_oes_b                   0.0008829    0.0339888 2943.2421927    0.03              0.97928    
-## med_txt_kur_b                   0.0365625    0.0380086 2867.1810969    0.96              0.33615    
-## med_txt_slz_b                  -0.0827144    0.0470744 3102.3676080   -1.76              0.07900 .  
-## med_txt_son_b                  -0.0105199    0.0271285 2867.6756779   -0.39              0.69821    
-## med_vid_orf_b                  -0.0121704    0.0298177 2981.1586382   -0.41              0.68319    
-## med_vid_pri_b                   0.0172226    0.0301109 2866.7192963    0.57              0.56739    
-## risk_prop_b                     0.0859106    0.0193253 3370.6398241    4.45    0.000009051269592 ***
-## loc_cntrl_int_m_b               1.7008028    0.0835868 3236.6135798   20.35 &lt; 0.0000000000000002 ***
-## act_wrk_w                       0.0570034    0.0231580 7366.8875457    2.46              0.01386 *  
-## act_spo_w                      -0.0047343    0.0288237 7898.9326293   -0.16              0.86954    
-## act_frn_w                       0.0276856    0.0351973 2990.6024127    0.79              0.43159    
-## act_sho_w                       0.0627209    0.0353851 7933.5885775    1.77              0.07635 .  
-## act_pet_w                      -0.0258532    0.0327429 8104.3755622   -0.79              0.42979    
-## act_wrk_b                       0.0429612    0.0309081 3291.2279730    1.39              0.16463    
-## act_spo_b                       0.0744552    0.0362604 3073.7238952    2.05              0.04012 *  
-## act_frn_b                       0.1611672    0.0545989 3462.0165058    2.95              0.00318 ** 
-## act_sho_b                      -0.0161156    0.0520272 3186.1562272   -0.31              0.75677    
-## act_pet_b                       0.0378888    0.0241977 2797.4561255    1.57              0.11751    
-## sat_dem_w                       0.1694558    0.0295585 3764.6462722    5.73    0.000000010647987 ***
-## sat_dem_b                       0.3697254    0.0343600 2864.0040293   10.76 &lt; 0.0000000000000002 ***
-## health_w                        0.1761690    0.0319752 7676.3616382    5.51    0.000000037141966 ***
-## health_b                        0.6987268    0.0531675 3381.8169420   13.14 &lt; 0.0000000000000002 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>model_life_sat_lmer_pre &lt;- &quot;
+  life_sat ~ 
+    (1 | id) + (1 | wave) + 
+    soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
+    soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+    soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+    soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
+    age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
+    res_vienna + acc_bal + acc_gar + home_sqm + 
+    work_h_b + work_h_w +
+    work_homeoff_b +  work_homeoff_w +
+    hh_income_b + hh_income_w +
+    hh_adults + hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + 
+    hh_oldfam + hh_outfam + hh_partner +
+    home_owner +
+    med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
+    med_vid_orf_b + med_vid_pri_b + 
+    med_txt_kro_w + med_txt_sta_w + med_txt_pre_w + med_txt_oes_w + med_txt_kur_w + med_txt_slz_w + med_txt_son_w + 
+    med_vid_orf_w + med_vid_pri_w + 
+    risk_prop_b + risk_prop_w + 
+    act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
+    act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
+    sat_dem_w + sat_dem_b + 
+    health_w + health_b +
+    loc_cntrl_int_m_w + loc_cntrl_int_m_b
+    &quot;
+fit_life_sat_lmer_pre &lt;- lmerTest::lmer(model_life_sat_lmer_pre, data = d_long_50_imp)
+print_res(broom.mixed::tidy(fit_life_sat_lmer_pre, conf.int = T), imputation = FALSE)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["term"],"name":[1],"type":["chr"],"align":["left"]},{"label":["estimate"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["2.5 %"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["97.5 %"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"(Intercept)","2":"-4.780411","3":"-5.51553","4":"-4.04529","5":"< .001"},{"1":"soc_med_read_w","2":"0.012279","3":"-0.00427","4":"0.02882","5":".146"},{"1":"soc_med_like_share_w","2":"-0.008923","3":"-0.02870","4":"0.01085","5":".376"},{"1":"soc_med_post_w","2":"-0.031588","3":"-0.05665","4":"-0.00652","5":".014"},{"1":"soc_med_fb_w","2":"-0.004952","3":"-0.01753","4":"0.00763","5":".440"},{"1":"soc_med_ig_w","2":"0.022154","3":"0.00630","4":"0.03800","5":".006"},{"1":"soc_med_wa_w","2":"-0.021065","3":"-0.03304","4":"-0.00909","5":"< .001"},{"1":"soc_med_yt_w","2":"0.022383","3":"0.00637","4":"0.03839","5":".006"},{"1":"soc_med_tw_w","2":"0.014028","3":"-0.00777","4":"0.03583","5":".207"},{"1":"soc_med_read_b","2":"0.012417","3":"-0.09096","4":"0.11580","5":".814"},{"1":"soc_med_like_share_b","2":"-0.107946","3":"-0.22961","4":"0.01371","5":".082"},{"1":"soc_med_post_b","2":"0.150286","3":"0.00492","4":"0.29565","5":".043"},{"1":"soc_med_fb_b","2":"-0.041124","3":"-0.12130","4":"0.03906","5":".315"},{"1":"soc_med_ig_b","2":"0.024570","3":"-0.06084","4":"0.10998","5":".573"},{"1":"soc_med_wa_b","2":"-0.000088","3":"-0.08459","4":"0.08441","5":".998"},{"1":"soc_med_yt_b","2":"0.029165","3":"-0.07092","4":"0.12925","5":".568"},{"1":"soc_med_tw_b","2":"-0.094321","3":"-0.21718","4":"0.02854","5":".132"},{"1":"age","2":"0.001992","3":"-0.00402","4":"0.00801","5":".516"},{"1":"male","2":"-0.060734","3":"-0.16829","4":"0.04682","5":".268"},{"1":"born_aus","2":"-0.096029","3":"-0.26360","4":"0.07154","5":".261"},{"1":"born_aus_prnts","2":"0.029690","3":"-0.02969","4":"0.08907","5":".327"},{"1":"edu_facBachelor","2":"0.266983","3":"0.01860","4":"0.51537","5":".035"},{"1":"edu_facHigh school","2":"0.229988","3":"0.04590","4":"0.41408","5":".014"},{"1":"edu_facMaster","2":"0.016752","3":"-0.20157","4":"0.23507","5":".880"},{"1":"edu_facMiddle school","2":"0.147197","3":"-0.04660","4":"0.34100","5":".137"},{"1":"edu_facNo degree","2":"1.029268","3":"0.42452","4":"1.63402","5":"< .001"},{"1":"edu_facPhD","2":"0.121930","3":"-0.35587","4":"0.59973","5":".617"},{"1":"edu_facState college","2":"-0.098016","3":"-0.39948","4":"0.20345","5":".524"},{"1":"edu_facTechnical school","2":"0.163834","3":"0.01446","4":"0.31321","5":".032"},{"1":"edu_facVocational school","2":"0.183190","3":"-0.01039","4":"0.37677","5":".064"},{"1":"employment_facIncapacitated","2":"-0.333514","3":"-0.89313","4":"0.22610","5":".243"},{"1":"employment_facIndustrie","2":"-1.060823","3":"-1.38806","4":"-0.73359","5":"< .001"},{"1":"employment_facParental Leave","2":"-0.454903","3":"-0.86996","4":"-0.03985","5":".032"},{"1":"employment_facPublic service","2":"-0.932891","3":"-1.26979","4":"-0.59599","5":"< .001"},{"1":"employment_facRetired","2":"-0.829540","3":"-1.16243","4":"-0.49665","5":"< .001"},{"1":"employment_facSelf-employed","2":"-1.310262","3":"-1.68052","4":"-0.94001","5":"< .001"},{"1":"employment_facStudent","2":"-0.787170","3":"-1.14405","4":"-0.43029","5":"< .001"},{"1":"employment_facUnemployed","2":"-0.987144","3":"-1.35707","4":"-0.61721","5":"< .001"},{"1":"res_vienna","2":"-0.012574","3":"-0.14268","4":"0.11753","5":".850"},{"1":"acc_bal","2":"-0.100888","3":"-0.19747","4":"-0.00431","5":".041"},{"1":"acc_gar","2":"-0.187554","3":"-0.30197","4":"-0.07314","5":".001"},{"1":"home_sqm","2":"0.000602","3":"-0.00018","4":"0.00139","5":".132"},{"1":"work_h_b","2":"-0.009731","3":"-0.01534","4":"-0.00412","5":"< .001"},{"1":"work_h_w","2":"0.001121","3":"-0.00020","4":"0.00245","5":".097"},{"1":"work_homeoff_b","2":"0.179226","3":"-0.02039","4":"0.37884","5":".078"},{"1":"work_homeoff_w","2":"0.052001","3":"0.00676","4":"0.09724","5":".024"},{"1":"hh_income_b","2":"0.082740","3":"0.05794","4":"0.10754","5":"< .001"},{"1":"hh_income_w","2":"0.048462","3":"0.03707","4":"0.05985","5":"< .001"},{"1":"hh_adults","2":"0.042589","3":"-0.00153","4":"0.08671","5":".058"},{"1":"hh_child18","2":"-0.079105","3":"-0.18995","4":"0.03174","5":".162"},{"1":"hh_child17","2":"-0.103640","3":"-0.17131","4":"-0.03597","5":".003"},{"1":"hh_child14","2":"0.055528","3":"0.00205","4":"0.10901","5":".042"},{"1":"hh_child5","2":"-0.033134","3":"-0.11342","4":"0.04715","5":".419"},{"1":"hh_child2","2":"0.075501","3":"-0.02978","4":"0.18079","5":".160"},{"1":"hh_oldfam","2":"-0.094399","3":"-0.22881","4":"0.04001","5":".169"},{"1":"hh_outfam","2":"-0.163033","3":"-0.39831","4":"0.07224","5":".174"},{"1":"hh_partner","2":"0.078370","3":"-0.03683","4":"0.19357","5":".182"},{"1":"home_owner","2":"0.052667","3":"-0.01674","4":"0.12207","5":".137"},{"1":"med_txt_kro_b","2":"0.157157","3":"0.06945","4":"0.24486","5":"< .001"},{"1":"med_txt_sta_b","2":"0.076432","3":"-0.02297","4":"0.17583","5":".132"},{"1":"med_txt_pre_b","2":"0.023248","3":"-0.11151","4":"0.15801","5":".735"},{"1":"med_txt_oes_b","2":"-0.000636","3":"-0.10045","4":"0.09918","5":".990"},{"1":"med_txt_kur_b","2":"0.077663","3":"-0.03617","4":"0.19149","5":".181"},{"1":"med_txt_slz_b","2":"-0.058920","3":"-0.18665","4":"0.06881","5":".366"},{"1":"med_txt_son_b","2":"-0.001983","3":"-0.08083","4":"0.07687","5":".961"},{"1":"med_vid_orf_b","2":"-0.075775","3":"-0.16521","4":"0.01366","5":".097"},{"1":"med_vid_pri_b","2":"0.068860","3":"-0.02203","4":"0.15975","5":".138"},{"1":"med_txt_kro_w","2":"0.041705","3":"0.02874","4":"0.05467","5":"< .001"},{"1":"med_txt_sta_w","2":"-0.011198","3":"-0.02789","4":"0.00549","5":".188"},{"1":"med_txt_pre_w","2":"0.004633","3":"-0.01624","4":"0.02551","5":".664"},{"1":"med_txt_oes_w","2":"0.022932","3":"0.00798","4":"0.03789","5":".003"},{"1":"med_txt_kur_w","2":"-0.001288","3":"-0.01783","4":"0.01525","5":".879"},{"1":"med_txt_slz_w","2":"-0.016698","3":"-0.03751","4":"0.00411","5":".116"},{"1":"med_txt_son_w","2":"0.001413","3":"-0.01158","4":"0.01441","5":".831"},{"1":"med_vid_orf_w","2":"-0.013113","3":"-0.02716","4":"0.00094","5":".067"},{"1":"med_vid_pri_w","2":"-0.001168","3":"-0.01492","4":"0.01259","5":".868"},{"1":"risk_prop_b","2":"0.123792","3":"0.08277","4":"0.16482","5":"< .001"},{"1":"risk_prop_w","2":"0.056425","3":"0.04921","4":"0.06364","5":"< .001"},{"1":"act_wrk_w","2":"0.016727","3":"-0.00169","4":"0.03515","5":".075"},{"1":"act_spo_w","2":"0.002728","3":"-0.01950","4":"0.02496","5":".810"},{"1":"act_frn_w","2":"0.012079","3":"-0.01333","4":"0.03749","5":".351"},{"1":"act_sho_w","2":"0.034979","3":"0.00843","4":"0.06153","5":".010"},{"1":"act_pet_w","2":"0.005407","3":"-0.01855","4":"0.02937","5":".658"},{"1":"act_wrk_b","2":"0.096262","3":"0.03602","4":"0.15650","5":".002"},{"1":"act_spo_b","2":"0.059076","3":"0.00180","4":"0.11636","5":".043"},{"1":"act_frn_b","2":"0.089731","3":"0.00489","4":"0.17457","5":".038"},{"1":"act_sho_b","2":"-0.082411","3":"-0.16195","4":"-0.00287","5":".042"},{"1":"act_pet_b","2":"0.021187","3":"-0.01710","4":"0.05947","5":".278"},{"1":"sat_dem_w","2":"0.128382","3":"0.10539","4":"0.15138","5":"< .001"},{"1":"sat_dem_b","2":"0.305005","3":"0.24614","4":"0.36387","5":"< .001"},{"1":"health_w","2":"0.220404","3":"0.19621","4":"0.24460","5":"< .001"},{"1":"health_b","2":"0.781513","3":"0.67896","4":"0.88407","5":"< .001"},{"1":"loc_cntrl_int_m_w","2":"0.426258","3":"0.39301","4":"0.45951","5":"< .001"},{"1":"loc_cntrl_int_m_b","2":"2.119349","3":"1.95211","4":"2.28659","5":"< .001"},{"1":"sd__(Intercept)","2":"1.113152","3":"NA","4":"NA","5":"NA"},{"1":"sd__(Intercept)","2":"0.110118","3":"NA","4":"NA","5":"NA"},{"1":"sd__Observation","2":"1.635328","3":"NA","4":"NA","5":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
 </div>
-<div id="positive-affect-1" class="section level2">
+</div>
+<div id="positive-affect-2" class="section level2">
 <h2>Positive Affect</h2>
-<pre class="r"><code>model_aff_pos_lmer_pre &lt;- lmerTest::lmer(aff_pos_fs ~ 
-                                        (1 | id) + (1 | wave) + 
-                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
-                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
-                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
-                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
-                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
-                                        res_vienna + acc_bal + acc_gar + home_sqm + corona_pos +
-                                        med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
-                                        med_vid_orf_b + med_vid_pri_b + 
-                                        risk_prop_b + loc_cntrl_int_m_b + 
-                                        act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
-                                        act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
-                                        sat_dem_w + sat_dem_b + 
-                                        health_w + health_b 
-                                      , data = d_long_50_imp)
-summary(model_aff_pos_lmer_pre)</code></pre>
-<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
-## Formula: aff_pos_fs ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +      soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
-##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b + age + male + born_aus + born_aus_prnts +      edu_fac + employment_fac + res_vienna + acc_bal + acc_gar +  
-##     home_sqm + corona_pos + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b +      med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b +      med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_m_b +  
-##     act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w +      act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +      sat_dem_w + sat_dem_b + health_w + health_b
-##    Data: d_long_50_imp
-## 
-## REML criterion at convergence: 18156
-## 
-## Scaled residuals: 
-##    Min     1Q Median     3Q    Max 
-## -4.961 -0.553 -0.016  0.570  4.654 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  id       (Intercept) 0.26388  0.5137  
-##  wave     (Intercept) 0.00442  0.0665  
-##  Residual             0.26000  0.5099  
-## Number of obs: 9208, groups:  id, 3164; wave, 28
-## 
-## Fixed effects:
-##                                  Estimate   Std. Error           df t value             Pr(&gt;|t|)    
-## (Intercept)                    -0.6572611    0.1578406 3239.8432253   -4.16    0.000032075857219 ***
-## soc_med_read_w                 -0.0141920    0.0072279 6318.5831583   -1.96              0.04963 *  
-## soc_med_like_share_w            0.0000508    0.0089963 6279.9837531    0.01              0.99550    
-## soc_med_post_w                 -0.0148972    0.0118378 6290.4766388   -1.26              0.20828    
-## soc_med_fb_w                    0.0054054    0.0080028 6305.9007011    0.68              0.49942    
-## soc_med_ig_w                    0.0035648    0.0090687 6331.1862562    0.39              0.69427    
-## soc_med_wa_w                   -0.0009147    0.0066410 6321.9475125   -0.14              0.89045    
-## soc_med_yt_w                    0.0120527    0.0088475 6308.7343612    1.36              0.17316    
-## soc_med_tw_w                    0.0177587    0.0132289 6353.1517187    1.34              0.17951    
-## soc_med_read_b                 -0.0482836    0.0139539 3467.2871663   -3.46              0.00055 ***
-## soc_med_like_share_b            0.0124112    0.0163339 3561.4264334    0.76              0.44740    
-## soc_med_post_b                  0.0523633    0.0207692 3637.1910604    2.52              0.01174 *  
-## soc_med_fb_b                   -0.0074204    0.0103400 3291.3165145   -0.72              0.47303    
-## soc_med_ig_b                   -0.0113874    0.0116499 3385.4105148   -0.98              0.32841    
-## soc_med_wa_b                    0.0126483    0.0108048 3196.3687111    1.17              0.24184    
-## soc_med_yt_b                    0.0082680    0.0135297 3318.2524853    0.61              0.54117    
-## soc_med_tw_b                    0.0063982    0.0164331 3360.3080955    0.39              0.69704    
-## age                             0.0026586    0.0012283 3311.3370249    2.16              0.03050 *  
-## male                            0.1049200    0.0242057 3096.6554710    4.33    0.000015073938380 ***
-## born_aus                       -0.0053192    0.0436159 3372.4921833   -0.12              0.90294    
-## born_aus_prnts                 -0.0208321    0.0151396 3160.1803507   -1.38              0.16892    
-## edu_facBachelor                 0.0603884    0.0628746 3146.4336331    0.96              0.33690    
-## edu_facHigh school              0.0027828    0.0470238 3305.2561974    0.06              0.95281    
-## edu_facMaster                  -0.0231233    0.0542247 2984.0632105   -0.43              0.66982    
-## edu_facMiddle school           -0.0008945    0.0472536 3293.8964125   -0.02              0.98490    
-## edu_facNo degree                0.2201383    0.1509526 2724.8222504    1.46              0.14487    
-## edu_facPhD                     -0.0093170    0.1189901 2765.2948848   -0.08              0.93759    
-## edu_facState college            0.1591048    0.0760764 3262.6032757    2.09              0.03657 *  
-## edu_facTechnical school         0.0456232    0.0368486 3159.1613391    1.24              0.21576    
-## edu_facVocational school       -0.0113439    0.0478964 3014.1671313   -0.24              0.81280    
-## employment_facIncapacitated    -0.0361793    0.1620490 3717.6190112   -0.22              0.82334    
-## employment_facIndustrie        -0.2656175    0.0848130 3459.1340799   -3.13              0.00175 ** 
-## employment_facParental Leave   -0.0412747    0.1067323 3407.9617073   -0.39              0.69899    
-## employment_facPublic service   -0.2256964    0.0873196 3438.4978639   -2.58              0.00979 ** 
-## employment_facRetired          -0.1333504    0.0865304 3327.7310907   -1.54              0.12339    
-## employment_facSelf-employed    -0.2918271    0.0947657 3316.1028681   -3.08              0.00209 ** 
-## employment_facStudent          -0.2755051    0.0914276 3561.9746458   -3.01              0.00260 ** 
-## employment_facUnemployed       -0.2874581    0.0955361 3293.2089264   -3.01              0.00264 ** 
-## res_vienna                     -0.0234982    0.0305494 3034.5035765   -0.77              0.44184    
-## acc_bal                        -0.0432827    0.0240581 3171.0216551   -1.80              0.07210 .  
-## acc_gar                        -0.0357678    0.0281810 3152.4686055   -1.27              0.20446    
-## home_sqm                        0.0006758    0.0001998 3616.1290816    3.38              0.00072 ***
-## corona_pos                      0.0049376    0.0067708 8340.6853099    0.73              0.46587    
-## med_txt_kro_b                   0.0036676    0.0104823 2935.2882107    0.35              0.72645    
-## med_txt_sta_b                  -0.0186507    0.0130072 3165.5911753   -1.43              0.15171    
-## med_txt_pre_b                   0.0096616    0.0173631 3295.5530559    0.56              0.57795    
-## med_txt_oes_b                  -0.0117385    0.0129720 3119.2969696   -0.90              0.36558    
-## med_txt_kur_b                   0.0234452    0.0145494 3071.1360648    1.61              0.10719    
-## med_txt_slz_b                   0.0105764    0.0178407 3253.5368558    0.59              0.55334    
-## med_txt_son_b                   0.0308671    0.0103802 3076.8247766    2.97              0.00297 ** 
-## med_vid_orf_b                  -0.0241141    0.0113632 3153.9867450   -2.12              0.03391 *  
-## med_vid_pri_b                   0.0094418    0.0115235 3073.6476508    0.82              0.41265    
-## risk_prop_b                     0.0066283    0.0072569 3423.0337444    0.91              0.36110    
-## loc_cntrl_int_m_b               0.5880701    0.0315475 3326.0717042   18.64 &lt; 0.0000000000000002 ***
-## act_wrk_w                       0.0113145    0.0068844 7188.7254818    1.64              0.10032    
-## act_spo_w                       0.0652036    0.0085492 7247.8002854    7.63    0.000000000000027 ***
-## act_frn_w                       0.0341505    0.0106407 5705.5083970    3.21              0.00134 ** 
-## act_sho_w                       0.0581695    0.0105185 7324.8259135    5.53    0.000000033083066 ***
-## act_pet_w                       0.0320860    0.0097589 7477.6612266    3.29              0.00101 ** 
-## act_wrk_b                       0.0248978    0.0116331 3462.3949189    2.14              0.03240 *  
-## act_spo_b                       0.1440683    0.0137587 3229.5752843   10.47 &lt; 0.0000000000000002 ***
-## act_frn_b                       0.1119099    0.0204256 3541.6114988    5.48    0.000000045783497 ***
-## act_sho_b                       0.0401805    0.0196672 3297.7491153    2.04              0.04113 *  
-## act_pet_b                       0.0171706    0.0092889 3016.9531334    1.85              0.06463 .  
-## sat_dem_w                       0.0242187    0.0088666 6565.1453395    2.73              0.00632 ** 
-## sat_dem_b                       0.0535610    0.0131578 3071.9267108    4.07    0.000048058738624 ***
-## health_w                        0.0814140    0.0094305 7027.8146571    8.63 &lt; 0.0000000000000002 ***
-## health_b                        0.2751490    0.0199687 3437.6918277   13.78 &lt; 0.0000000000000002 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>model_aff_pos_lmer_pre &lt;- &quot;
+  aff_pos_fs ~ 
+    (1 | id) + (1 | wave) + 
+    soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
+    soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+    soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+    soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
+    age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
+    res_vienna + acc_bal + acc_gar + home_sqm + 
+    work_h_b + work_h_w +
+    work_homeoff_b +  work_homeoff_w +
+    hh_income_b + hh_income_w +
+    hh_adults + hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + 
+    hh_oldfam + hh_outfam + hh_partner +
+    home_owner +
+    med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
+    med_vid_orf_b + med_vid_pri_b + 
+    med_txt_kro_w + med_txt_sta_w + med_txt_pre_w + med_txt_oes_w + med_txt_kur_w + med_txt_slz_w + med_txt_son_w + 
+    med_vid_orf_w + med_vid_pri_w + 
+    risk_prop_b + risk_prop_w + 
+    act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
+    act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
+    sat_dem_w + sat_dem_b + 
+    health_w + health_b +
+    loc_cntrl_int_m_w + loc_cntrl_int_m_b
+    &quot;
+fit_aff_pos_lmer_pre &lt;- lmerTest::lmer(model_aff_pos_lmer_pre, data = d_long_50_imp)
+print_res(broom.mixed::tidy(fit_aff_pos_lmer_pre, conf.int = T), imputation = FALSE)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["term"],"name":[1],"type":["chr"],"align":["left"]},{"label":["estimate"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["2.5 %"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["97.5 %"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"(Intercept)","2":"-1.764537","3":"-2.065562","4":"-1.4635117","5":"< .001"},{"1":"soc_med_read_w","2":"-0.014815","3":"-0.019755","4":"-0.0098754","5":"< .001"},{"1":"soc_med_like_share_w","2":"0.005658","3":"-0.000233","4":"0.0115489","5":".060"},{"1":"soc_med_post_w","2":"0.000032","3":"-0.007435","4":"0.0074996","5":".993"},{"1":"soc_med_fb_w","2":"0.003076","3":"-0.000674","4":"0.0068266","5":".108"},{"1":"soc_med_ig_w","2":"0.000087","3":"-0.004636","4":"0.0048097","5":".971"},{"1":"soc_med_wa_w","2":"0.001360","3":"-0.002207","4":"0.0049272","5":".455"},{"1":"soc_med_yt_w","2":"0.001257","3":"-0.003513","4":"0.0060263","5":".606"},{"1":"soc_med_tw_w","2":"0.007308","3":"0.000812","4":"0.0138031","5":".027"},{"1":"soc_med_read_b","2":"-0.124999","3":"-0.165991","4":"-0.0840078","5":"< .001"},{"1":"soc_med_like_share_b","2":"0.051573","3":"0.003861","4":"0.0992862","5":".034"},{"1":"soc_med_post_b","2":"0.170048","3":"0.112994","4":"0.2271019","5":"< .001"},{"1":"soc_med_fb_b","2":"0.018831","3":"-0.013085","4":"0.0507463","5":".247"},{"1":"soc_med_ig_b","2":"0.009730","3":"-0.024104","4":"0.0435639","5":".573"},{"1":"soc_med_wa_b","2":"-0.020979","3":"-0.054848","4":"0.0128889","5":".225"},{"1":"soc_med_yt_b","2":"0.029671","3":"-0.010084","4":"0.0694257","5":".143"},{"1":"soc_med_tw_b","2":"0.049306","3":"0.000880","4":"0.0977310","5":".046"},{"1":"age","2":"0.003401","3":"0.000986","4":"0.0058158","5":".006"},{"1":"male","2":"0.051488","3":"0.007129","4":"0.0958470","5":".023"},{"1":"born_aus","2":"0.029529","3":"-0.039766","4":"0.0988240","5":".404"},{"1":"born_aus_prnts","2":"-0.023158","3":"-0.047556","4":"0.0012401","5":".063"},{"1":"edu_facBachelor","2":"0.014134","3":"-0.091352","4":"0.1196197","5":".793"},{"1":"edu_facHigh school","2":"0.009113","3":"-0.068421","4":"0.0866475","5":".818"},{"1":"edu_facMaster","2":"-0.111060","3":"-0.203686","4":"-0.0184344","5":".019"},{"1":"edu_facMiddle school","2":"0.011787","3":"-0.069350","4":"0.0929243","5":".776"},{"1":"edu_facNo degree","2":"0.074536","3":"-0.184282","4":"0.3333545","5":".572"},{"1":"edu_facPhD","2":"-0.107314","3":"-0.311558","4":"0.0969298","5":".303"},{"1":"edu_facState college","2":"0.081724","3":"-0.045373","4":"0.2088200","5":".207"},{"1":"edu_facTechnical school","2":"0.064295","3":"0.001219","4":"0.1273703","5":".046"},{"1":"edu_facVocational school","2":"-0.035499","3":"-0.117766","4":"0.0467674","5":".398"},{"1":"employment_facIncapacitated","2":"0.100574","3":"-0.106557","4":"0.3077043","5":".341"},{"1":"employment_facIndustrie","2":"-0.219931","3":"-0.349723","4":"-0.0901384","5":"< .001"},{"1":"employment_facParental Leave","2":"0.030086","3":"-0.134378","4":"0.1945507","5":".720"},{"1":"employment_facPublic service","2":"-0.228544","3":"-0.362860","4":"-0.0942288","5":"< .001"},{"1":"employment_facRetired","2":"-0.077670","3":"-0.210025","4":"0.0546845","5":".250"},{"1":"employment_facSelf-employed","2":"-0.319211","3":"-0.468992","4":"-0.1694304","5":"< .001"},{"1":"employment_facStudent","2":"-0.194394","3":"-0.334987","4":"-0.0538000","5":".007"},{"1":"employment_facUnemployed","2":"-0.156342","3":"-0.306497","4":"-0.0061866","5":".041"},{"1":"res_vienna","2":"-0.039118","3":"-0.093404","4":"0.0151676","5":".158"},{"1":"acc_bal","2":"-0.052922","3":"-0.093316","4":"-0.0125276","5":".010"},{"1":"acc_gar","2":"-0.066664","3":"-0.114077","4":"-0.0192504","5":".006"},{"1":"home_sqm","2":"0.000101","3":"-0.000208","4":"0.0004104","5":".520"},{"1":"work_h_b","2":"-0.001095","3":"-0.003404","4":"0.0012146","5":".353"},{"1":"work_h_w","2":"-0.000397","3":"-0.000792","4":"-0.0000014","5":".049"},{"1":"work_homeoff_b","2":"0.025136","3":"-0.057242","4":"0.1075149","5":".550"},{"1":"work_homeoff_w","2":"-0.003913","3":"-0.017394","4":"0.0095684","5":".569"},{"1":"hh_income_b","2":"0.013112","3":"0.002732","4":"0.0234927","5":".013"},{"1":"hh_income_w","2":"0.008526","3":"0.005131","4":"0.0119214","5":"< .001"},{"1":"hh_adults","2":"0.015820","3":"0.001186","4":"0.0304537","5":".034"},{"1":"hh_child18","2":"-0.060601","3":"-0.097264","4":"-0.0239370","5":".001"},{"1":"hh_child17","2":"-0.009579","3":"-0.032225","4":"0.0130678","5":".407"},{"1":"hh_child14","2":"-0.021439","3":"-0.039099","4":"-0.0037794","5":".017"},{"1":"hh_child5","2":"0.028761","3":"0.002686","4":"0.0548369","5":".031"},{"1":"hh_child2","2":"0.013028","3":"-0.021675","4":"0.0477312","5":".462"},{"1":"hh_oldfam","2":"-0.080857","3":"-0.124680","4":"-0.0370338","5":"< .001"},{"1":"hh_outfam","2":"-0.024872","3":"-0.103532","4":"0.0537874","5":".535"},{"1":"hh_partner","2":"-0.008400","3":"-0.045851","4":"0.0290502","5":".660"},{"1":"home_owner","2":"0.041297","3":"0.018633","4":"0.0639605","5":"< .001"},{"1":"med_txt_kro_b","2":"-0.001882","3":"-0.037306","4":"0.0335411","5":".917"},{"1":"med_txt_sta_b","2":"-0.025723","3":"-0.065602","4":"0.0141561","5":".206"},{"1":"med_txt_pre_b","2":"0.054984","3":"0.001169","4":"0.1088004","5":".045"},{"1":"med_txt_oes_b","2":"0.015304","3":"-0.024625","4":"0.0552336","5":".452"},{"1":"med_txt_kur_b","2":"0.053632","3":"0.007666","4":"0.0995981","5":".022"},{"1":"med_txt_slz_b","2":"0.046130","3":"-0.004812","4":"0.0970715","5":".076"},{"1":"med_txt_son_b","2":"0.023791","3":"-0.008066","4":"0.0556476","5":".143"},{"1":"med_vid_orf_b","2":"-0.063954","3":"-0.099706","4":"-0.0282027","5":"< .001"},{"1":"med_vid_pri_b","2":"0.002381","3":"-0.034027","4":"0.0387899","5":".898"},{"1":"med_txt_kro_w","2":"-0.003397","3":"-0.007259","4":"0.0004642","5":".085"},{"1":"med_txt_sta_w","2":"-0.009427","3":"-0.014400","4":"-0.0044538","5":"< .001"},{"1":"med_txt_pre_w","2":"0.006126","3":"-0.000093","4":"0.0123441","5":".054"},{"1":"med_txt_oes_w","2":"0.006757","3":"0.002302","4":"0.0112122","5":".003"},{"1":"med_txt_kur_w","2":"0.008799","3":"0.003871","4":"0.0137278","5":"< .001"},{"1":"med_txt_slz_w","2":"0.004574","3":"-0.001626","4":"0.0107737","5":".148"},{"1":"med_txt_son_w","2":"0.002624","3":"-0.001248","4":"0.0064955","5":".184"},{"1":"med_vid_orf_w","2":"-0.005719","3":"-0.009908","4":"-0.0015302","5":".007"},{"1":"med_vid_pri_w","2":"0.002555","3":"-0.001544","4":"0.0066541","5":".222"},{"1":"risk_prop_b","2":"-0.004740","3":"-0.021317","4":"0.0118363","5":".575"},{"1":"risk_prop_w","2":"-0.002485","3":"-0.004634","4":"-0.0003368","5":".023"},{"1":"act_wrk_w","2":"0.012481","3":"0.006985","4":"0.0179771","5":"< .001"},{"1":"act_spo_w","2":"0.060192","3":"0.053568","4":"0.0668171","5":"< .001"},{"1":"act_frn_w","2":"0.045191","3":"0.037549","4":"0.0528338","5":"< .001"},{"1":"act_sho_w","2":"0.048014","3":"0.040097","4":"0.0559311","5":"< .001"},{"1":"act_pet_w","2":"0.024657","3":"0.017513","4":"0.0317998","5":"< .001"},{"1":"act_wrk_b","2":"0.041334","3":"0.016643","4":"0.0660239","5":".001"},{"1":"act_spo_b","2":"0.120973","3":"0.096975","4":"0.1449718","5":"< .001"},{"1":"act_frn_b","2":"0.072150","3":"0.037179","4":"0.1071203","5":"< .001"},{"1":"act_sho_b","2":"0.014335","3":"-0.018793","4":"0.0474631","5":".396"},{"1":"act_pet_b","2":"0.016039","3":"-0.000182","4":"0.0322596","5":".053"},{"1":"sat_dem_w","2":"0.016765","3":"0.009850","4":"0.0236802","5":"< .001"},{"1":"sat_dem_b","2":"0.027971","3":"0.003466","4":"0.0524766","5":".025"},{"1":"health_w","2":"0.080241","3":"0.073029","4":"0.0874522","5":"< .001"},{"1":"health_b","2":"0.345771","3":"0.303985","4":"0.3875578","5":"< .001"},{"1":"loc_cntrl_int_m_w","2":"0.119771","3":"0.109865","4":"0.1296769","5":"< .001"},{"1":"loc_cntrl_int_m_b","2":"0.855183","3":"0.786970","4":"0.9233970","5":"< .001"},{"1":"sd__(Intercept)","2":"0.508366","3":"NA","4":"NA","5":"NA"},{"1":"sd__(Intercept)","2":"0.060997","3":"NA","4":"NA","5":"NA"},{"1":"sd__Observation","2":"0.487144","3":"NA","4":"NA","5":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
 </div>
-<div id="negative-affect-1" class="section level2">
+</div>
+<div id="negative-affect-2" class="section level2">
 <h2>Negative Affect</h2>
-<pre class="r"><code>model_aff_neg_lmer_pre &lt;- lmerTest::lmer(aff_neg_fs ~ 
-                                        (1 | id) + (1 | wave) + 
-                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
-                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
-                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
-                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
-                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
-                                        res_vienna + acc_bal + acc_gar + home_sqm + corona_pos +
-                                        med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
-                                        med_vid_orf_b + med_vid_pri_b + 
-                                        risk_prop_b + loc_cntrl_int_m_b + 
-                                        act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
-                                        act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
-                                        sat_dem_w + sat_dem_b + 
-                                        health_w + health_b
-                                      , data = d_long_50_imp)
-summary(model_aff_neg_lmer_pre)</code></pre>
-<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
-## Formula: aff_neg_fs ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +      soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
-##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b + age + male + born_aus + born_aus_prnts +      edu_fac + employment_fac + res_vienna + acc_bal + acc_gar +  
-##     home_sqm + corona_pos + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b +      med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b +      med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_m_b +  
-##     act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w +      act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +      sat_dem_w + sat_dem_b + health_w + health_b
-##    Data: d_long_50_imp
-## 
-## REML criterion at convergence: 12106
-## 
-## Scaled residuals: 
-##    Min     1Q Median     3Q    Max 
-## -4.540 -0.437 -0.085  0.320  5.867 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  id       (Intercept) 0.13805  0.3716  
-##  wave     (Intercept) 0.00812  0.0901  
-##  Residual             0.13320  0.3650  
-## Number of obs: 9208, groups:  id, 3164; wave, 28
-## 
-## Fixed effects:
-##                                 Estimate  Std. Error          df t value             Pr(&gt;|t|)    
-## (Intercept)                     4.413170    0.114863 2702.081348   38.42 &lt; 0.0000000000000002 ***
-## soc_med_read_w                  0.003811    0.005179 6099.111982    0.74              0.46186    
-## soc_med_like_share_w            0.009575    0.006441 6046.236672    1.49              0.13720    
-## soc_med_post_w                  0.021041    0.008476 6060.443417    2.48              0.01308 *  
-## soc_med_fb_w                   -0.003290    0.005730 6072.226320   -0.57              0.56593    
-## soc_med_ig_w                   -0.010463    0.006493 6099.462403   -1.61              0.10715    
-## soc_med_wa_w                   -0.000403    0.004755 6091.928757   -0.08              0.93240    
-## soc_med_yt_w                    0.012555    0.006335 6075.173142    1.98              0.04754 *  
-## soc_med_tw_w                    0.008607    0.009473 6127.784218    0.91              0.36361    
-## soc_med_read_b                  0.004883    0.010067 3230.763585    0.49              0.62768    
-## soc_med_like_share_b            0.010615    0.011780 3321.014958    0.90              0.36760    
-## soc_med_post_b                  0.057983    0.014982 3394.238020    3.87              0.00011 ***
-## soc_med_fb_b                    0.005206    0.007460 3063.650988    0.70              0.48536    
-## soc_med_ig_b                    0.000704    0.008407 3153.625313    0.08              0.93327    
-## soc_med_wa_b                    0.005042    0.007793 2971.494677    0.65              0.51774    
-## soc_med_yt_b                    0.001251    0.009757 3089.754421    0.13              0.89801    
-## soc_med_tw_b                    0.011248    0.011857 3127.660903    0.95              0.34291    
-## age                            -0.007962    0.000887 3091.655942   -8.97 &lt; 0.0000000000000002 ***
-## male                           -0.095498    0.017479 2875.114319   -5.46        0.00000005063 ***
-## born_aus                       -0.071960    0.031447 3144.089480   -2.29              0.02219 *  
-## born_aus_prnts                 -0.014310    0.010921 2940.657899   -1.31              0.19020    
-## edu_facBachelor                -0.067201    0.045355 2925.492136   -1.48              0.13854    
-## edu_facHigh school             -0.001754    0.033929 3075.695664   -0.05              0.95878    
-## edu_facMaster                  -0.023725    0.039117 2770.671238   -0.61              0.54422    
-## edu_facMiddle school           -0.009248    0.034108 3068.756794   -0.27              0.78630    
-## edu_facNo degree                0.065083    0.108955 2525.807369    0.60              0.55033    
-## edu_facPhD                      0.035692    0.085853 2561.858796    0.42              0.67764    
-## edu_facState college           -0.098464    0.054875 3038.329632   -1.79              0.07286 .  
-## edu_facTechnical school        -0.070175    0.026626 2941.236681   -2.64              0.00844 ** 
-## edu_facVocational school       -0.030942    0.034565 2800.450878   -0.90              0.37077    
-## employment_facIncapacitated     0.250804    0.116817 3494.470519    2.15              0.03186 *  
-## employment_facIndustrie         0.131986    0.061159 3237.431741    2.16              0.03100 *  
-## employment_facParental Leave    0.046990    0.076994 3180.912831    0.61              0.54170    
-## employment_facPublic service    0.137256    0.062966 3216.975182    2.18              0.02934 *  
-## employment_facRetired           0.179607    0.062405 3108.153106    2.88              0.00403 ** 
-## employment_facSelf-employed     0.215518    0.068347 3096.108092    3.15              0.00163 ** 
-## employment_facStudent           0.185582    0.065928 3335.711934    2.81              0.00491 ** 
-## employment_facUnemployed        0.215701    0.068901 3073.569744    3.13              0.00176 ** 
-## res_vienna                     -0.052656    0.022071 2820.984492   -2.39              0.01711 *  
-## acc_bal                        -0.018204    0.017354 2952.709606   -1.05              0.29428    
-## acc_gar                        -0.053002    0.020327 2933.415866   -2.61              0.00917 ** 
-## home_sqm                       -0.000370    0.000144 3379.115247   -2.57              0.01028 *  
-## corona_pos                     -0.001425    0.004876 8568.056129   -0.29              0.77009    
-## med_txt_kro_b                  -0.003568    0.007564 2724.072473   -0.47              0.63711    
-## med_txt_sta_b                   0.029481    0.009382 2943.550310    3.14              0.00169 ** 
-## med_txt_pre_b                   0.000566    0.012522 3067.626543    0.05              0.96397    
-## med_txt_oes_b                   0.002412    0.009358 2898.461147    0.26              0.79664    
-## med_txt_kur_b                   0.002998    0.010498 2852.862053    0.29              0.77523    
-## med_txt_slz_b                   0.018727    0.012866 3028.274647    1.46              0.14564    
-## med_txt_son_b                  -0.005372    0.007487 2858.309959   -0.72              0.47312    
-## med_vid_orf_b                   0.023902    0.008198 2932.026612    2.92              0.00358 ** 
-## med_vid_pri_b                  -0.010087    0.008313 2855.173964   -1.21              0.22509    
-## risk_prop_b                    -0.020660    0.005233 3188.836055   -3.95        0.00008046121 ***
-## loc_cntrl_int_m_b              -0.458836    0.022756 3094.778471  -20.16 &lt; 0.0000000000000002 ***
-## act_wrk_w                      -0.004081    0.004941 7070.302932   -0.83              0.40882    
-## act_spo_w                       0.011753    0.006129 7060.763844    1.92              0.05519 .  
-## act_frn_w                       0.017743    0.007681 7107.388152    2.31              0.02092 *  
-## act_sho_w                       0.006774    0.007539 7134.773781    0.90              0.36893    
-## act_pet_w                       0.044634    0.006993 7299.034326    6.38        0.00000000018 ***
-## act_wrk_b                       0.009266    0.008399 3236.519876    1.10              0.27002    
-## act_spo_b                       0.026348    0.009923 3004.111226    2.66              0.00797 ** 
-## act_frn_b                       0.035508    0.014772 3351.686858    2.40              0.01628 *  
-## act_sho_b                       0.036800    0.014186 3068.967454    2.59              0.00953 ** 
-## act_pet_b                       0.015945    0.006701 2801.727163    2.38              0.01740 *  
-## sat_dem_w                      -0.020495    0.006378 7122.504771   -3.21              0.00132 ** 
-## sat_dem_b                      -0.047495    0.009497 2852.598431   -5.00        0.00000060443 ***
-## health_w                       -0.079655    0.006757 6821.571612  -11.79 &lt; 0.0000000000000002 ***
-## health_b                       -0.268461    0.014407 3205.185005  -18.63 &lt; 0.0000000000000002 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>model_aff_neg_lmer_pre &lt;- &quot;
+  aff_neg_fs ~ 
+    (1 | id) + (1 | wave) + 
+    soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
+    soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+    soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+    soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
+    age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
+    res_vienna + acc_bal + acc_gar + home_sqm + 
+    work_h_b + work_h_w +
+    work_homeoff_b +  work_homeoff_w +
+    hh_income_b + hh_income_w +
+    hh_adults + hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + 
+    hh_oldfam + hh_outfam + hh_partner +
+    home_owner +
+    med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
+    med_vid_orf_b + med_vid_pri_b + 
+    med_txt_kro_w + med_txt_sta_w + med_txt_pre_w + med_txt_oes_w + med_txt_kur_w + med_txt_slz_w + med_txt_son_w + 
+    med_vid_orf_w + med_vid_pri_w + 
+    risk_prop_b + risk_prop_w + 
+    act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
+    act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
+    sat_dem_w + sat_dem_b + 
+    health_w + health_b +
+    loc_cntrl_int_m_w + loc_cntrl_int_m_b
+    &quot;
+fit_aff_neg_lmer_pre &lt;- lmerTest::lmer(model_aff_neg_lmer_pre, data = d_long_50_imp)
+print_res(broom.mixed::tidy(fit_aff_neg_lmer_pre, conf.int = T), imputation = FALSE)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["term"],"name":[1],"type":["chr"],"align":["left"]},{"label":["estimate"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["2.5 %"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["97.5 %"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"(Intercept)","2":"4.437471","3":"4.23639","4":"4.63856","5":"< .001"},{"1":"soc_med_read_w","2":"-0.000905","3":"-0.00441","4":"0.00260","5":".613"},{"1":"soc_med_like_share_w","2":"0.010537","3":"0.00635","4":"0.01472","5":"< .001"},{"1":"soc_med_post_w","2":"0.016908","3":"0.01161","4":"0.02221","5":"< .001"},{"1":"soc_med_fb_w","2":"-0.006544","3":"-0.00921","4":"-0.00388","5":"< .001"},{"1":"soc_med_ig_w","2":"0.000251","3":"-0.00310","4":"0.00361","5":".883"},{"1":"soc_med_wa_w","2":"0.002928","3":"0.00039","4":"0.00546","5":".024"},{"1":"soc_med_yt_w","2":"0.003234","3":"-0.00015","4":"0.00662","5":".061"},{"1":"soc_med_tw_w","2":"0.011271","3":"0.00666","4":"0.01588","5":"< .001"},{"1":"soc_med_read_b","2":"0.029789","3":"0.00233","4":"0.05725","5":".033"},{"1":"soc_med_like_share_b","2":"0.034421","3":"0.00240","4":"0.06644","5":".035"},{"1":"soc_med_post_b","2":"0.088134","3":"0.04985","4":"0.12642","5":"< .001"},{"1":"soc_med_fb_b","2":"-0.023393","3":"-0.04476","4":"-0.00203","5":".032"},{"1":"soc_med_ig_b","2":"0.016708","3":"-0.00596","4":"0.03938","5":".149"},{"1":"soc_med_wa_b","2":"0.004632","3":"-0.01801","4":"0.02728","5":".688"},{"1":"soc_med_yt_b","2":"0.001136","3":"-0.02549","4":"0.02776","5":".933"},{"1":"soc_med_tw_b","2":"0.064470","3":"0.03200","4":"0.09694","5":"< .001"},{"1":"age","2":"-0.007242","3":"-0.00886","4":"-0.00562","5":"< .001"},{"1":"male","2":"-0.095396","3":"-0.12495","4":"-0.06584","5":"< .001"},{"1":"born_aus","2":"-0.064288","3":"-0.11045","4":"-0.01812","5":".006"},{"1":"born_aus_prnts","2":"-0.031362","3":"-0.04765","4":"-0.01507","5":"< .001"},{"1":"edu_facBachelor","2":"-0.012368","3":"-0.08221","4":"0.05747","5":".728"},{"1":"edu_facHigh school","2":"0.013117","3":"-0.03830","4":"0.06454","5":".617"},{"1":"edu_facMaster","2":"0.028384","3":"-0.03298","4":"0.08975","5":".365"},{"1":"edu_facMiddle school","2":"-0.004005","3":"-0.05787","4":"0.04986","5":".884"},{"1":"edu_facNo degree","2":"0.078543","3":"-0.09270","4":"0.24979","5":".369"},{"1":"edu_facPhD","2":"0.055804","3":"-0.07937","4":"0.19098","5":".418"},{"1":"edu_facState college","2":"-0.062984","3":"-0.14728","4":"0.02132","5":".143"},{"1":"edu_facTechnical school","2":"-0.058313","3":"-0.10013","4":"-0.01650","5":".006"},{"1":"edu_facVocational school","2":"-0.034651","3":"-0.08914","4":"0.01983","5":".213"},{"1":"employment_facIncapacitated","2":"0.015774","3":"-0.12570","4":"0.15725","5":".827"},{"1":"employment_facIndustrie","2":"0.171851","3":"0.08445","4":"0.25925","5":"< .001"},{"1":"employment_facParental Leave","2":"0.118501","3":"0.00783","4":"0.22918","5":".036"},{"1":"employment_facPublic service","2":"0.162404","3":"0.07207","4":"0.25273","5":"< .001"},{"1":"employment_facRetired","2":"0.205869","3":"0.11678","4":"0.29496","5":"< .001"},{"1":"employment_facSelf-employed","2":"0.233912","3":"0.13355","4":"0.33428","5":"< .001"},{"1":"employment_facStudent","2":"0.179673","3":"0.08491","4":"0.27444","5":"< .001"},{"1":"employment_facUnemployed","2":"0.134681","3":"0.03413","4":"0.23523","5":".009"},{"1":"res_vienna","2":"-0.040253","3":"-0.07635","4":"-0.00416","5":".029"},{"1":"acc_bal","2":"0.003560","3":"-0.02329","4":"0.03041","5":".795"},{"1":"acc_gar","2":"0.018791","3":"-0.01278","4":"0.05036","5":".243"},{"1":"home_sqm","2":"-0.000335","3":"-0.00054","4":"-0.00013","5":".002"},{"1":"work_h_b","2":"0.001367","3":"-0.00017","4":"0.00290","5":".081"},{"1":"work_h_w","2":"0.000021","3":"-0.00026","4":"0.00030","5":".884"},{"1":"work_homeoff_b","2":"0.009269","3":"-0.04555","4":"0.06409","5":".740"},{"1":"work_homeoff_w","2":"-0.002675","3":"-0.01225","4":"0.00690","5":".584"},{"1":"hh_income_b","2":"-0.007006","3":"-0.01390","4":"-0.00011","5":".046"},{"1":"hh_income_w","2":"-0.007475","3":"-0.00989","4":"-0.00506","5":"< .001"},{"1":"hh_adults","2":"0.003081","3":"-0.00713","4":"0.01329","5":".554"},{"1":"hh_child18","2":"0.012154","3":"-0.01346","4":"0.03776","5":".352"},{"1":"hh_child17","2":"0.006180","3":"-0.00960","4":"0.02196","5":".443"},{"1":"hh_child14","2":"-0.020049","3":"-0.03238","4":"-0.00771","5":".001"},{"1":"hh_child5","2":"0.010462","3":"-0.00781","4":"0.02873","5":".262"},{"1":"hh_child2","2":"0.030519","3":"0.00629","4":"0.05475","5":".014"},{"1":"hh_oldfam","2":"0.000286","3":"-0.03039","4":"0.03096","5":".985"},{"1":"hh_outfam","2":"-0.003310","3":"-0.05811","4":"0.05149","5":".906"},{"1":"hh_partner","2":"-0.032418","3":"-0.05865","4":"-0.00619","5":".015"},{"1":"home_owner","2":"-0.005428","3":"-0.02129","4":"0.01044","5":".503"},{"1":"med_txt_kro_b","2":"0.014142","3":"-0.00952","4":"0.03780","5":".241"},{"1":"med_txt_sta_b","2":"0.006633","3":"-0.02003","4":"0.03330","5":".626"},{"1":"med_txt_pre_b","2":"-0.023629","3":"-0.05963","4":"0.01237","5":".198"},{"1":"med_txt_oes_b","2":"0.003648","3":"-0.02306","4":"0.03036","5":".789"},{"1":"med_txt_kur_b","2":"0.029771","3":"-0.00093","4":"0.06047","5":".057"},{"1":"med_txt_slz_b","2":"0.066058","3":"0.03197","4":"0.10015","5":"< .001"},{"1":"med_txt_son_b","2":"-0.003516","3":"-0.02479","4":"0.01776","5":".746"},{"1":"med_vid_orf_b","2":"0.055092","3":"0.03117","4":"0.07901","5":"< .001"},{"1":"med_vid_pri_b","2":"-0.015226","3":"-0.03957","4":"0.00912","5":".220"},{"1":"med_txt_kro_w","2":"-0.001343","3":"-0.00409","4":"0.00140","5":".337"},{"1":"med_txt_sta_w","2":"0.008468","3":"0.00494","4":"0.01200","5":"< .001"},{"1":"med_txt_pre_w","2":"0.001900","3":"-0.00252","4":"0.00632","5":".399"},{"1":"med_txt_oes_w","2":"0.003058","3":"-0.00011","4":"0.00622","5":".058"},{"1":"med_txt_kur_w","2":"0.006775","3":"0.00327","4":"0.01028","5":"< .001"},{"1":"med_txt_slz_w","2":"0.012506","3":"0.00810","4":"0.01691","5":"< .001"},{"1":"med_txt_son_w","2":"-0.004167","3":"-0.00692","4":"-0.00142","5":".003"},{"1":"med_vid_orf_w","2":"0.007528","3":"0.00455","4":"0.01050","5":"< .001"},{"1":"med_vid_pri_w","2":"0.003902","3":"0.00099","4":"0.00681","5":".009"},{"1":"risk_prop_b","2":"-0.025135","3":"-0.03621","4":"-0.01406","5":"< .001"},{"1":"risk_prop_w","2":"-0.004881","3":"-0.00641","4":"-0.00335","5":"< .001"},{"1":"act_wrk_w","2":"0.002100","3":"-0.00180","4":"0.00600","5":".292"},{"1":"act_spo_w","2":"0.013285","3":"0.00858","4":"0.01799","5":"< .001"},{"1":"act_frn_w","2":"0.016783","3":"0.01135","4":"0.02222","5":"< .001"},{"1":"act_sho_w","2":"0.016986","3":"0.01136","4":"0.02261","5":"< .001"},{"1":"act_pet_w","2":"0.042225","3":"0.03715","4":"0.04730","5":"< .001"},{"1":"act_wrk_b","2":"0.018158","3":"0.00170","4":"0.03462","5":".031"},{"1":"act_spo_b","2":"0.030150","3":"0.01422","4":"0.04608","5":"< .001"},{"1":"act_frn_b","2":"0.044567","3":"0.02129","4":"0.06785","5":"< .001"},{"1":"act_sho_b","2":"0.030062","3":"0.00805","4":"0.05207","5":".007"},{"1":"act_pet_b","2":"0.006481","3":"-0.00426","4":"0.01723","5":".237"},{"1":"sat_dem_w","2":"-0.031872","3":"-0.03679","4":"-0.02696","5":"< .001"},{"1":"sat_dem_b","2":"-0.048505","3":"-0.06479","4":"-0.03222","5":"< .001"},{"1":"health_w","2":"-0.073395","3":"-0.07852","4":"-0.06827","5":"< .001"},{"1":"health_b","2":"-0.301481","3":"-0.32935","4":"-0.27361","5":"< .001"},{"1":"loc_cntrl_int_m_w","2":"-0.099781","3":"-0.10682","4":"-0.09275","5":"< .001"},{"1":"loc_cntrl_int_m_b","2":"-0.572919","3":"-0.61840","4":"-0.52743","5":"< .001"},{"1":"sd__(Intercept)","2":"0.332838","3":"NA","4":"NA","5":"NA"},{"1":"sd__(Intercept)","2":"0.051512","3":"NA","4":"NA","5":"NA"},{"1":"sd__Observation","2":"0.345978","3":"NA","4":"NA","5":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
 </div>
 </div>
 <div id="preregistered-without-imputation" class="section level1">
 <h1>Preregistered without imputation</h1>
 <p>Same as before, but now don’t use any imputed data whatsoever. Was
 preregistered as additional analysis to provide comparison.</p>
-<p>We first need to export factor scores for variables without imputed
-data. Note that I don’t report results of mean scores to save space, as
-results would be highly similar.</p>
-<pre class="r"><code>model &lt;- &quot;
-aff_pos =~ a1*aff_pos_1 + a2*aff_pos_2 + a3*aff_pos_3
-&quot;
-cfa_aff_pos &lt;- cfa(model, d_long_50, group = &quot;wave&quot;, estimator = &quot;MLM&quot;)
-d_long_50$aff_pos_fs &lt;- get_fs(cfa_aff_pos)
-
-model &lt;- &quot;
-aff_neg =~ a1*aff_neg_1 + a2*aff_neg_2 + a3*aff_neg_3 + a4*aff_neg_4 + a5*aff_neg_5 + a6*aff_neg_6
-&quot;
-cfa_aff_neg &lt;- cfa(model, d_long_50, group = &quot;wave&quot;, estimator = &quot;MLM&quot;)
-d_long_50$aff_neg_fs &lt;- get_fs(cfa_aff_neg)</code></pre>
-<div id="life-satisfaction-2" class="section level2">
+<div id="life-satisfaction-3" class="section level2">
 <h2>Life satisfaction</h2>
-<pre class="r"><code>model_life_sat_lmer_noi &lt;- lmerTest::lmer(life_sat ~
-                                        (1 | id) + (1 | wave) + 
-                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
-                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
-                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
-                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
-                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
-                                        res_vienna + acc_bal + acc_gar + home_sqm + corona_pos +
-                                        med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
-                                        med_vid_orf_b + med_vid_pri_b + 
-                                        risk_prop_b + loc_cntrl_int_m_b + 
-                                        act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
-                                        act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
-                                        sat_dem_w + sat_dem_b + 
-                                        health_w + health_b 
-                                      , data = d_long_50)
-summary(model_life_sat_lmer_noi)</code></pre>
-<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
-## Formula: life_sat ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +      soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
-##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b + age + male + born_aus + born_aus_prnts +      edu_fac + employment_fac + res_vienna + acc_bal + acc_gar +  
-##     home_sqm + corona_pos + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b +      med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b +      med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_m_b +  
-##     act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w +      act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +      sat_dem_w + sat_dem_b + health_w + health_b
-##    Data: d_long_50
-## 
-## REML criterion at convergence: 20051
-## 
-## Scaled residuals: 
-##    Min     1Q Median     3Q    Max 
-## -3.971 -0.365  0.151  0.536  3.798 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  id       (Intercept) 1.4639   1.210   
-##  wave     (Intercept) 0.0154   0.124   
-##  Residual             3.4339   1.853   
-## Number of obs: 4539, groups:  id, 2485; wave, 28
-## 
-## Fixed effects:
-##                                 Estimate  Std. Error          df t value             Pr(&gt;|t|)    
-## (Intercept)                    -1.256985    0.720046 2213.413088   -1.75              0.08100 .  
-## soc_med_read_w                  0.038299    0.039266 3282.531552    0.98              0.32945    
-## soc_med_like_share_w            0.045413    0.047962 3241.887179    0.95              0.34379    
-## soc_med_post_w                 -0.069989    0.064889 3239.931757   -1.08              0.28085    
-## soc_med_fb_w                   -0.038064    0.045924 3504.521887   -0.83              0.40725    
-## soc_med_ig_w                    0.115692    0.051511 3471.184717    2.25              0.02477 *  
-## soc_med_wa_w                   -0.030466    0.036626 3275.160297   -0.83              0.40557    
-## soc_med_yt_w                    0.014468    0.049121 3303.982616    0.29              0.76836    
-## soc_med_tw_w                   -0.139958    0.075462 3636.222463   -1.85              0.06372 .  
-## soc_med_read_b                 -0.017843    0.049654 2579.436764   -0.36              0.71936    
-## soc_med_like_share_b           -0.065835    0.057342 2606.672476   -1.15              0.25103    
-## soc_med_post_b                 -0.029731    0.074649 2810.240441   -0.40              0.69046    
-## soc_med_fb_b                    0.027017    0.036061 2451.060262    0.75              0.45381    
-## soc_med_ig_b                   -0.029889    0.042079 2515.595189   -0.71              0.47758    
-## soc_med_wa_b                   -0.013794    0.037250 2371.840394   -0.37              0.71119    
-## soc_med_yt_b                    0.048802    0.047076 2422.800476    1.04              0.30000    
-## soc_med_tw_b                   -0.004247    0.058514 2445.545058   -0.07              0.94214    
-## age                             0.007868    0.004337 2319.759577    1.81              0.06976 .  
-## male                            0.057435    0.082834 2263.130875    0.69              0.48814    
-## born_aus                       -0.413120    0.159848 2449.855463   -2.58              0.00981 ** 
-## born_aus_prnts                 -0.043718    0.053588 2331.297483   -0.82              0.41469    
-## edu_facMiddle school           -1.352037    0.542604 2007.441981   -2.49              0.01279 *  
-## edu_facVocational school       -1.197226    0.539634 1991.451052   -2.22              0.02663 *  
-## edu_facTechnical school        -1.289500    0.530275 1988.768570   -2.43              0.01511 *  
-## edu_facHigh school             -1.253832    0.544204 2015.994521   -2.30              0.02133 *  
-## edu_facApplied high school     -1.310973    0.539323 2009.665901   -2.43              0.01515 *  
-## edu_facState college           -1.527769    0.577666 2069.661847   -2.64              0.00824 ** 
-## edu_facBachelor                -0.983703    0.565325 2032.684970   -1.74              0.08200 .  
-## edu_facMaster                  -1.069204    0.550003 2024.932153   -1.94              0.05203 .  
-## edu_facPhD                     -0.853283    0.657998 2058.377518   -1.30              0.19485    
-## employment_facIndustrie         0.821409    0.202783 2252.727763    4.05           0.00005280 ***
-## employment_facPublic service    0.937067    0.216234 2291.577492    4.33           0.00001530 ***
-## employment_facSelf-employed     0.531022    0.246503 2233.728881    2.15              0.03133 *  
-## employment_facRetired           0.809318    0.219507 2174.144272    3.69              0.00023 ***
-## employment_facHousekeeping      0.963176    0.349653 2229.235049    2.75              0.00592 ** 
-## employment_facStudent           1.054592    0.241043 2372.718496    4.38           0.00001266 ***
-## employment_facIncapacitated     1.170581    0.552394 2264.769554    2.12              0.03419 *  
-## employment_facParental Leave    1.453417    0.335003 2333.728658    4.34           0.00001496 ***
-## res_vienna                      0.055046    0.106456 2265.895093    0.52              0.60515    
-## acc_bal                         0.059513    0.084302 2282.000492    0.71              0.48029    
-## acc_gar                         0.043679    0.099083 2299.745268    0.44              0.65937    
-## home_sqm                        0.001623    0.000731 2507.548078    2.22              0.02637 *  
-## corona_pos                     -0.064866    0.060439 3469.351139   -1.07              0.28323    
-## med_txt_kro_b                   0.075948    0.035041 2230.476892    2.17              0.03031 *  
-## med_txt_sta_b                  -0.001863    0.045139 2330.646636   -0.04              0.96708    
-## med_txt_pre_b                   0.053580    0.059812 2495.300336    0.90              0.37044    
-## med_txt_oes_b                   0.006084    0.044913 2292.736348    0.14              0.89226    
-## med_txt_kur_b                   0.010467    0.049576 2197.752289    0.21              0.83281    
-## med_txt_slz_b                   0.011577    0.062294 2331.676547    0.19              0.85258    
-## med_txt_son_b                  -0.003931    0.034662 2292.434664   -0.11              0.90971    
-## med_vid_orf_b                  -0.039737    0.038725 2360.315307   -1.03              0.30493    
-## med_vid_pri_b                   0.014571    0.039092 2312.248052    0.37              0.70938    
-## risk_prop_b                     0.030380    0.020164 2325.911988    1.51              0.13203    
-## loc_cntrl_int_m_b               1.163065    0.088654 2320.978175   13.12 &lt; 0.0000000000000002 ***
-## act_wrk_w                       0.075751    0.039316 4308.431038    1.93              0.05408 .  
-## act_spo_w                       0.061104    0.045803 4287.350754    1.33              0.18226    
-## act_frn_w                       0.025616    0.059169  932.513692    0.43              0.66517    
-## act_sho_w                      -0.034479    0.059863 4375.075698   -0.58              0.56467    
-## act_pet_w                      -0.106272    0.058115 4470.927003   -1.83              0.06752 .  
-## act_wrk_b                       0.082587    0.042390 2447.663939    1.95              0.05150 .  
-## act_spo_b                       0.070880    0.048319 2422.683221    1.47              0.14253    
-## act_frn_b                       0.153083    0.075874 2468.891273    2.02              0.04374 *  
-## act_sho_b                      -0.097499    0.071655 2517.071124   -1.36              0.17374    
-## act_pet_b                       0.016932    0.031468 2247.438632    0.54              0.59060    
-## sat_dem_w                       0.243239    0.048467 4166.556269    5.02           0.00000054 ***
-## sat_dem_b                       0.386560    0.045663 2391.872789    8.47 &lt; 0.0000000000000002 ***
-## health_w                        0.041206    0.075841 4200.878363    0.54              0.58694    
-## health_b                        0.676884    0.064041 2383.385617   10.57 &lt; 0.0000000000000002 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>model_life_sat_lmer_noi &lt;- &quot;
+  life_sat ~
+  (1 | id) + (1 | wave) + 
+  soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
+  soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+  soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+  soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
+  age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
+  res_vienna + acc_bal + acc_gar + home_sqm + corona_pos +
+  med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + med_vid_orf_b + med_vid_pri_b + 
+  risk_prop_b + loc_cntrl_int_m_b + 
+  act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
+  act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
+  sat_dem_w + sat_dem_b + 
+  health_w + health_b
+&quot;
+fit_life_sat_lmer_noi &lt;- lmerTest::lmer(model_life_sat_lmer_noi, data = d_long_50)
+print_res(broom.mixed::tidy(fit_life_sat_lmer_noi, conf.int = T), imputation = FALSE)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["term"],"name":[1],"type":["chr"],"align":["left"]},{"label":["estimate"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["2.5 %"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["97.5 %"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"(Intercept)","2":"-1.2570","3":"-2.66902","4":"0.1551","5":".081"},{"1":"soc_med_read_w","2":"0.0383","3":"-0.03869","4":"0.1153","5":".329"},{"1":"soc_med_like_share_w","2":"0.0454","3":"-0.04863","4":"0.1395","5":".344"},{"1":"soc_med_post_w","2":"-0.0700","3":"-0.19722","4":"0.0572","5":".281"},{"1":"soc_med_fb_w","2":"-0.0381","3":"-0.12810","4":"0.0520","5":".407"},{"1":"soc_med_ig_w","2":"0.1157","3":"0.01470","4":"0.2167","5":".025"},{"1":"soc_med_wa_w","2":"-0.0305","3":"-0.10228","4":"0.0413","5":".406"},{"1":"soc_med_yt_w","2":"0.0145","3":"-0.08184","4":"0.1108","5":".768"},{"1":"soc_med_tw_w","2":"-0.1400","3":"-0.28791","4":"0.0080","5":".064"},{"1":"soc_med_read_b","2":"-0.0178","3":"-0.11521","4":"0.0795","5":".719"},{"1":"soc_med_like_share_b","2":"-0.0658","3":"-0.17828","4":"0.0466","5":".251"},{"1":"soc_med_post_b","2":"-0.0297","3":"-0.17610","4":"0.1166","5":".690"},{"1":"soc_med_fb_b","2":"0.0270","3":"-0.04370","4":"0.0977","5":".454"},{"1":"soc_med_ig_b","2":"-0.0299","3":"-0.11240","4":"0.0526","5":".478"},{"1":"soc_med_wa_b","2":"-0.0138","3":"-0.08684","4":"0.0593","5":".711"},{"1":"soc_med_yt_b","2":"0.0488","3":"-0.04351","4":"0.1411","5":".300"},{"1":"soc_med_tw_b","2":"-0.0042","3":"-0.11899","4":"0.1105","5":".942"},{"1":"age","2":"0.0079","3":"-0.00064","4":"0.0164","5":".070"},{"1":"male","2":"0.0574","3":"-0.10500","4":"0.2199","5":".488"},{"1":"born_aus","2":"-0.4131","3":"-0.72657","4":"-0.0997","5":".010"},{"1":"born_aus_prnts","2":"-0.0437","3":"-0.14880","4":"0.0614","5":".415"},{"1":"edu_facMiddle school","2":"-1.3520","3":"-2.41616","4":"-0.2879","5":".013"},{"1":"edu_facVocational school","2":"-1.1972","3":"-2.25553","4":"-0.1389","5":".027"},{"1":"edu_facTechnical school","2":"-1.2895","3":"-2.32945","4":"-0.2495","5":".015"},{"1":"edu_facHigh school","2":"-1.2538","3":"-2.32109","4":"-0.1866","5":".021"},{"1":"edu_facApplied high school","2":"-1.3110","3":"-2.36866","4":"-0.2533","5":".015"},{"1":"edu_facState college","2":"-1.5278","3":"-2.66063","4":"-0.3949","5":".008"},{"1":"edu_facBachelor","2":"-0.9837","3":"-2.09238","4":"0.1250","5":".082"},{"1":"edu_facMaster","2":"-1.0692","3":"-2.14784","4":"0.0094","5":".052"},{"1":"edu_facPhD","2":"-0.8533","3":"-2.14369","4":"0.4371","5":".195"},{"1":"employment_facIndustrie","2":"0.8214","3":"0.42375","4":"1.2191","5":"< .001"},{"1":"employment_facPublic service","2":"0.9371","3":"0.51303","4":"1.3611","5":"< .001"},{"1":"employment_facSelf-employed","2":"0.5310","3":"0.04762","4":"1.0144","5":".031"},{"1":"employment_facRetired","2":"0.8093","3":"0.37885","4":"1.2398","5":"< .001"},{"1":"employment_facHousekeeping","2":"0.9632","3":"0.27750","4":"1.6489","5":".006"},{"1":"employment_facStudent","2":"1.0546","3":"0.58191","4":"1.5273","5":"< .001"},{"1":"employment_facIncapacitated","2":"1.1706","3":"0.08733","4":"2.2538","5":".034"},{"1":"employment_facParental Leave","2":"1.4534","3":"0.79648","4":"2.1104","5":"< .001"},{"1":"res_vienna","2":"0.0550","3":"-0.15372","4":"0.2638","5":".605"},{"1":"acc_bal","2":"0.0595","3":"-0.10580","4":"0.2248","5":".480"},{"1":"acc_gar","2":"0.0437","3":"-0.15062","4":"0.2380","5":".659"},{"1":"home_sqm","2":"0.0016","3":"0.00019","4":"0.0031","5":".026"},{"1":"corona_pos","2":"-0.0649","3":"-0.18337","4":"0.0536","5":".283"},{"1":"med_txt_kro_b","2":"0.0759","3":"0.00723","4":"0.1447","5":".030"},{"1":"med_txt_sta_b","2":"-0.0019","3":"-0.09038","4":"0.0867","5":".967"},{"1":"med_txt_pre_b","2":"0.0536","3":"-0.06371","4":"0.1709","5":".370"},{"1":"med_txt_oes_b","2":"0.0061","3":"-0.08199","4":"0.0942","5":".892"},{"1":"med_txt_kur_b","2":"0.0105","3":"-0.08675","4":"0.1077","5":".833"},{"1":"med_txt_slz_b","2":"0.0116","3":"-0.11058","4":"0.1337","5":".853"},{"1":"med_txt_son_b","2":"-0.0039","3":"-0.07190","4":"0.0640","5":".910"},{"1":"med_vid_orf_b","2":"-0.0397","3":"-0.11568","4":"0.0362","5":".305"},{"1":"med_vid_pri_b","2":"0.0146","3":"-0.06209","4":"0.0912","5":".709"},{"1":"risk_prop_b","2":"0.0304","3":"-0.00916","4":"0.0699","5":".132"},{"1":"loc_cntrl_int_m_b","2":"1.1631","3":"0.98922","4":"1.3369","5":"< .001"},{"1":"act_wrk_w","2":"0.0758","3":"-0.00133","4":"0.1528","5":".054"},{"1":"act_spo_w","2":"0.0611","3":"-0.02869","4":"0.1509","5":".182"},{"1":"act_frn_w","2":"0.0256","3":"-0.09050","4":"0.1417","5":".665"},{"1":"act_sho_w","2":"-0.0345","3":"-0.15184","4":"0.0829","5":".565"},{"1":"act_pet_w","2":"-0.1063","3":"-0.22021","4":"0.0077","5":".068"},{"1":"act_wrk_b","2":"0.0826","3":"-0.00054","4":"0.1657","5":".051"},{"1":"act_spo_b","2":"0.0709","3":"-0.02387","4":"0.1656","5":".143"},{"1":"act_frn_b","2":"0.1531","3":"0.00430","4":"0.3019","5":".044"},{"1":"act_sho_b","2":"-0.0975","3":"-0.23801","4":"0.0430","5":".174"},{"1":"act_pet_b","2":"0.0169","3":"-0.04478","4":"0.0786","5":".591"},{"1":"sat_dem_w","2":"0.2432","3":"0.14822","4":"0.3383","5":"< .001"},{"1":"sat_dem_b","2":"0.3866","3":"0.29702","4":"0.4761","5":"< .001"},{"1":"health_w","2":"0.0412","3":"-0.10748","4":"0.1899","5":".587"},{"1":"health_b","2":"0.6769","3":"0.55130","4":"0.8025","5":"< .001"},{"1":"sd__(Intercept)","2":"1.2099","3":"NA","4":"NA","5":"NA"},{"1":"sd__(Intercept)","2":"0.1241","3":"NA","4":"NA","5":"NA"},{"1":"sd__Observation","2":"1.8531","3":"NA","4":"NA","5":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
 </div>
-<div id="positive-affect-2" class="section level2">
+</div>
+<div id="positive-affect-3" class="section level2">
 <h2>Positive Affect</h2>
-<pre class="r"><code>model_aff_pos_lmer_noi &lt;- lmerTest::lmer(aff_pos_fs ~ 
-                                        (1 | id) + (1 | wave) + 
-                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
-                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
-                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
-                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
-                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
-                                        res_vienna + acc_bal + acc_gar + home_sqm + corona_pos +
-                                        med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
-                                        med_vid_orf_b + med_vid_pri_b + 
-                                        risk_prop_b + loc_cntrl_int_m_b + 
-                                        act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
-                                        act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
-                                        sat_dem_w + sat_dem_b + 
-                                        health_w + health_b 
-                                      , data = d_long_50)
-summary(model_aff_pos_lmer_noi)</code></pre>
-<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
-## Formula: aff_pos_fs ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +      soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
-##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b + age + male + born_aus + born_aus_prnts +      edu_fac + employment_fac + res_vienna + acc_bal + acc_gar +  
-##     home_sqm + corona_pos + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b +      med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b +      med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_m_b +  
-##     act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w +      act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +      sat_dem_w + sat_dem_b + health_w + health_b
-##    Data: d_long_50
-## 
-## REML criterion at convergence: 8956
-## 
-## Scaled residuals: 
-##    Min     1Q Median     3Q    Max 
-## -4.434 -0.513 -0.016  0.518  3.209 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  id       (Intercept) 0.279503 0.529   
-##  wave     (Intercept) 0.000839 0.029   
-##  Residual             0.224901 0.474   
-## Number of obs: 4375, groups:  id, 2426; wave, 28
-## 
-## Fixed effects:
-##                                 Estimate  Std. Error          df t value             Pr(&gt;|t|)    
-## (Intercept)                    -0.043072    0.252116 2276.883253   -0.17               0.8644    
-## soc_med_read_w                 -0.005642    0.010773 2444.292796   -0.52               0.6005    
-## soc_med_like_share_w            0.003326    0.013179 2618.103318    0.25               0.8008    
-## soc_med_post_w                 -0.009632    0.018017 2598.257571   -0.53               0.5930    
-## soc_med_fb_w                    0.013902    0.012743 2814.444000    1.09               0.2754    
-## soc_med_ig_w                    0.021884    0.014370 2794.567926    1.52               0.1279    
-## soc_med_wa_w                   -0.018290    0.010149 2662.866753   -1.80               0.0716 .  
-## soc_med_yt_w                   -0.000450    0.013566 2660.309380   -0.03               0.9735    
-## soc_med_tw_w                   -0.011787    0.021651 2954.392851   -0.54               0.5862    
-## soc_med_read_b                 -0.030075    0.017206 2477.400874   -1.75               0.0806 .  
-## soc_med_like_share_b            0.010674    0.019815 2497.364407    0.54               0.5902    
-## soc_med_post_b                  0.015498    0.025451 2620.609073    0.61               0.5426    
-## soc_med_fb_b                   -0.007971    0.012539 2405.028034   -0.64               0.5250    
-## soc_med_ig_b                   -0.023129    0.014569 2446.438015   -1.59               0.1125    
-## soc_med_wa_b                    0.011209    0.013026 2357.080974    0.86               0.3896    
-## soc_med_yt_b                   -0.000828    0.016396 2387.474390   -0.05               0.9598    
-## soc_med_tw_b                    0.006574    0.020256 2422.340970    0.32               0.7455    
-## age                             0.001445    0.001518 2312.038763    0.95               0.3413    
-## male                            0.120801    0.028981 2309.074896    4.17       0.000031816872 ***
-## born_aus                       -0.014366    0.055784 2414.534754   -0.26               0.7968    
-## born_aus_prnts                 -0.040888    0.018725 2349.724464   -2.18               0.0291 *  
-## edu_facMiddle school           -0.263370    0.191487 2169.205032   -1.38               0.1692    
-## edu_facVocational school       -0.257517    0.190754 2159.158765   -1.35               0.1772    
-## edu_facTechnical school        -0.295328    0.187295 2158.109200   -1.58               0.1150    
-## edu_facHigh school             -0.273143    0.192058 2174.421768   -1.42               0.1551    
-## edu_facApplied high school     -0.315539    0.190379 2172.164700   -1.66               0.0976 .  
-## edu_facState college           -0.194474    0.203524 2206.555856   -0.96               0.3394    
-## edu_facBachelor                -0.227259    0.199465 2181.625294   -1.14               0.2547    
-## edu_facMaster                  -0.319028    0.193920 2179.616389   -1.65               0.1001    
-## edu_facPhD                     -0.281321    0.232613 2171.167379   -1.21               0.2266    
-## employment_facIndustrie         0.045927    0.071509 2272.083399    0.64               0.5208    
-## employment_facPublic service    0.053751    0.076018 2295.828579    0.71               0.4796    
-## employment_facSelf-employed     0.037822    0.086712 2270.940263    0.44               0.6628    
-## employment_facRetired           0.201614    0.077984 2233.559921    2.59               0.0098 ** 
-## employment_facHousekeeping      0.203068    0.125092 2266.161597    1.62               0.1047    
-## employment_facStudent          -0.026605    0.084686 2340.205641   -0.31               0.7534    
-## employment_facIncapacitated     0.132468    0.188538 2335.862165    0.70               0.4824    
-## employment_facParental Leave    0.190787    0.117182 2326.651367    1.63               0.1036    
-## res_vienna                     -0.015519    0.037464 2300.592893   -0.41               0.6787    
-## acc_bal                        -0.033550    0.029536 2311.443318   -1.14               0.2561    
-## acc_gar                        -0.005931    0.034631 2323.422676   -0.17               0.8640    
-## home_sqm                        0.000832    0.000253 2440.324122    3.29               0.0010 ** 
-## corona_pos                     -0.004476    0.019462 3122.882927   -0.23               0.8181    
-## med_txt_kro_b                  -0.009133    0.012352 2293.344384   -0.74               0.4598    
-## med_txt_sta_b                  -0.024932    0.015729 2333.663560   -1.59               0.1131    
-## med_txt_pre_b                   0.023227    0.020760 2434.354217    1.12               0.2633    
-## med_txt_oes_b                   0.001036    0.015776 2323.087834    0.07               0.9476    
-## med_txt_kur_b                   0.021798    0.017465 2273.219855    1.25               0.2121    
-## med_txt_slz_b                   0.022734    0.021878 2327.564754    1.04               0.2989    
-## med_txt_son_b                   0.036721    0.012119 2311.071522    3.03               0.0025 ** 
-## med_vid_orf_b                  -0.024945    0.013544 2366.905049   -1.84               0.0656 .  
-## med_vid_pri_b                   0.016349    0.013706 2323.291784    1.19               0.2331    
-## risk_prop_b                    -0.006539    0.007068 2338.642165   -0.93               0.3550    
-## loc_cntrl_int_m_b               0.441000    0.031073 2339.331729   14.19 &lt; 0.0000000000000002 ***
-## act_wrk_w                       0.003827    0.011783 3851.533067    0.32               0.7454    
-## act_spo_w                       0.055207    0.013247 3497.797241    4.17       0.000031551340 ***
-## act_frn_w                       0.040973    0.017105  329.303720    2.40               0.0172 *  
-## act_sho_w                       0.053402    0.017650 3706.505621    3.03               0.0025 ** 
-## act_pet_w                       0.000515    0.017485 3993.877685    0.03               0.9765    
-## act_wrk_b                       0.027267    0.014654 2385.939915    1.86               0.0629 .  
-## act_spo_b                       0.110999    0.016859 2391.891544    6.58       0.000000000056 ***
-## act_frn_b                       0.105067    0.025923 2303.920708    4.05       0.000052250941 ***
-## act_sho_b                       0.039022    0.024913 2461.620570    1.57               0.1174    
-## act_pet_b                       0.009680    0.011071 2300.572139    0.87               0.3820    
-## sat_dem_w                       0.021262    0.014102 3141.944437    1.51               0.1317    
-## sat_dem_b                       0.059084    0.015884 2401.727632    3.72               0.0002 ***
-## health_w                        0.037523    0.022026 3431.816908    1.70               0.0885 .  
-## health_b                        0.288180    0.022306 2387.289223   12.92 &lt; 0.0000000000000002 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>model_aff_pos_lmer_noi &lt;- &quot;
+  aff_pos_fs ~ 
+  (1 | id) + (1 | wave) + 
+  soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
+  soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+  soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+  soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
+  age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
+  res_vienna + acc_bal + acc_gar + home_sqm + corona_pos +
+  med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + med_vid_orf_b + med_vid_pri_b + 
+  risk_prop_b + loc_cntrl_int_m_b + 
+  act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
+  act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
+  sat_dem_w + sat_dem_b + 
+  health_w + health_b
+&quot;
+fit_aff_pos_lmer_noi &lt;- lmerTest::lmer(model_aff_pos_lmer_noi, data = d_long_50)
+print_res(broom.mixed::tidy(fit_aff_pos_lmer_noi, conf.int = T), imputation = FALSE)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["term"],"name":[1],"type":["chr"],"align":["left"]},{"label":["estimate"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["2.5 %"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["97.5 %"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"(Intercept)","2":"-0.04307","3":"-0.53747","4":"0.4513","5":".864"},{"1":"soc_med_read_w","2":"-0.00564","3":"-0.02677","4":"0.0155","5":".600"},{"1":"soc_med_like_share_w","2":"0.00333","3":"-0.02252","4":"0.0292","5":".801"},{"1":"soc_med_post_w","2":"-0.00963","3":"-0.04496","4":"0.0257","5":".593"},{"1":"soc_med_fb_w","2":"0.01390","3":"-0.01108","4":"0.0389","5":".275"},{"1":"soc_med_ig_w","2":"0.02188","3":"-0.00629","4":"0.0501","5":".128"},{"1":"soc_med_wa_w","2":"-0.01829","3":"-0.03819","4":"0.0016","5":".072"},{"1":"soc_med_yt_w","2":"-0.00045","3":"-0.02705","4":"0.0262","5":".974"},{"1":"soc_med_tw_w","2":"-0.01179","3":"-0.05424","4":"0.0307","5":".586"},{"1":"soc_med_read_b","2":"-0.03007","3":"-0.06381","4":"0.0037","5":".081"},{"1":"soc_med_like_share_b","2":"0.01067","3":"-0.02818","4":"0.0495","5":".590"},{"1":"soc_med_post_b","2":"0.01550","3":"-0.03441","4":"0.0654","5":".543"},{"1":"soc_med_fb_b","2":"-0.00797","3":"-0.03256","4":"0.0166","5":".525"},{"1":"soc_med_ig_b","2":"-0.02313","3":"-0.05170","4":"0.0054","5":".113"},{"1":"soc_med_wa_b","2":"0.01121","3":"-0.01433","4":"0.0368","5":".390"},{"1":"soc_med_yt_b","2":"-0.00083","3":"-0.03298","4":"0.0313","5":".960"},{"1":"soc_med_tw_b","2":"0.00657","3":"-0.03315","4":"0.0463","5":".746"},{"1":"age","2":"0.00144","3":"-0.00153","4":"0.0044","5":".341"},{"1":"male","2":"0.12080","3":"0.06397","4":"0.1776","5":"< .001"},{"1":"born_aus","2":"-0.01437","3":"-0.12376","4":"0.0950","5":".797"},{"1":"born_aus_prnts","2":"-0.04089","3":"-0.07761","4":"-0.0042","5":".029"},{"1":"edu_facMiddle school","2":"-0.26337","3":"-0.63889","4":"0.1121","5":".169"},{"1":"edu_facVocational school","2":"-0.25752","3":"-0.63160","4":"0.1166","5":".177"},{"1":"edu_facTechnical school","2":"-0.29533","3":"-0.66263","4":"0.0720","5":".115"},{"1":"edu_facHigh school","2":"-0.27314","3":"-0.64978","4":"0.1035","5":".155"},{"1":"edu_facApplied high school","2":"-0.31554","3":"-0.68888","4":"0.0578","5":".098"},{"1":"edu_facState college","2":"-0.19447","3":"-0.59359","4":"0.2046","5":".339"},{"1":"edu_facBachelor","2":"-0.22726","3":"-0.61842","4":"0.1639","5":".255"},{"1":"edu_facMaster","2":"-0.31903","3":"-0.69932","4":"0.0613","5":".100"},{"1":"edu_facPhD","2":"-0.28132","3":"-0.73749","4":"0.1748","5":".227"},{"1":"employment_facIndustrie","2":"0.04593","3":"-0.09430","4":"0.1862","5":".521"},{"1":"employment_facPublic service","2":"0.05375","3":"-0.09532","4":"0.2028","5":".480"},{"1":"employment_facSelf-employed","2":"0.03782","3":"-0.13222","4":"0.2079","5":".663"},{"1":"employment_facRetired","2":"0.20161","3":"0.04868","4":"0.3545","5":".010"},{"1":"employment_facHousekeeping","2":"0.20307","3":"-0.04224","4":"0.4484","5":".105"},{"1":"employment_facStudent","2":"-0.02661","3":"-0.19267","4":"0.1395","5":".753"},{"1":"employment_facIncapacitated","2":"0.13247","3":"-0.23725","4":"0.5022","5":".482"},{"1":"employment_facParental Leave","2":"0.19079","3":"-0.03901","4":"0.4206","5":".104"},{"1":"res_vienna","2":"-0.01552","3":"-0.08899","4":"0.0579","5":".679"},{"1":"acc_bal","2":"-0.03355","3":"-0.09147","4":"0.0244","5":".256"},{"1":"acc_gar","2":"-0.00593","3":"-0.07384","4":"0.0620","5":".864"},{"1":"home_sqm","2":"0.00083","3":"0.00034","4":"0.0013","5":".001"},{"1":"corona_pos","2":"-0.00448","3":"-0.04264","4":"0.0337","5":".818"},{"1":"med_txt_kro_b","2":"-0.00913","3":"-0.03335","4":"0.0151","5":".460"},{"1":"med_txt_sta_b","2":"-0.02493","3":"-0.05578","4":"0.0059","5":".113"},{"1":"med_txt_pre_b","2":"0.02323","3":"-0.01748","4":"0.0639","5":".263"},{"1":"med_txt_oes_b","2":"0.00104","3":"-0.02990","4":"0.0320","5":".948"},{"1":"med_txt_kur_b","2":"0.02180","3":"-0.01245","4":"0.0560","5":".212"},{"1":"med_txt_slz_b","2":"0.02273","3":"-0.02017","4":"0.0656","5":".299"},{"1":"med_txt_son_b","2":"0.03672","3":"0.01296","4":"0.0605","5":".002"},{"1":"med_vid_orf_b","2":"-0.02495","3":"-0.05151","4":"0.0016","5":".066"},{"1":"med_vid_pri_b","2":"0.01635","3":"-0.01053","4":"0.0432","5":".233"},{"1":"risk_prop_b","2":"-0.00654","3":"-0.02040","4":"0.0073","5":".355"},{"1":"loc_cntrl_int_m_b","2":"0.44100","3":"0.38007","4":"0.5019","5":"< .001"},{"1":"act_wrk_w","2":"0.00383","3":"-0.01927","4":"0.0269","5":".745"},{"1":"act_spo_w","2":"0.05521","3":"0.02923","4":"0.0812","5":"< .001"},{"1":"act_frn_w","2":"0.04097","3":"0.00733","4":"0.0746","5":".017"},{"1":"act_sho_w","2":"0.05340","3":"0.01880","4":"0.0880","5":".002"},{"1":"act_pet_w","2":"0.00051","3":"-0.03377","4":"0.0348","5":".977"},{"1":"act_wrk_b","2":"0.02727","3":"-0.00147","4":"0.0560","5":".063"},{"1":"act_spo_b","2":"0.11100","3":"0.07794","4":"0.1441","5":"< .001"},{"1":"act_frn_b","2":"0.10507","3":"0.05423","4":"0.1559","5":"< .001"},{"1":"act_sho_b","2":"0.03902","3":"-0.00983","4":"0.0879","5":".117"},{"1":"act_pet_b","2":"0.00968","3":"-0.01203","4":"0.0314","5":".382"},{"1":"sat_dem_w","2":"0.02126","3":"-0.00639","4":"0.0489","5":".132"},{"1":"sat_dem_b","2":"0.05908","3":"0.02794","4":"0.0902","5":"< .001"},{"1":"health_w","2":"0.03752","3":"-0.00566","4":"0.0807","5":".089"},{"1":"health_b","2":"0.28818","3":"0.24444","4":"0.3319","5":"< .001"},{"1":"sd__(Intercept)","2":"0.52868","3":"NA","4":"NA","5":"NA"},{"1":"sd__(Intercept)","2":"0.02896","3":"NA","4":"NA","5":"NA"},{"1":"sd__Observation","2":"0.47424","3":"NA","4":"NA","5":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
 </div>
-<div id="negative-affect-2" class="section level2">
+</div>
+<div id="negative-affect-3" class="section level2">
 <h2>Negative Affect</h2>
-<pre class="r"><code>model_aff_neg_lmer_noi &lt;- lmerTest::lmer(aff_neg_fs ~ 
-                                        (1 | id) + (1 | wave) + 
-                                        soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
-                                        soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
-                                        soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
-                                        soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
-                                        age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
-                                        res_vienna + acc_bal + acc_gar + home_sqm + corona_pos +
-                                        med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
-                                        med_vid_orf_b + med_vid_pri_b + 
-                                        risk_prop_b + loc_cntrl_int_m_b + 
-                                        act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
-                                        act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
-                                        sat_dem_w + sat_dem_b + 
-                                        health_w + health_b
-                                      , data = d_long_50)
-summary(model_aff_neg_lmer_noi)</code></pre>
-<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [&#39;lmerModLmerTest&#39;]
-## Formula: aff_neg_fs ~ (1 | id) + (1 | wave) + soc_med_read_w + soc_med_like_share_w +      soc_med_post_w + soc_med_fb_w + soc_med_ig_w + soc_med_wa_w +      soc_med_yt_w + soc_med_tw_w + soc_med_read_b + soc_med_like_share_b +  
-##     soc_med_post_b + soc_med_fb_b + soc_med_ig_b + soc_med_wa_b +      soc_med_yt_b + soc_med_tw_b + age + male + born_aus + born_aus_prnts +      edu_fac + employment_fac + res_vienna + acc_bal + acc_gar +  
-##     home_sqm + corona_pos + med_txt_kro_b + med_txt_sta_b + med_txt_pre_b +      med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b +      med_vid_orf_b + med_vid_pri_b + risk_prop_b + loc_cntrl_int_m_b +  
-##     act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w +      act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +      sat_dem_w + sat_dem_b + health_w + health_b
-##    Data: d_long_50
-## 
-## REML criterion at convergence: 5512
-## 
-## Scaled residuals: 
-##    Min     1Q Median     3Q    Max 
-## -3.394 -0.394 -0.089  0.290  5.745 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  id       (Intercept) 0.1484   0.385   
-##  wave     (Intercept) 0.0170   0.130   
-##  Residual             0.0918   0.303   
-## Number of obs: 4338, groups:  id, 2405; wave, 28
-## 
-## Fixed effects:
-##                                 Estimate  Std. Error          df t value             Pr(&gt;|t|)    
-## (Intercept)                     4.118224    0.175586 1707.618793   23.45 &lt; 0.0000000000000002 ***
-## soc_med_read_w                  0.002364    0.007105 2399.008355    0.33              0.73931    
-## soc_med_like_share_w            0.004205    0.008513 2321.540845    0.49              0.62144    
-## soc_med_post_w                  0.009512    0.011633 2337.132163    0.82              0.41363    
-## soc_med_fb_w                   -0.008691    0.008324 2509.865670   -1.04              0.29657    
-## soc_med_ig_w                   -0.010218    0.009431 2504.347199   -1.08              0.27874    
-## soc_med_wa_w                   -0.006087    0.006607 2357.800534   -0.92              0.35704    
-## soc_med_yt_w                    0.013098    0.008820 2380.601447    1.49              0.13766    
-## soc_med_tw_w                    0.017766    0.014135 2645.134713    1.26              0.20892    
-## soc_med_read_b                  0.011186    0.012133 2296.762437    0.92              0.35664    
-## soc_med_like_share_b            0.006960    0.014005 2290.960573    0.50              0.61925    
-## soc_med_post_b                  0.059361    0.017991 2403.370746    3.30              0.00098 ***
-## soc_med_fb_b                   -0.006722    0.008871 2227.858786   -0.76              0.44868    
-## soc_med_ig_b                    0.009492    0.010279 2253.478988    0.92              0.35589    
-## soc_med_wa_b                    0.014053    0.009202 2183.019185    1.53              0.12685    
-## soc_med_yt_b                    0.010220    0.011560 2225.001165    0.88              0.37674    
-## soc_med_tw_b                   -0.013164    0.014336 2205.167705   -0.92              0.35858    
-## age                            -0.006432    0.001074 2188.723056   -5.99         0.0000000025 ***
-## male                           -0.119041    0.020509 2144.474273   -5.80         0.0000000074 ***
-## born_aus                       -0.021697    0.038939 2217.629301   -0.56              0.57745    
-## born_aus_prnts                 -0.006039    0.013232 2180.843152   -0.46              0.64817    
-## edu_facMiddle school           -0.144624    0.129315 1979.067781   -1.12              0.26354    
-## edu_facVocational school       -0.154883    0.128786 1969.065904   -1.20              0.22926    
-## edu_facTechnical school        -0.172835    0.126233 1967.893499   -1.37              0.17110    
-## edu_facHigh school             -0.109169    0.129607 1986.643643   -0.84              0.39972    
-## edu_facApplied high school     -0.132524    0.128394 1982.387842   -1.03              0.30212    
-## edu_facState college           -0.233266    0.138025 2016.145849   -1.69              0.09118 .  
-## edu_facBachelor                -0.155089    0.134740 1997.999241   -1.15              0.24986    
-## edu_facMaster                  -0.130153    0.131024 1989.628248   -0.99              0.32066    
-## edu_facPhD                     -0.100312    0.158125 2013.350953   -0.63              0.52590    
-## employment_facIndustrie        -0.160532    0.050181 2116.526876   -3.20              0.00140 ** 
-## employment_facPublic service   -0.132605    0.053382 2135.658339   -2.48              0.01306 *  
-## employment_facSelf-employed    -0.067314    0.060739 2107.668441   -1.11              0.26788    
-## employment_facRetired          -0.118596    0.054506 2086.730470   -2.18              0.02968 *  
-## employment_facHousekeeping     -0.275371    0.085790 2144.492179   -3.21              0.00135 ** 
-## employment_facStudent          -0.125637    0.059350 2174.177744   -2.12              0.03438 *  
-## employment_facIncapacitated     0.146587    0.135601 2122.802566    1.08              0.27981    
-## employment_facParental Leave   -0.136630    0.083730 2129.247526   -1.63              0.10287    
-## res_vienna                     -0.061056    0.026490 2144.054818   -2.30              0.02127 *  
-## acc_bal                        -0.032567    0.020830 2147.242677   -1.56              0.11809    
-## acc_gar                        -0.046562    0.024472 2153.987798   -1.90              0.05721 .  
-## home_sqm                       -0.000521    0.000178 2255.840638   -2.93              0.00343 ** 
-## corona_pos                     -0.014663    0.014008  883.558490   -1.05              0.29551    
-## med_txt_kro_b                  -0.000281    0.008675 2128.200242   -0.03              0.97419    
-## med_txt_sta_b                   0.023889    0.011064 2157.318912    2.16              0.03095 *  
-## med_txt_pre_b                   0.007128    0.014623 2224.804425    0.49              0.62598    
-## med_txt_oes_b                   0.004876    0.011092 2145.292092    0.44              0.66027    
-## med_txt_kur_b                  -0.004235    0.012236 2099.559299   -0.35              0.72928    
-## med_txt_slz_b                   0.002338    0.015262 2170.137958    0.15              0.87828    
-## med_txt_son_b                  -0.010564    0.008544 2138.681603   -1.24              0.21645    
-## med_vid_orf_b                   0.027669    0.009563 2184.579905    2.89              0.00385 ** 
-## med_vid_pri_b                  -0.013229    0.009641 2150.121210   -1.37              0.17015    
-## risk_prop_b                    -0.007244    0.005006 2149.002057   -1.45              0.14803    
-## loc_cntrl_int_m_b              -0.296801    0.021895 2155.869295  -13.56 &lt; 0.0000000000000002 ***
-## act_wrk_w                      -0.005367    0.007881 3780.577910   -0.68              0.49590    
-## act_spo_w                      -0.003410    0.008771 3147.029798   -0.39              0.69746    
-## act_frn_w                       0.027186    0.011955 3251.214490    2.27              0.02303 *  
-## act_sho_w                       0.009802    0.011603 3372.964341    0.84              0.39830    
-## act_pet_w                       0.041204    0.011555 3665.666467    3.57              0.00037 ***
-## act_wrk_b                      -0.004300    0.010424 2293.416229   -0.41              0.68002    
-## act_spo_b                       0.018254    0.011875 2214.817227    1.54              0.12439    
-## act_frn_b                       0.029789    0.018524 2445.204527    1.61              0.10794    
-## act_sho_b                       0.037376    0.017669 2245.220048    2.12              0.03452 *  
-## act_pet_b                       0.014190    0.007788 2132.661667    1.82              0.06859 .  
-## sat_dem_w                      -0.021373    0.009375 3226.354904   -2.28              0.02269 *  
-## sat_dem_b                      -0.050540    0.011177 2226.739909   -4.52         0.0000064481 ***
-## health_w                       -0.065707    0.014434 3057.406753   -4.55         0.0000055170 ***
-## health_b                       -0.213330    0.015841 2204.641484  -13.47 &lt; 0.0000000000000002 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>model_aff_neg_lmer_noi &lt;- &quot;
+  aff_neg_fs ~ 
+  (1 | id) + (1 | wave) + 
+  soc_med_read_w + soc_med_like_share_w + soc_med_post_w  + 
+  soc_med_fb_w + soc_med_ig_w + soc_med_wa_w + soc_med_yt_w + soc_med_tw_w +
+  soc_med_read_b + soc_med_like_share_b + soc_med_post_b + 
+  soc_med_fb_b + soc_med_ig_b + soc_med_wa_b + soc_med_yt_b + soc_med_tw_b +  
+  age + male + born_aus + born_aus_prnts + edu_fac + employment_fac +
+  res_vienna + acc_bal + acc_gar + home_sqm + corona_pos +
+  med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + med_vid_orf_b + med_vid_pri_b + 
+  risk_prop_b + loc_cntrl_int_m_b + 
+  act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
+  act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
+  sat_dem_w + sat_dem_b + 
+  health_w + health_b
+&quot;
+fit_aff_neg_lmer_noi &lt;- lmerTest::lmer(model_aff_neg_lmer_noi, data = d_long_50)
+print_res(broom.mixed::tidy(fit_aff_neg_lmer_noi, conf.int = T), imputation = FALSE)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["term"],"name":[1],"type":["chr"],"align":["left"]},{"label":["estimate"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["2.5 %"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["97.5 %"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[5],"type":["chr"],"align":["left"]}],"data":[{"1":"(Intercept)","2":"4.11822","3":"3.77384","4":"4.46261","5":"< .001"},{"1":"soc_med_read_w","2":"0.00236","3":"-0.01157","4":"0.01630","5":".739"},{"1":"soc_med_like_share_w","2":"0.00420","3":"-0.01249","4":"0.02090","5":".621"},{"1":"soc_med_post_w","2":"0.00951","3":"-0.01330","4":"0.03232","5":".414"},{"1":"soc_med_fb_w","2":"-0.00869","3":"-0.02501","4":"0.00763","5":".297"},{"1":"soc_med_ig_w","2":"-0.01022","3":"-0.02871","4":"0.00828","5":".279"},{"1":"soc_med_wa_w","2":"-0.00609","3":"-0.01904","4":"0.00687","5":".357"},{"1":"soc_med_yt_w","2":"0.01310","3":"-0.00420","4":"0.03039","5":".138"},{"1":"soc_med_tw_w","2":"0.01777","3":"-0.00995","4":"0.04548","5":".209"},{"1":"soc_med_read_b","2":"0.01119","3":"-0.01261","4":"0.03498","5":".357"},{"1":"soc_med_like_share_b","2":"0.00696","3":"-0.02050","4":"0.03442","5":".619"},{"1":"soc_med_post_b","2":"0.05936","3":"0.02408","4":"0.09464","5":"< .001"},{"1":"soc_med_fb_b","2":"-0.00672","3":"-0.02412","4":"0.01067","5":".449"},{"1":"soc_med_ig_b","2":"0.00949","3":"-0.01067","4":"0.02965","5":".356"},{"1":"soc_med_wa_b","2":"0.01405","3":"-0.00399","4":"0.03210","5":".127"},{"1":"soc_med_yt_b","2":"0.01022","3":"-0.01245","4":"0.03289","5":".377"},{"1":"soc_med_tw_b","2":"-0.01316","3":"-0.04128","4":"0.01495","5":".359"},{"1":"age","2":"-0.00643","3":"-0.00854","4":"-0.00433","5":"< .001"},{"1":"male","2":"-0.11904","3":"-0.15926","4":"-0.07882","5":"< .001"},{"1":"born_aus","2":"-0.02170","3":"-0.09806","4":"0.05466","5":".577"},{"1":"born_aus_prnts","2":"-0.00604","3":"-0.03199","4":"0.01991","5":".648"},{"1":"edu_facMiddle school","2":"-0.14462","3":"-0.39823","4":"0.10898","5":".264"},{"1":"edu_facVocational school","2":"-0.15488","3":"-0.40745","4":"0.09769","5":".229"},{"1":"edu_facTechnical school","2":"-0.17284","3":"-0.42040","4":"0.07473","5":".171"},{"1":"edu_facHigh school","2":"-0.10917","3":"-0.36335","4":"0.14501","5":".400"},{"1":"edu_facApplied high school","2":"-0.13252","3":"-0.38432","4":"0.11928","5":".302"},{"1":"edu_facState college","2":"-0.23327","3":"-0.50395","4":"0.03742","5":".091"},{"1":"edu_facBachelor","2":"-0.15509","3":"-0.41933","4":"0.10916","5":".250"},{"1":"edu_facMaster","2":"-0.13015","3":"-0.38711","4":"0.12681","5":".321"},{"1":"edu_facPhD","2":"-0.10031","3":"-0.41042","4":"0.20979","5":".526"},{"1":"employment_facIndustrie","2":"-0.16053","3":"-0.25894","4":"-0.06212","5":".001"},{"1":"employment_facPublic service","2":"-0.13261","3":"-0.23729","4":"-0.02792","5":".013"},{"1":"employment_facSelf-employed","2":"-0.06731","3":"-0.18643","4":"0.05180","5":".268"},{"1":"employment_facRetired","2":"-0.11860","3":"-0.22549","4":"-0.01170","5":".030"},{"1":"employment_facHousekeeping","2":"-0.27537","3":"-0.44361","4":"-0.10713","5":".001"},{"1":"employment_facStudent","2":"-0.12564","3":"-0.24203","4":"-0.00925","5":".034"},{"1":"employment_facIncapacitated","2":"0.14659","3":"-0.11934","4":"0.41251","5":".280"},{"1":"employment_facParental Leave","2":"-0.13663","3":"-0.30083","4":"0.02757","5":".103"},{"1":"res_vienna","2":"-0.06106","3":"-0.11301","4":"-0.00911","5":".021"},{"1":"acc_bal","2":"-0.03257","3":"-0.07342","4":"0.00828","5":".118"},{"1":"acc_gar","2":"-0.04656","3":"-0.09455","4":"0.00143","5":".057"},{"1":"home_sqm","2":"-0.00052","3":"-0.00087","4":"-0.00017","5":".003"},{"1":"corona_pos","2":"-0.01466","3":"-0.04216","4":"0.01283","5":".296"},{"1":"med_txt_kro_b","2":"-0.00028","3":"-0.01729","4":"0.01673","5":".974"},{"1":"med_txt_sta_b","2":"0.02389","3":"0.00219","4":"0.04559","5":".031"},{"1":"med_txt_pre_b","2":"0.00713","3":"-0.02155","4":"0.03580","5":".626"},{"1":"med_txt_oes_b","2":"0.00488","3":"-0.01688","4":"0.02663","5":".660"},{"1":"med_txt_kur_b","2":"-0.00424","3":"-0.02823","4":"0.01976","5":".729"},{"1":"med_txt_slz_b","2":"0.00234","3":"-0.02759","4":"0.03227","5":".878"},{"1":"med_txt_son_b","2":"-0.01056","3":"-0.02732","4":"0.00619","5":".216"},{"1":"med_vid_orf_b","2":"0.02767","3":"0.00891","4":"0.04642","5":".004"},{"1":"med_vid_pri_b","2":"-0.01323","3":"-0.03214","4":"0.00568","5":".170"},{"1":"risk_prop_b","2":"-0.00724","3":"-0.01706","4":"0.00257","5":".148"},{"1":"loc_cntrl_int_m_b","2":"-0.29680","3":"-0.33974","4":"-0.25386","5":"< .001"},{"1":"act_wrk_w","2":"-0.00537","3":"-0.02082","4":"0.01008","5":".496"},{"1":"act_spo_w","2":"-0.00341","3":"-0.02061","4":"0.01379","5":".697"},{"1":"act_frn_w","2":"0.02719","3":"0.00375","4":"0.05063","5":".023"},{"1":"act_sho_w","2":"0.00980","3":"-0.01295","4":"0.03255","5":".398"},{"1":"act_pet_w","2":"0.04120","3":"0.01855","4":"0.06386","5":"< .001"},{"1":"act_wrk_b","2":"-0.00430","3":"-0.02474","4":"0.01614","5":".680"},{"1":"act_spo_b","2":"0.01825","3":"-0.00503","4":"0.04154","5":".124"},{"1":"act_frn_b","2":"0.02979","3":"-0.00654","4":"0.06611","5":".108"},{"1":"act_sho_b","2":"0.03738","3":"0.00273","4":"0.07203","5":".035"},{"1":"act_pet_b","2":"0.01419","3":"-0.00108","4":"0.02946","5":".069"},{"1":"sat_dem_w","2":"-0.02137","3":"-0.03976","4":"-0.00299","5":".023"},{"1":"sat_dem_b","2":"-0.05054","3":"-0.07246","4":"-0.02862","5":"< .001"},{"1":"health_w","2":"-0.06571","3":"-0.09401","4":"-0.03741","5":"< .001"},{"1":"health_b","2":"-0.21333","3":"-0.24439","4":"-0.18227","5":"< .001"},{"1":"sd__(Intercept)","2":"0.38517","3":"NA","4":"NA","5":"NA"},{"1":"sd__(Intercept)","2":"0.13032","3":"NA","4":"NA","5":"NA"},{"1":"sd__Observation","2":"0.30294","3":"NA","4":"NA","5":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
 </div>
 </div>
 <div id="figures" class="section level1">
 <h1>Figures</h1>
 <ul>
 <li>In what follows, see figure with all results combined.</li>
-<li>Results show that different models are very comparable.</li>
-<li>The model without control variables stands a bit out, showing that
+<li>Results show that different models are comparable.</li>
+<li>The model without control variables stands out a bit, showing that
 controlling for additional varying variables is important.</li>
 <li>The preregistered model without imputation also has larger
 confidence intervals, which was to be expected given fewer data.</li>
 </ul>
-<div id="within" class="section level2">
-<h2>Within</h2>
 <pre class="r"><code># get data
 dat_fig_results_activity_pub &lt;- get_dat_res(
-  model_aff_neg_lmer_pub, model_aff_pos_lmer_pub, model_life_sat_lmer_pub, 
-  type = &quot;activity&quot;, analysis = &quot;1. preregistered&quot;)
+  fit_aff_neg_lmer_pub, fit_aff_pos_lmer_pub, fit_life_sat_lmer_pub, 
+  type = &quot;Activity&quot;, analysis = &quot;1. Published&quot;, variance = &quot;within&quot;)
 
 dat_fig_results_channel_pub &lt;- get_dat_res(
-  model_aff_neg_lmer_pub, model_aff_pos_lmer_pub, model_life_sat_lmer_pub, 
-  type = &quot;channels&quot;, analysis = &quot;1. preregistered&quot;)
-
-dat_fig_results_within_pub &lt;- rbind(
-  cbind(dat_fig_results_activity_pub, comm = &quot;activity&quot;), 
-  cbind(dat_fig_results_channel_pub, comm = &quot;channel&quot;)) %&gt;% 
-  filter(type == &quot;within&quot;)
-
-dat_fig_results_activity_nco &lt;- get_dat_res(
-  model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, 
-  type = &quot;activity&quot;, analysis = &quot;2. no covars&quot;)
-
-dat_fig_results_channel_nco &lt;- get_dat_res(
-  model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, 
-  type = &quot;channels&quot;, analysis = &quot;2. no covars&quot;)
-
-dat_fig_results_within_nco &lt;- rbind(
-  cbind(dat_fig_results_activity_nco, comm = &quot;activity&quot;), 
-  cbind(dat_fig_results_channel_nco, comm = &quot;channel&quot;)) %&gt;% 
-  filter(type == &quot;within&quot;)
+  fit_aff_neg_lmer_pub, fit_aff_pos_lmer_pub, fit_life_sat_lmer_pub, 
+  type = &quot;Channels&quot;, analysis = &quot;1. Published&quot;, variance = &quot;within&quot;)
 
 dat_fig_results_activity_add &lt;- get_dat_res(
-  model_aff_neg_lmer_add, model_aff_pos_lmer_add, model_life_sat_lmer_add, 
-  type = &quot;activity&quot;, analysis = &quot;3. additional covars&quot;)
+  fit_aff_neg_lmer_add, fit_aff_pos_lmer_add, fit_life_sat_lmer_add, 
+  type = &quot;Activity&quot;, analysis = &quot;2. Additional covars&quot;, variance = &quot;within&quot;)
 
 dat_fig_results_channel_add &lt;- get_dat_res(
-  model_aff_neg_lmer_add, model_aff_pos_lmer_add, model_life_sat_lmer_add, 
-  type = &quot;channels&quot;, analysis = &quot;3. additional covars&quot;)
+  fit_aff_neg_lmer_add, fit_aff_pos_lmer_add, fit_life_sat_lmer_add, 
+  type = &quot;Channels&quot;, analysis = &quot;2. Additional covars&quot;, variance = &quot;within&quot;)
 
-dat_fig_results_within_add &lt;- rbind(
-  cbind(dat_fig_results_activity_add, comm = &quot;activity&quot;), 
-  cbind(dat_fig_results_channel_add, comm = &quot;channel&quot;)) %&gt;% 
-  filter(type == &quot;within&quot;)
+dat_fig_results_activity_nco &lt;- get_dat_res(
+  fit_aff_neg_lmer_nco, fit_aff_pos_lmer_nco, fit_life_sat_lmer_nco, 
+  type = &quot;Activity&quot;, analysis = &quot;3. No covars&quot;, variance = &quot;within&quot;)
+
+dat_fig_results_channel_nco &lt;- get_dat_res(
+  fit_aff_neg_lmer_nco, fit_aff_pos_lmer_nco, fit_life_sat_lmer_nco, 
+  type = &quot;Channels&quot;, analysis = &quot;3. No covars&quot;, variance = &quot;within&quot;)
 
 dat_fig_results_activity_pre &lt;- get_dat_res(
-  model_aff_neg_lmer_pre, model_aff_pos_lmer_pre, model_life_sat_lmer_pre, 
-  type = &quot;activity&quot;, analysis = &quot;4. preregistered&quot;)
+  fit_aff_neg_lmer_pre, fit_aff_pos_lmer_pre, fit_life_sat_lmer_pre, 
+  type = &quot;Activity&quot;, analysis = &quot;4. Preregistered&quot;, variance = &quot;within&quot;)
 
 dat_fig_results_channel_pre &lt;- get_dat_res(
-  model_aff_neg_lmer_pre, model_aff_pos_lmer_pre, model_life_sat_lmer_pre, 
-  type = &quot;channels&quot;, analysis = &quot;4. preregistered&quot;)
-
-dat_fig_results_within_pre &lt;- rbind(
-  cbind(dat_fig_results_activity_pre, comm = &quot;activity&quot;), 
-  cbind(dat_fig_results_channel_pre, comm = &quot;channel&quot;)) %&gt;% 
-  filter(type == &quot;within&quot;)
+  fit_aff_neg_lmer_pre, fit_aff_pos_lmer_pre, fit_life_sat_lmer_pre, 
+  type = &quot;Channels&quot;, analysis = &quot;4. Preregistered&quot;, variance = &quot;within&quot;)
 
 dat_fig_results_activity_noi &lt;- get_dat_res(
-  model_aff_neg_lmer_noi, model_aff_pos_lmer_noi, model_life_sat_lmer_noi, 
-  type = &quot;activity&quot;, analysis = &quot;5. prereg no imp&quot;)
+  fit_aff_neg_lmer_noi, fit_aff_pos_lmer_noi, fit_life_sat_lmer_noi, 
+  type = &quot;Activity&quot;, analysis = &quot;5. No imputation&quot;, variance = &quot;within&quot;)
 
 dat_fig_results_channel_noi &lt;- get_dat_res(
-  model_aff_neg_lmer_noi, model_aff_pos_lmer_noi, model_life_sat_lmer_noi, 
-  type = &quot;channels&quot;, analysis = &quot;5. prereg no imp&quot;)
+  fit_aff_neg_lmer_noi, fit_aff_pos_lmer_noi, fit_life_sat_lmer_noi, 
+  type = &quot;Channels&quot;, analysis = &quot;5. No imputation&quot;, variance = &quot;within&quot;)
 
-dat_fig_results_within_noi &lt;- rbind(
-  cbind(dat_fig_results_activity_noi, comm = &quot;activity&quot;), 
-  cbind(dat_fig_results_channel_noi, comm = &quot;channel&quot;)) %&gt;% 
-  filter(type == &quot;within&quot;)
-
-dat_fig_results_within_comp &lt;- rbind(
-  dat_fig_results_within_pub,
-  dat_fig_results_within_nco,
-  dat_fig_results_within_add,
-  dat_fig_results_within_pre,
-  dat_fig_results_within_noi
+dat_fig_results_comp &lt;- rbind(
+  dat_fig_results_activity_pub, 
+  dat_fig_results_channel_pub,
+  dat_fig_results_activity_nco, 
+  dat_fig_results_channel_nco,
+  dat_fig_results_activity_add, 
+  dat_fig_results_channel_add,
+  dat_fig_results_activity_pre, 
+  dat_fig_results_channel_pre,
+  dat_fig_results_activity_noi, 
+  dat_fig_results_channel_noi
 )
+
 # make figure
-fig_results_within_comp &lt;- make_graph_res(
-  dat_fig_results_within_comp,
+fig_results_comp &lt;- make_graph_res(
+  dat_fig_results_comp,
   sesoi = &quot;est&quot;,
-  facet = &quot;comm&quot;
+  facet = &quot;type&quot;
   )
-fig_results_within_comp</code></pre>
-<p><img src="analyses_additional_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+fig_results_comp</code></pre>
+<p><img src="analyses_additional_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <pre class="r"><code># safe figure
-ggsave(&quot;figures/fig_results_within_comparison.pdf&quot;, 
+ggsave(&quot;figures/fig_results_comparison.pdf&quot;, 
        width = 7, height = 5,
        plot = fig_results_within_comp)</code></pre>
-</div>
-<div id="between" class="section level2">
-<h2>Between</h2>
-<pre class="r"><code># get data
-dat_fig_results_activity_pub &lt;- get_dat_res(
-  model_aff_neg_lmer_pub, model_aff_pos_lmer_pub, model_life_sat_lmer_pub, 
-  type = &quot;activity&quot;, analysis = &quot;1. preregistered&quot;)
-
-dat_fig_results_channel_pub &lt;- get_dat_res(
-  model_aff_neg_lmer_pub, model_aff_pos_lmer_pub, model_life_sat_lmer_pub, 
-  type = &quot;channels&quot;, analysis = &quot;1. preregistered&quot;)
-
-dat_fig_results_between_pub &lt;- rbind(
-  cbind(dat_fig_results_activity_pub, comm = &quot;activity&quot;), 
-  cbind(dat_fig_results_channel_pub, comm = &quot;channel&quot;)) %&gt;% 
-  filter(type == &quot;between&quot;)
-
-dat_fig_results_activity_nco &lt;- get_dat_res(
-  model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, 
-  type = &quot;activity&quot;, analysis = &quot;2. no covars&quot;)
-
-dat_fig_results_channel_nco &lt;- get_dat_res(
-  model_aff_neg_lmer_nco, model_aff_pos_lmer_nco, model_life_sat_lmer_nco, 
-  type = &quot;channels&quot;, analysis = &quot;2. no covars&quot;)
-
-dat_fig_results_between_nco &lt;- rbind(
-  cbind(dat_fig_results_activity_nco, comm = &quot;activity&quot;), 
-  cbind(dat_fig_results_channel_nco, comm = &quot;channel&quot;)) %&gt;% 
-  filter(type == &quot;between&quot;)
-
-dat_fig_results_activity_add &lt;- get_dat_res(
-  model_aff_neg_lmer_add, model_aff_pos_lmer_add, model_life_sat_lmer_add, 
-  type = &quot;activity&quot;, analysis = &quot;3. additional covars&quot;)
-
-dat_fig_results_channel_add &lt;- get_dat_res(
-  model_aff_neg_lmer_add, model_aff_pos_lmer_add, model_life_sat_lmer_add, 
-  type = &quot;channels&quot;, analysis = &quot;3. additional covars&quot;)
-
-dat_fig_results_between_add &lt;- rbind(
-  cbind(dat_fig_results_activity_add, comm = &quot;activity&quot;), 
-  cbind(dat_fig_results_channel_add, comm = &quot;channel&quot;)) %&gt;% 
-  filter(type == &quot;between&quot;)
-
-dat_fig_results_activity_pre &lt;- get_dat_res(
-  model_aff_neg_lmer_pre, model_aff_pos_lmer_pre, model_life_sat_lmer_pre, 
-  type = &quot;activity&quot;, analysis = &quot;4. preregistered&quot;)
-
-dat_fig_results_channel_pre &lt;- get_dat_res(
-  model_aff_neg_lmer_pre, model_aff_pos_lmer_pre, model_life_sat_lmer_pre, 
-  type = &quot;channels&quot;, analysis = &quot;4. preregistered&quot;)
-
-dat_fig_results_between_pre &lt;- rbind(
-  cbind(dat_fig_results_activity_pre, comm = &quot;activity&quot;), 
-  cbind(dat_fig_results_channel_pre, comm = &quot;channel&quot;)) %&gt;% 
-  filter(type == &quot;between&quot;)
-
-dat_fig_results_activity_noi &lt;- get_dat_res(
-  model_aff_neg_lmer_noi, model_aff_pos_lmer_noi, model_life_sat_lmer_noi, 
-  type = &quot;activity&quot;, analysis = &quot;5. prereg no imp&quot;)
-
-dat_fig_results_channel_noi &lt;- get_dat_res(
-  model_aff_neg_lmer_noi, model_aff_pos_lmer_noi, model_life_sat_lmer_noi, 
-  type = &quot;channels&quot;, analysis = &quot;5. prereg no imp&quot;)
-
-dat_fig_results_between_noi &lt;- rbind(
-  cbind(dat_fig_results_activity_noi, comm = &quot;activity&quot;), 
-  cbind(dat_fig_results_channel_noi, comm = &quot;channel&quot;)) %&gt;% 
-  filter(type == &quot;between&quot;)
-
-dat_fig_results_between_comp &lt;- rbind(
-  dat_fig_results_between_pub,
-  dat_fig_results_between_nco,
-  dat_fig_results_between_add,
-  dat_fig_results_between_pre,
-  dat_fig_results_between_noi
-)
-# make figure
-fig_results_between_comp &lt;- make_graph_res(
-  dat_fig_results_between_comp,
-  sesoi = &quot;est&quot;,
-  facet = &quot;comm&quot;
-  )
-fig_results_between_comp</code></pre>
-<p><img src="analyses_additional_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
-<pre class="r"><code># safe figure
-ggsave(&quot;figures/fig_results_between_comparison.pdf&quot;, 
-       width = 7, height = 5,
-       plot = fig_results_between_comp)</code></pre>
 <pre class="r"><code>save.image(&quot;data/workspace_2.RData&quot;)</code></pre>
-</div>
 </div>
 
 

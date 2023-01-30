@@ -33,3 +33,4 @@ dplyr
 stringr
 forcats
 td
+lmerTest

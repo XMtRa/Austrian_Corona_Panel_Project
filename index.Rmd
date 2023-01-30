@@ -8,6 +8,7 @@ On this website, you can find the companion material for the paper _The effects 
 You can find the following information here:
 
 - The paper, which you can read [in your browser](manuscript.html) or download as [pdf](manuscript.pdf). 
+- The [set-up](analyses_setup.html) for the analyses, including session information, custom functions, data wrangling, and data imputation.
 - The detailed code and summaries of the [analyses](analyses.html)
 - [Additional analyses](analyses_additional.html).
 - A list of the [items translated into English](items_english.html)

@@ -4,8 +4,12 @@
 .Ruserdata
 .DS_Store
 analyses_additional_cache/*
+analyses_additional_cache/html/*
+analyses_additional_cache/__packages
+analyses_additional_cache/__packages.*
 # analyses_additional_files/*
 analyses_cache/*
+analyses_setup_cache/*
 archive/*
 data/
 figures/archive/*
