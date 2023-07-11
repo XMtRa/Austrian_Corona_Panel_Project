@@ -10,11 +10,24 @@ output:
   
 The following changes were introduced after the preregistration.
 
+## Wording Hypotheses
+
+Before: Hypothesis: The within-person effects of all types of COVID-19 related social media use on all types of well-being indicators---while controlling for several stable and varying covariates such as sociodemographic variables and psychological dispositions---will be trivial.
+
+Now: "Hypothesis: The within-person effects of all measures of COVID-19 related social media use (types: reading, liking and sharing, posting; channels: Twitter, Instagram, Facebook, YouTube, WhatsApp) on all measures of well-being indicators (positive affect, negative affect, life satisfaction)---while controlling for several stable and varying covariates such as sociodemographic variables and psychological dispositions (see below)---will be trivial.
+
+Explanation: The wording of the hypotheses was changed slightly. Instead of "trivial", it not states "very small". The reason was that trivial contains a normative element (irrelevant). Instead, I now state "very small", which seems more objective. Some might consider very small effects trivial, others not.
+
+In addition, I link to the control variables explicated below.
+
 ## Covariates
 
 I originally planned to include the following variables as varying covariates. I thought they were measured at several/all waves. However, upon seeing the actual data I realized this wasn't the case. I hence included them as stable covariates.
 
 This includes residency is Vienna, self-reported physical health, living space (in squaremeter), access to balcony, access to garden, and employment status.
+
+I additionally planned to control for satisfaction with democracy and other types of media use. However, it's likely that they also serve as mediators, which is why I will not include them in the main models. They will, however, be reported in the supplementary analyses.
+
 
 ## Imputation
 

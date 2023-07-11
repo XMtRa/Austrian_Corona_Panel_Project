@@ -32,5 +32,6 @@ purrr
 dplyr
 stringr
 forcats
+lubridate
 td
 lmerTest

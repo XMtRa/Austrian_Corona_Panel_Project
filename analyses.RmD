@@ -15,8 +15,21 @@ bibliography      :
 
 ```{r knitr-setup, include=F}
 set.seed(170819)
-knitr::opts_chunk$set(warning=F, echo=T, error=F, message=F, cache=T, rows.print=20)
-options(digits=2, width=260, scipen=999)
+
+knitr::opts_chunk$set(
+  warning=F, 
+  echo=T, 
+  error=F, 
+  message=F, 
+  cache=T, 
+  rows.print=20
+  )
+
+options(
+  digits=2, 
+  width=260, 
+  scipen=999
+  )
 ```
 
  - Here you can find the code and the results of all main analyses. 
@@ -29,16 +42,30 @@ Load packages & workspace.
 
 ```{r r-setup, results='hide', cache=F}
 # install packages
-# devtools::install_github("https://github.com/tdienlin/td@v.0.0.2.5")
+## devtools::install_github("https://github.com/tdienlin/td@v.0.0.2.5")
 
 # define packages
-packages <- c("broom.mixed", "brms", "corrr", "devtools", "GGally", "ggplot2", 
-              "gridExtra", "kableExtra", "knitr", "lavaan", "lme4", 
-              "magrittr", "mice", "PerFit", "performance", "psych", 
-              "quanteda.textstats", "scales", "semTools", "tidyverse")
-
-# load packages
-lapply(c(packages, "td"), library, character.only = TRUE)
+library(broom.mixed)
+library(brms)
+library(corrr)
+library(devtools)
+library(GGally)
+library(ggplot2)
+library(gridExtra)
+library(kableExtra)
+library(knitr)
+library(lavaan)
+library(lme4)
+library(magrittr)
+library(mice)
+library(PerFit)
+library(performance)
+library(psych)
+library(quanteda.textstats)
+library(scales)
+library(semTools)
+library(tidyverse)
+library(td)
 
 # load workspace
 load("data/workspace_1.RData")
@@ -79,7 +106,7 @@ We first test assumption of multivariate normality. We focus on wave 1 here.
 
 ```{r}
 d_long_100_imp %>%
-  filter(wave == 1) %>% 
+  filter(wave == 1) %>%
   select(aff_pos_1, aff_pos_2, aff_pos_3) %>% 
   mardia()
 ```
@@ -483,14 +510,9 @@ model_life_sat_lmer_pub <- "
     hh_adults + hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + 
     hh_oldfam + hh_outfam + hh_partner +
     home_owner +
-    med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
-    med_vid_orf_b + med_vid_pri_b + 
-    med_txt_kro_w + med_txt_sta_w + med_txt_pre_w + med_txt_oes_w + med_txt_kur_w + med_txt_slz_w + med_txt_son_w + 
-    med_vid_orf_w + med_vid_pri_w + 
     risk_prop_b + risk_prop_w + 
     act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
     act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
-    sat_dem_w + sat_dem_b + 
     health_w + health_b +
     loc_cntrl_int_m_w + loc_cntrl_int_m_b
 "
@@ -531,14 +553,9 @@ model_aff_pos_lmer_pub <- "
     hh_adults + hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + 
     hh_oldfam + hh_outfam + hh_partner +
     home_owner +
-    med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
-    med_vid_orf_b + med_vid_pri_b + 
-    med_txt_kro_w + med_txt_sta_w + med_txt_pre_w + med_txt_oes_w + med_txt_kur_w + med_txt_slz_w + med_txt_son_w + 
-    med_vid_orf_w + med_vid_pri_w + 
     risk_prop_b + risk_prop_w + 
     act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
     act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
-    sat_dem_w + sat_dem_b + 
     health_w + health_b +
     loc_cntrl_int_m_w + loc_cntrl_int_m_b
 "
@@ -579,14 +596,9 @@ model_aff_neg_lmer_pub <- "
     hh_adults + hh_child18 + hh_child17 + hh_child14 + hh_child5 + hh_child2 + 
     hh_oldfam + hh_outfam + hh_partner +
     home_owner +
-    med_txt_kro_b + med_txt_sta_b + med_txt_pre_b + med_txt_oes_b + med_txt_kur_b + med_txt_slz_b + med_txt_son_b + 
-    med_vid_orf_b + med_vid_pri_b + 
-    med_txt_kro_w + med_txt_sta_w + med_txt_pre_w + med_txt_oes_w + med_txt_kur_w + med_txt_slz_w + med_txt_son_w + 
-    med_vid_orf_w + med_vid_pri_w + 
     risk_prop_b + risk_prop_w + 
     act_wrk_w + act_spo_w + act_frn_w + act_sho_w + act_pet_w + 
     act_wrk_b + act_spo_b + act_frn_b + act_sho_b + act_pet_b +
-    sat_dem_w + sat_dem_b + 
     health_w + health_b +
     loc_cntrl_int_m_w + loc_cntrl_int_m_b
 "
@@ -636,29 +648,6 @@ fit_aff_neg_lmer_std <- summary(pool(fit_aff_neg_lmer_std), conf.int = TRUE)
 print_res(fit_aff_neg_lmer_std)
 ```
 
-## Table
-
-Let's extract results for a table of within-person effects.
-
-```{r cache=F, eval=T}
-tab_within <-
-  data_tab_std %>% 
-  filter(Type %in% c("Activity", "Channels")) %>% 
-  select(std = estimate) %>% 
-  cbind(data_tab_within) %>% 
-  mutate(p.value = td::my_round(p.value, "p")) %>% 
-  arrange(dv) %>% 
-  select(Outcome = dv,
-         Predictor = iv,
-         b = estimate,
-         `Lower` = conf.low,
-         `Higher` = conf.high,
-         beta = "std",
-         p = "p.value")
-
-tab_within
-```
-
 ## Figures
 
 Let's visualize results. First, results of unstandardized predictors.
@@ -692,7 +681,7 @@ Let's next visualize standardized predictors, to allow for better comparison acr
 
 ```{r warning=F, cache=F, fig.height=7}
 # make figure
-data_tab_comp <- rbind(
+data_tab_comp_std <- rbind(
   get_dat_res(fit_aff_neg_lmer_std, fit_aff_pos_lmer_std, fit_life_sat_lmer_std, 
               type = "Activity", variance = "within", analysis = "standardized"),
   get_dat_res(fit_aff_neg_lmer_std, fit_aff_pos_lmer_std, fit_life_sat_lmer_std, 
@@ -707,22 +696,52 @@ data_tab_comp <- rbind(
               type = "Psycho-\nlogy", variance = "within", analysis = "standardized")
   )
 
-fig_results_comp <- make_graph_res(
-  data = data_tab_comp,
+fig_results_comp_std <- make_graph_res(
+  data = data_tab_comp_std,
   sesoi = "std",
   legend = FALSE
   , facet = "type"
   # , title = "Results of selected covariates"
   )
-fig_results_comp
+fig_results_comp_std
 
 # save figure
-ggsave("figures/fig_results_comp.png", 
+ggsave("figures/fig_results_comp_std.png", 
        width = 7, height = 7,
-       plot = fig_results_control_std)
+       plot = fig_results_comp_std)
+```
+
+## Table
+
+Let's extract results for a table of within-person effects.
+
+```{r cache=F, eval=T}
+tab_within <-
+  data_tab_comp_std %>% 
+  filter(Type %in% c("Activity", "Channels")) %>% 
+  select(std = estimate) %>% 
+  cbind(data_tab_within) %>% 
+  mutate(p.value = td::my_round(p.value, "p")) %>% 
+  arrange(dv) %>% 
+  select(Outcome = dv,
+         Predictor = iv,
+         b = estimate,
+         `Lower` = conf.low,
+         `Higher` = conf.high,
+         beta = "std",
+         p = "p.value")
+
+tab_within
 ```
 
 # Save workspace
+
+First remove large objects
+
+```{r}
+rm(fig_cor)
+```
+
 
 ```{r cache=F}
 save.image("data/workspace_2.RData")

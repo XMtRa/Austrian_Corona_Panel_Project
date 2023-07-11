@@ -15,8 +15,23 @@ bibliography      :
   
 ```{r knitr-setup, include=F}
 set.seed(170819)
-knitr::opts_chunk$set(warning=F, echo=T, error=F, message=F, cache=T, rows.print=20)
-options(digits=2, width=260, scipen=999)
+
+knitr::opts_chunk$set(
+  warning = F, 
+  echo = T, 
+  error = F, 
+  message = F, 
+  cache = T, 
+  rows.print = 20,
+  cache.lazy = FALSE
+  )
+
+options(
+  digits = 2, 
+  width = 260, 
+  scipen = 999,
+  max.print = 10000
+  )
 ```
 
 - Here you can find the set-up for the analyses and the results.
@@ -25,23 +40,39 @@ options(digits=2, width=260, scipen=999)
 - Alternatively, you can download the rmd file from the github repo.
 - The data are hosted on aussda. Please download them separately, to rerun the analyses (https://doi.org/10.11587/28KQNS). 
 - Note that this paper uses a scientific use file, which is at the time of writing not officially published.
+- Download the .sav file and save it in the folder "data"
 
 # Set-up
-
-Load packages.
+## Load packages
 
 ```{r r-setup, results='hide', cache=F}
 # install packages
 # devtools::install_github("https://github.com/tdienlin/td@v.0.0.2.5")
 
 # define packages
-packages <- c("broom.mixed", "brms", "devtools", "GGally", "ggplot2", 
-              "gridExtra", "kableExtra", "knitr", "lavaan", "lme4", 
-              "magrittr", "mice", #"mvnormalTest", 
-              "PerFit", "performance", "psych", "quanteda.textstats", "semTools", "tidyverse")
-
-# load packages
-lapply(c(packages, "td"), library, character.only = TRUE)
+library(broom.mixed)
+library(brms)
+library(devtools)
+library(GGally)
+library(ggplot2)
+library(gridExtra)
+library(haven)
+library(kableExtra)
+library(knitr)
+library(lavaan)
+library(lme4)
+library(magrittr)
+library(mice)
+library(mvnormalTest)
+library(PerFit)
+library(performance)
+library(psych)
+library(quanteda.textstats)
+library(readxl)
+library(semTools)
+library(td)
+library(tidyverse)
+# unload("MASS")
 ```
 
 ## Session info
@@ -61,9 +92,10 @@ Find variables in dataset.
 ```{r}
 find_var <- function(name, data = doc)(
   # finds the variables names for an item for each wave
-  data %>%
+
+  doc %>% 
     filter(Label == name) %>%
-    select(Variable) %>%
+    dplyr::select(Variable) %>%
     unlist() %>%
     set_names(sub("\\_.*", "", .))
 )
@@ -324,27 +356,48 @@ get_fs <- function(model) {
 # Data Wrangling
 ## Load data
 
+```{r load-data}
+d_spss_en <- read_spss("data/W1-34_ACPP_V20230303_EN.SAV")
+d_spss <- read_spss("data/W1-34_ACPP_V20230303.SAV")
+write.csv(d_spss, file = "data/W1-34_ACPP_V20230303_EN.csv")
+d_raw <- read_csv("data/W1-34_ACPP_V20230303_EN.csv")
+```
+
+## Documentation
+
+Make file with documentation about variables
+
 ```{r}
-doc <- read_csv2("data/Variable_List_w1-34.csv")
-d_raw <- read_csv("data/W1-32_ACPP_V20220601.csv")
+# get labels
+doc_raw <- map(d_spss, attr, "label")
+
+# reformat
+doc_raw <- 
+  data.frame(
+    Variable = names(doc),
+    Label = unlist(doc, use.names = FALSE)
+  )
+
+# define waves where media use was measured
+waves_media_use <- c(1, 8, 17, 23, 28)
 ```
 
 ## Find names
 
 Identify the names of each item for each wave.
 
-```{r}
+```{r get-var-names}
 # identify variable names of items, using custom function
 health <- find_var("Gesundheitszustand") # wsn't collected at wave 21
-aff_neg_1 <- find_var("Depressivitaet: einsam")
-aff_neg_2 <- find_var("Depressivitaet: aergerlich")
-aff_neg_3 <- find_var("Depressivitaet: so niedergeschlagen")
-aff_neg_4 <- find_var("Depressivitaet: sehr nervoes")
-aff_neg_5 <- find_var("Depressivitaet: aengstlich")
-aff_neg_6 <- find_var("Depressivitaet: bedrueckt und traurig")
-aff_pos_1 <- find_var("Depressivitaet: ruhig und gelassen")
-aff_pos_2 <- find_var("Depressivitaet: gluecklich")
-aff_pos_3 <- find_var("Depressivitaet: voller Energie")
+aff_neg_1 <- find_var("Depressivitaet: Einsam")
+aff_neg_2 <- find_var("Depressivitaet: Aergerlich")
+aff_neg_3 <- find_var("Depressivitaet: So niedergeschlagen")
+aff_neg_4 <- find_var("Depressivitaet: Sehr nervoes")
+aff_neg_5 <- find_var("Depressivitaet: Aengstlich")
+aff_neg_6 <- find_var("Depressivitaet: Bedrueckt und traurig")
+aff_pos_1 <- find_var("Depressivitaet: Ruhig und gelassen")
+aff_pos_2 <- find_var("Depressivitaet: Gluecklich")
+aff_pos_3 <- find_var("Depressivitaet: Voller Energie")
 act_wrk <- find_var("Zuhause verlassen: Arbeit")
 act_spo <- find_var("Zuhause verlassen: Sport")
 act_frn <- find_var("Zuhause verlassen: Freunde oder Verwandte treffen")
@@ -370,10 +423,10 @@ soc_med_yt <- find_var("Soziale Medien: Youtube")
 soc_med_wa <- find_var("Soziale Medien: WhatsApp")
 soc_med_read <- find_var("Soziale Medien Aktivitaet: Postings zu Corona anderer lesen")
 soc_med_like_share <- find_var("Soziale Medien Aktivitaet: Postings liken, teilen oder retweeten")
-soc_med_post <- find_var("Soziale Medien Aktivitaet: selber Postings zu Corona verfassen")
+soc_med_post <- find_var("Soziale Medien Aktivitaet: Selber Postings zu Corona verfassen")
 life_sat <- find_var("Lebenszufriedenheit")
 risk_prop <- find_var("Risikobereitschaft")
-loc_cntrl_int_1 <- find_var("Psychologie: habe Leben selbst in der Hand")
+loc_cntrl_int_1 <- find_var("Psychologie: Habe Leben selbst in der Hand")
 loc_cntrl_int_2 <- find_var("Psychologie: Belohnung durch Anstrengung")
 loc_cntrl_int_3 <- find_var("Psychologie: Fremdbestimmung")
 loc_cntrl_int_4 <- find_var("Psychologie: Schicksal")
@@ -391,7 +444,7 @@ corona_pos <- c(
 
 ## Select variables
 
-```{r}
+```{r select-vars}
 d_wide <- d_raw %>% 
   select(
     id = RESPID,
@@ -466,14 +519,19 @@ d_wide <- d_raw %>%
     trst_hlthsec = all_of(trst_hlthsec),
     trst_gov = all_of(trst_gov),
     trst_army = all_of(trst_army),
-    corona_pos = all_of(corona_pos)
+    corona_pos = all_of(corona_pos),
+    wave_part_1 = W1_PANELIST,
+    wave_part_8 = W8_PANELIST,
+    wave_part_17 = W17_PANELIST,
+    wave_part_23 = W23_PANELIST,
+    wave_part_28 = W28_PANELIST
   )
 ```
 
 Make new documentation with selected variables.
 
-```{r}
-doc_selected <- filter(doc, Variable %in% c(
+```{r make-doc}
+doc_selected <- filter(doc_raw, Variable %in% c(
   "RESPID",
   "SD_GENDER",
   "SD_ACCESS_BALCONY",
@@ -547,12 +605,12 @@ doc_selected <- filter(doc, Variable %in% c(
   trst_army,
   corona_pos
 ))
-write.csv(doc_selected, "data/documentation.csv")
+write.csv(doc_selected, "data/used_variables.csv")
 ```
 
 ## Recode variables
 
-```{r}
+```{r recode-vars}
 d_wide %<>%
   mutate_at(vars(everything(.)), funs(na_if(., 88))) %>%
   mutate_at(vars(everything(.)), funs(na_if(., 99))) %>%
@@ -590,11 +648,11 @@ d_wide %<>%
 
 ## Make long data format
 
-```{r cache=T}
+```{r long-format, cache=T}
 d_long <-
   d_wide %>% 
   pivot_longer(
-    cols = health...W1:corona_pos...W32,
+    cols = health...W1:corona_pos...W34,
     names_to = "item",
     values_to = "value"
   ) %>% 
@@ -604,15 +662,26 @@ d_long <-
 
 ## Recode values
 
-```{r}
+```{r recode-vars-2}
 # recode such that higher values imply more strength / align with wording
 d_long %<>% 
-  mutate_at(vars(med_txt_kro:med_vid_pri, health, sat_dem, soc_med_fb:soc_med_post), 
-            funs(recode(., `1` = 5L, `2` = 4L, `3` = 3L, `4` = 2L, `5` = 1L))) %>% 
-  mutate_at(vars(loc_cntrl_int_1:loc_cntrl_int_4), 
-            funs(recode(., `1` = 4L, `2` = 3L, `3` = 2L, `4` = 1L))) %>% 
-  mutate_at(vars(born_aus_prnts), 
-            funs(recode(., `3` = 0L, `2` = 2L, `1` = 1L)))
+  mutate_at(
+    vars(
+      med_txt_kro:med_vid_pri, 
+      health, 
+      sat_dem, 
+      soc_med_fb:soc_med_post
+      ), 
+    funs(recode(., `1` = 5L, `2` = 4L, `3` = 3L, `4` = 2L, `5` = 1L))) %>% 
+  mutate_at(
+    vars(
+      loc_cntrl_int_1:loc_cntrl_int_4
+      ), 
+    funs(recode(., `1` = 4L, `2` = 3L, `3` = 2L, `4` = 1L))) %>% 
+  mutate_at(
+    vars(born_aus_prnts), 
+    funs(recode(., `3` = 0L, `2` = 2L, `1` = 1L))
+    )
 
 # recode inverted items
 d_long %<>%
@@ -629,7 +698,7 @@ d_long %<>%
 
 ## Order dataset
 
-```{r}
+```{r ordering}
 d_long %<>%
   arrange(id, wave)
 ```
@@ -672,9 +741,9 @@ incl_ma_50[vars_excl] <- FALSE
 
 ## Single imputation
 
-For analyses as originally preregistered (see additional analyses), hence only participants who provided more than 50% of all data.
+For analyses as originally preregistered (see additional analyses), hence using only participants who provided more than 50% of all data.
 
-```{r imputation-single-50, eval=F, cache=T}
+```{r imputation-single-50, eval=T, cache=T}
 d_long_50_imp <- mice(d_long_50, 
                       method = "pmm", # use predictive mean matching
                       m = 1, maxit = 30, # only 1 imputation
@@ -686,10 +755,11 @@ write_csv(d_long_50_imp, "data/data_50_imputed.csv")
 
 Because CFAs aren't evaluated with multiple imputation, impute single data-set. Missing data was imputed for everyone.
 
-```{r imputation-single-100, eval=F, cache=T}
+```{r imputation-single-100, eval=T, cache=T}
 d_long_100_imp <- mice(d_long, 
                    method = "pmm", # use predictive mean matching
-                   m = 1, maxit = 30, # only 1 imputation
+                   m = 1, # only 1 imputation
+                   maxit = 30, 
                    # where = incl_ma,
                    seed = 180719, print = FALSE)
 d_long_100_imp <- mice::complete(d_long_100_imp)
@@ -698,13 +768,14 @@ write_csv(d_long_100_imp, "data/data_100_imputed.csv")
 
 ## Multiple Imputation
 
-Now, multiple imputation of data-sets (5 data sets, 5 iterations), used for the final analyses.
+Now, multiple imputation of data-sets (5 data sets, 20 iterations), used for the final analyses.
 
-```{r imputation-mult, eval=F, cache=T}
+```{r imputation-mult, eval=T, cache=T}
 # impute missing data with multiple imputation
 d_long_100_mim_mice <- mice(d_long, 
                    method = "pmm", # use predictive mean matching
-                   m = 5, maxit = 5, # 5 imputations, 5 iterations
+                   m = 20, # 5 imputations, 
+                   maxit = 5, # 5 iterations
                    # where = incl_ma,
                    seed = 180719, print = FALSE)
 d_long_100_mim <- mice::complete(d_long_100_mim_mice, action = "long", include = TRUE)
@@ -725,7 +796,7 @@ d_long_100_mim <- read_csv("data/data_100_mim.csv") # data where all people were
 
 First, create means for scales. Then, create mean values for each person (between), and unique changes per wave (within).
 
-```{r}
+```{r within-between-100-mim}
 d_long_100_mim <-
   d_long_100_mim %>% 
   mutate(aff_pos_m = rowMeans(select(., aff_pos_1 : aff_pos_3)),
@@ -740,7 +811,7 @@ d_long_100_mim %<>%
 d_long_100_mim_mice <- as.mids(d_long_100_mim)
 ```
 
-```{r}
+```{r within-between-100-imp}
 d_long_100_imp <-
   d_long_100_imp %>% 
   mutate(aff_pos_m = rowMeans(select(., aff_pos_1 : aff_pos_3)),
@@ -753,39 +824,9 @@ d_long_100_imp %<>%
   ungroup()
 ```
 
-And because later we want to rerun the results as originally preregistered, we'll now do the same for analyses without filtered data.
-
-```{r}
-d_long_50_imp <-
-  d_long_50_imp %>% 
-  mutate(aff_pos_m = rowMeans(select(., aff_pos_1 : aff_pos_3)),
-         aff_neg_m = rowMeans(select(., aff_neg_1 : aff_neg_6)),
-         loc_cntrl_int_m = rowMeans(select(., loc_cntrl_int_1 : loc_cntrl_int_4)))
-
-d_long_50_imp %<>% 
-  group_by(id) %>% 
-  mutate_at(vars(health:corona_pos, loc_cntrl_int_m), 
-            funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %>% 
-  ungroup()
-```
-
-And because later we want to rerun the results without imputed data, now the same for data without imputation.
-
-```{r}
-d_long_50 %<>% 
-  mutate(aff_pos_m = rowMeans(select(., aff_pos_1 : aff_pos_3)),
-         aff_neg_m = rowMeans(select(., aff_neg_1 : aff_neg_6)),
-         loc_cntrl_int_m = rowMeans(select(., loc_cntrl_int_1 : loc_cntrl_int_4)))
-
-d_long_50 %<>% 
-  group_by(id) %>% 
-  mutate_at(vars(health:corona_pos, loc_cntrl_int_m), funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %>% 
-  ungroup()
-```
-
 And now the same for the standardized data set.
 
-```{r}
+```{r within-between-100-imp-std}
 d_long_100_mim_std <-
   d_long_100_mim %>% 
   group_by(.imp) %>% 
@@ -803,6 +844,36 @@ d_long_100_mim_std %<>%
   ungroup()
 
 d_long_100_mim_mice_std <- as.mids(d_long_100_mim_std)
+```
+
+And because later we want to rerun the results as originally preregistered, we'll now do the same for analyses without filtered data.
+
+```{r within-between-50-imp}
+d_long_50_imp <-
+  d_long_50_imp %>% 
+  mutate(aff_pos_m = rowMeans(select(., aff_pos_1 : aff_pos_3)),
+         aff_neg_m = rowMeans(select(., aff_neg_1 : aff_neg_6)),
+         loc_cntrl_int_m = rowMeans(select(., loc_cntrl_int_1 : loc_cntrl_int_4)))
+
+d_long_50_imp %<>% 
+  group_by(id) %>% 
+  mutate_at(vars(health:corona_pos, loc_cntrl_int_m), 
+            funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %>% 
+  ungroup()
+```
+
+And because later we want to rerun the results without imputed data, now the same for data without imputation.
+
+```{r within-between-50}
+d_long_50 %<>% 
+  mutate(aff_pos_m = rowMeans(select(., aff_pos_1 : aff_pos_3)),
+         aff_neg_m = rowMeans(select(., aff_neg_1 : aff_neg_6)),
+         loc_cntrl_int_m = rowMeans(select(., loc_cntrl_int_1 : loc_cntrl_int_4)))
+
+d_long_50 %<>% 
+  group_by(id) %>% 
+  mutate_at(vars(health:corona_pos, loc_cntrl_int_m), funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %>% 
+  ungroup()
 ```
 
 # Save workspace

@@ -13,7 +13,7 @@
 
 <title>Analyses Setup</title>
 
-<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.22/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
@@ -29,7 +29,7 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
@@ -38,8 +38,8 @@
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
 <script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
-<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.0/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.0/css/v4-shims.min.css" rel="stylesheet" />
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -405,62 +405,84 @@ rerun the analyses (<a href="https://doi.org/10.11587/28KQNS"
 class="uri">https://doi.org/10.11587/28KQNS</a>).</li>
 <li>Note that this paper uses a scientific use file, which is at the
 time of writing not officially published.</li>
+<li>Download the .sav file and save it in the folder “data”</li>
 </ul>
 <div id="set-up" class="section level1">
 <h1>Set-up</h1>
-<p>Load packages.</p>
+<div id="load-packages" class="section level2">
+<h2>Load packages</h2>
 <pre class="r"><code># install packages
 # devtools::install_github(&quot;https://github.com/tdienlin/td@v.0.0.2.5&quot;)
 
 # define packages
-packages &lt;- c(&quot;broom.mixed&quot;, &quot;brms&quot;, &quot;devtools&quot;, &quot;GGally&quot;, &quot;ggplot2&quot;, 
-              &quot;gridExtra&quot;, &quot;kableExtra&quot;, &quot;knitr&quot;, &quot;lavaan&quot;, &quot;lme4&quot;, 
-              &quot;magrittr&quot;, &quot;mice&quot;, #&quot;mvnormalTest&quot;, 
-              &quot;PerFit&quot;, &quot;performance&quot;, &quot;psych&quot;, &quot;quanteda.textstats&quot;, &quot;semTools&quot;, &quot;tidyverse&quot;)
-
-# load packages
-lapply(c(packages, &quot;td&quot;), library, character.only = TRUE)</code></pre>
+library(broom.mixed)
+library(brms)
+library(devtools)
+library(GGally)
+library(ggplot2)
+library(gridExtra)
+library(haven)
+library(kableExtra)
+library(knitr)
+library(lavaan)
+library(lme4)
+library(magrittr)
+library(mice)
+library(mvnormalTest)
+library(PerFit)
+library(performance)
+library(psych)
+library(quanteda.textstats)
+library(readxl)
+library(semTools)
+library(td)
+library(tidyverse)
+# unload(&quot;MASS&quot;)</code></pre>
+</div>
 <div id="session-info" class="section level2">
 <h2>Session info</h2>
 <p>Provide session info to make results reproducible.</p>
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>## R version 4.2.2 (2022-10-31)
+<pre><code>## R version 4.3.0 (2023-04-21)
 ## Platform: aarch64-apple-darwin20 (64-bit)
-## Running under: macOS Ventura 13.1
+## Running under: macOS Ventura 13.4
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/lib/libRblas.0.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/lib/libRlapack.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRblas.0.dylib 
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## time zone: Europe/Vienna
+## tzcode source: internal
 ## 
 ## attached base packages:
 ## [1] stats4    stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] td_0.0.1                forcats_0.5.2           stringr_1.4.1           dplyr_1.0.10            purrr_0.3.5             readr_2.1.3             tidyr_1.2.1             tibble_3.1.8            tidyverse_1.3.2         semTools_0.5-6         
-## [11] quanteda.textstats_0.96 psych_2.2.9             performance_0.10.2      PerFit_1.4.6            mirt_1.37.1             lattice_0.20-45         ltm_1.2-0               polycor_0.8-1           msm_1.7                 MASS_7.3-58.1          
-## [21] mice_3.15.0             magrittr_2.0.3          lme4_1.1-31             Matrix_1.5-1            lavaan_0.6-12           knitr_1.41              kableExtra_1.3.4        gridExtra_2.3           GGally_2.1.2            ggplot2_3.4.0          
-## [31] devtools_2.4.5          usethis_2.1.6           brms_2.18.0             Rcpp_1.0.9              broom.mixed_0.2.9.4    
+##  [1] lubridate_1.9.2           forcats_1.0.0             stringr_1.5.0             dplyr_1.1.2               purrr_1.0.1               readr_2.1.4               tidyr_1.3.0               tibble_3.2.1              tidyverse_2.0.0          
+## [10] td_0.0.1                  semTools_0.5-6            readxl_1.4.2              quanteda.textstats_0.96.2 psych_2.3.3               performance_0.10.4        PerFit_1.4.6              mirt_1.39                 lattice_0.21-8           
+## [19] ltm_1.2-0                 polycor_0.8-1             msm_1.7                   MASS_7.3-60               mvnormalTest_1.0.0        mice_3.16.0               magrittr_2.0.3            lme4_1.1-33               Matrix_1.5-4.1           
+## [28] lavaan_0.6-15             knitr_1.43                kableExtra_1.3.4          haven_2.5.2               gridExtra_2.3             GGally_2.1.2              ggplot2_3.4.2             devtools_2.4.5            usethis_2.2.0            
+## [37] brms_2.19.0               Rcpp_1.0.10               broom.mixed_0.2.9.4      
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] coda_0.19-4           stopwords_2.3         dygraphs_1.1.1.6      data.table_1.14.6     rpart_4.1.19          inline_0.3.19         RCurl_1.98-1.9        generics_0.1.3        callr_3.7.3           future_1.29.0         nsyllable_1.0.1      
-##  [12] tzdb_0.3.0            webshot_0.5.4         xml2_1.3.3            lubridate_1.9.0       httpuv_1.6.6          StanHeaders_2.21.0-7  assertthat_0.2.1      gargle_1.2.1          xfun_0.35             hms_1.1.2             jquerylib_0.1.4      
-##  [23] bayesplot_1.10.0      evaluate_0.18         promises_1.2.0.1      fansi_1.0.3           readxl_1.4.1          dbplyr_2.2.1          igraph_1.3.5          DBI_1.1.3             htmlwidgets_1.5.4     reshape_0.8.9         tensorA_0.36.2       
-##  [34] googledrive_2.0.0     ellipsis_0.3.2        crosstalk_1.2.0       ks_1.14.0             backports_1.4.1       pbivnorm_0.6.0        insight_0.18.8        permute_0.9-7         markdown_1.4          RcppParallel_5.1.5    deldir_1.0-6         
-##  [45] vctrs_0.5.1           remotes_2.4.2         abind_1.4-5           cachem_1.0.6          withr_2.5.0           checkmate_2.1.0       vegan_2.6-4           xts_0.12.2            prettyunits_1.1.1     mclust_6.0.0          mnormt_2.1.1         
-##  [56] svglite_2.1.0         cluster_2.1.4         crayon_1.5.2          pkgconfig_2.0.3       nlme_3.1-160          pkgload_1.3.2         nnet_7.3-18           rlang_1.0.6           globals_0.16.1        lifecycle_1.0.3       miniUI_0.1.1.1       
-##  [67] colourpicker_1.2.0    modelr_0.1.10         cellranger_1.1.0      distributional_0.3.1  matrixStats_0.63.0    loo_2.5.1             boot_1.3-28           zoo_1.8-11            reprex_2.0.2          base64enc_0.1-3       processx_3.8.0       
-##  [78] googlesheets4_1.0.1   png_0.1-7             viridisLite_0.4.1     bitops_1.0-7          KernSmooth_2.23-20    parallelly_1.32.1     jpeg_0.1-9            shinystan_2.6.0       scales_1.2.1          memoise_2.0.1         plyr_1.8.8           
-##  [89] threejs_0.3.3         compiler_4.2.2        hdrcde_3.4            rstantools_2.2.0      RColorBrewer_1.1-3    cli_3.4.1             urlchecker_1.0.1      listenv_0.8.0         pbapply_1.6-0         ps_1.7.2              Brobdingnag_1.2-9    
-## [100] htmlTable_2.4.1       Formula_1.2-4         mgcv_1.8-41           tidyselect_1.2.0      stringi_1.7.8         yaml_2.3.6            latticeExtra_0.6-30   bridgesampling_1.1-2  grid_4.2.2            sass_0.4.3            fastmatch_1.1-3      
-## [111] tools_4.2.2           timechange_0.1.1      parallel_4.2.2        rstudioapi_0.14       foreign_0.8-83        GPArotation_2022.10-2 quanteda_3.2.3        posterior_1.3.1       farver_2.1.1          irtoys_0.2.2          digest_0.6.30        
-## [122] shiny_1.7.3           pracma_2.4.2          broom_1.0.1           later_1.3.0           fda_6.0.5             httr_1.4.4            Deriv_4.1.3           colorspace_2.0-3      rvest_1.0.3           fs_1.5.2              rainbow_3.7          
-## [133] splines_4.2.2         sm_2.2-5.7.1          expm_0.999-6          shinythemes_1.2.0     sessioninfo_1.2.2     systemfonts_1.0.4     xtable_1.8-4          jsonlite_1.8.3        nloptr_2.0.3          fds_1.8               rstan_2.21.7         
-## [144] dcurver_0.9.2         R6_2.5.1              profvis_0.3.7         Hmisc_4.7-2           pillar_1.8.1          htmltools_0.5.3       mime_0.12             glue_1.6.2            fastmap_1.1.0         minqa_1.2.5           DT_0.26              
-## [155] deSolve_1.34          codetools_0.2-18      pkgbuild_1.3.1        pcaPP_2.0-3           mvtnorm_1.1-3         furrr_0.3.1           utf8_1.2.2            bslib_0.4.1           gtools_3.9.3          shinyjs_2.1.0         interp_1.1-3         
-## [166] survival_3.4-0        admisc_0.30           rmarkdown_2.18        munsell_0.5.0         haven_2.5.1           reshape2_1.4.4        gtable_0.3.1</code></pre>
+##   [1] fs_1.6.2             matrixStats_1.0.0    bitops_1.0-7         insight_0.19.2       httr_1.4.6           webshot_0.5.4        RColorBrewer_1.1-3   numDeriv_2016.8-1.1  profvis_0.3.8        tools_4.3.0          backports_1.4.1      utf8_1.2.3          
+##  [13] R6_2.5.1             DT_0.28              vegan_2.6-4          sm_2.2-5.7.1         mgcv_1.8-42          nortest_1.0-4        jomo_2.7-6           permute_0.9-7        urlchecker_1.0.1     withr_2.5.0          Brobdingnag_1.2-9    prettyunits_1.1.1   
+##  [25] cli_3.6.1            pspline_1.0-19       shinyjs_2.1.0        sass_0.4.6           mvtnorm_1.2-2        pbapply_1.7-0        pbivnorm_0.6.0       systemfonts_1.0.4    StanHeaders_2.26.27  foreign_0.8-84       svglite_2.1.1        parallelly_1.36.0   
+##  [37] sessioninfo_1.2.2    rstudioapi_0.14      generics_0.1.3       shape_1.4.6          gtools_3.9.4         crosstalk_1.2.0      distributional_0.3.2 inline_0.3.19        loo_2.6.0            fansi_1.0.4          abind_1.4-5          lifecycle_1.0.3     
+##  [49] yaml_2.3.7           grid_4.3.0           promises_1.2.0.1     irtoys_0.2.2         crayon_1.5.2         mitml_0.4-5          miniUI_0.1.1.1       pillar_1.9.0         boot_1.3-28.1        fda_6.1.4            estimability_1.4.1   shinystan_2.6.0     
+##  [61] stopwords_2.3        admisc_0.32          codetools_0.2-19     fastmatch_1.1-3      pan_1.6              glue_1.6.2           data.table_1.14.8    remotes_2.4.2        vctrs_0.6.3          cellranger_1.1.0     gtable_0.3.3         cachem_1.0.8        
+##  [73] ks_1.14.0            xfun_0.39            mime_0.12            fds_1.8              pracma_2.4.2         coda_0.19-4          pcaPP_2.0-3          survival_3.5-5       iterators_1.0.14     shinythemes_1.2.0    ellipsis_0.3.2       nlme_3.1-162        
+##  [85] xts_0.13.1           threejs_0.3.3        rstan_2.21.8         tensorA_0.36.2       bslib_0.5.0          Deriv_4.1.3          KernSmooth_2.23-21   rpart_4.1.19         colorspace_2.1-0     Hmisc_5.1-0          nnet_7.3-19          mnormt_2.1.1        
+##  [97] tidyselect_1.2.0     processx_3.8.1       emmeans_1.8.6        moments_0.14.1       compiler_4.3.0       glmnet_4.1-7         rvest_1.0.3          htmlTable_2.4.1      expm_0.999-7         xml2_1.3.4           colourpicker_1.2.0   posterior_1.4.1     
+## [109] checkmate_2.2.0      scales_1.2.1         dygraphs_1.1.1.6     quadprog_1.5-8       callr_3.7.3          digest_0.6.31        rainbow_3.7          minqa_1.2.5          rmarkdown_2.22       htmltools_0.5.5      pkgconfig_2.0.3      base64enc_0.1-3     
+## [121] stabledist_0.7-1     fastmap_1.1.1        ADGofTest_0.3        rlang_1.1.1          htmlwidgets_1.6.2    shiny_1.7.4          farver_2.1.1         jquerylib_0.1.4      zoo_1.8-12           jsonlite_1.8.5       mclust_6.0.0         dcurver_0.9.2       
+## [133] RCurl_1.98-1.12      Formula_1.2-5        bayesplot_1.10.0     munsell_0.5.0        furrr_0.3.1          stringi_1.7.12       plyr_1.8.8           pkgbuild_1.4.0       parallel_4.3.0       listenv_0.9.0        splines_4.3.0        hms_1.1.3           
+## [145] ps_1.7.5             igraph_1.5.0         markdown_1.7         reshape2_1.4.4       pkgload_1.3.2        rstantools_2.3.1     GPArotation_2023.3-1 evaluate_0.21        RcppParallel_5.1.7   deSolve_1.35         tzdb_0.4.0           nloptr_2.0.3        
+## [157] foreach_1.5.2        httpuv_1.6.11        quanteda_3.3.1       future_1.32.0        reshape_0.8.9        broom_1.0.5          xtable_1.8-4         later_1.3.1          viridisLite_0.4.2    gsl_2.1-8            nsyllable_1.0.1      copula_1.1-2        
+## [169] memoise_2.0.1        cluster_2.1.4        timechange_0.2.0     globals_0.16.2       hdrcde_3.4           bridgesampling_1.1-2</code></pre>
 </div>
 </div>
 <div id="custom-functions" class="section level1">
@@ -470,9 +492,10 @@ lapply(c(packages, &quot;td&quot;), library, character.only = TRUE)</code></pre>
 <p>Find variables in dataset.</p>
 <pre class="r"><code>find_var &lt;- function(name, data = doc)(
   # finds the variables names for an item for each wave
-  data %&gt;%
+
+  doc %&gt;% 
     filter(Label == name) %&gt;%
-    select(Variable) %&gt;%
+    dplyr::select(Variable) %&gt;%
     unlist() %&gt;%
     set_names(sub(&quot;\\_.*&quot;, &quot;&quot;, .))
 )</code></pre>
@@ -711,23 +734,41 @@ get_dat_res &lt;- function(data_aff_neg, data_aff_pos, data_life_sat, variance =
 <h1>Data Wrangling</h1>
 <div id="load-data" class="section level2">
 <h2>Load data</h2>
-<pre class="r"><code>doc &lt;- read_csv2(&quot;data/Variable_List_w1-34.csv&quot;)
-d_raw &lt;- read_csv(&quot;data/W1-32_ACPP_V20220601.csv&quot;)</code></pre>
+<pre class="r"><code>d_spss_en &lt;- read_spss(&quot;data/W1-34_ACPP_V20230303_EN.SAV&quot;)
+d_spss &lt;- read_spss(&quot;data/W1-34_ACPP_V20230303.SAV&quot;)
+write.csv(d_spss, file = &quot;data/W1-34_ACPP_V20230303_EN.csv&quot;)
+d_raw &lt;- read_csv(&quot;data/W1-34_ACPP_V20230303_EN.csv&quot;)</code></pre>
+</div>
+<div id="documentation" class="section level2">
+<h2>Documentation</h2>
+<p>Make file with documentation about variables</p>
+<pre class="r"><code># get labels
+doc_raw &lt;- map(d_spss, attr, &quot;label&quot;)
+
+# reformat
+doc_raw &lt;- 
+  data.frame(
+    Variable = names(doc),
+    Label = unlist(doc, use.names = FALSE)
+  )
+
+# define waves where media use was measured
+waves_media_use &lt;- c(1, 8, 17, 23, 28)</code></pre>
 </div>
 <div id="find-names" class="section level2">
 <h2>Find names</h2>
 <p>Identify the names of each item for each wave.</p>
 <pre class="r"><code># identify variable names of items, using custom function
 health &lt;- find_var(&quot;Gesundheitszustand&quot;) # wsn&#39;t collected at wave 21
-aff_neg_1 &lt;- find_var(&quot;Depressivitaet: einsam&quot;)
-aff_neg_2 &lt;- find_var(&quot;Depressivitaet: aergerlich&quot;)
-aff_neg_3 &lt;- find_var(&quot;Depressivitaet: so niedergeschlagen&quot;)
-aff_neg_4 &lt;- find_var(&quot;Depressivitaet: sehr nervoes&quot;)
-aff_neg_5 &lt;- find_var(&quot;Depressivitaet: aengstlich&quot;)
-aff_neg_6 &lt;- find_var(&quot;Depressivitaet: bedrueckt und traurig&quot;)
-aff_pos_1 &lt;- find_var(&quot;Depressivitaet: ruhig und gelassen&quot;)
-aff_pos_2 &lt;- find_var(&quot;Depressivitaet: gluecklich&quot;)
-aff_pos_3 &lt;- find_var(&quot;Depressivitaet: voller Energie&quot;)
+aff_neg_1 &lt;- find_var(&quot;Depressivitaet: Einsam&quot;)
+aff_neg_2 &lt;- find_var(&quot;Depressivitaet: Aergerlich&quot;)
+aff_neg_3 &lt;- find_var(&quot;Depressivitaet: So niedergeschlagen&quot;)
+aff_neg_4 &lt;- find_var(&quot;Depressivitaet: Sehr nervoes&quot;)
+aff_neg_5 &lt;- find_var(&quot;Depressivitaet: Aengstlich&quot;)
+aff_neg_6 &lt;- find_var(&quot;Depressivitaet: Bedrueckt und traurig&quot;)
+aff_pos_1 &lt;- find_var(&quot;Depressivitaet: Ruhig und gelassen&quot;)
+aff_pos_2 &lt;- find_var(&quot;Depressivitaet: Gluecklich&quot;)
+aff_pos_3 &lt;- find_var(&quot;Depressivitaet: Voller Energie&quot;)
 act_wrk &lt;- find_var(&quot;Zuhause verlassen: Arbeit&quot;)
 act_spo &lt;- find_var(&quot;Zuhause verlassen: Sport&quot;)
 act_frn &lt;- find_var(&quot;Zuhause verlassen: Freunde oder Verwandte treffen&quot;)
@@ -753,10 +794,10 @@ soc_med_yt &lt;- find_var(&quot;Soziale Medien: Youtube&quot;)
 soc_med_wa &lt;- find_var(&quot;Soziale Medien: WhatsApp&quot;)
 soc_med_read &lt;- find_var(&quot;Soziale Medien Aktivitaet: Postings zu Corona anderer lesen&quot;)
 soc_med_like_share &lt;- find_var(&quot;Soziale Medien Aktivitaet: Postings liken, teilen oder retweeten&quot;)
-soc_med_post &lt;- find_var(&quot;Soziale Medien Aktivitaet: selber Postings zu Corona verfassen&quot;)
+soc_med_post &lt;- find_var(&quot;Soziale Medien Aktivitaet: Selber Postings zu Corona verfassen&quot;)
 life_sat &lt;- find_var(&quot;Lebenszufriedenheit&quot;)
 risk_prop &lt;- find_var(&quot;Risikobereitschaft&quot;)
-loc_cntrl_int_1 &lt;- find_var(&quot;Psychologie: habe Leben selbst in der Hand&quot;)
+loc_cntrl_int_1 &lt;- find_var(&quot;Psychologie: Habe Leben selbst in der Hand&quot;)
 loc_cntrl_int_2 &lt;- find_var(&quot;Psychologie: Belohnung durch Anstrengung&quot;)
 loc_cntrl_int_3 &lt;- find_var(&quot;Psychologie: Fremdbestimmung&quot;)
 loc_cntrl_int_4 &lt;- find_var(&quot;Psychologie: Schicksal&quot;)
@@ -847,10 +888,15 @@ corona_pos &lt;- c(
     trst_hlthsec = all_of(trst_hlthsec),
     trst_gov = all_of(trst_gov),
     trst_army = all_of(trst_army),
-    corona_pos = all_of(corona_pos)
+    corona_pos = all_of(corona_pos),
+    wave_part_1 = W1_PANELIST,
+    wave_part_8 = W8_PANELIST,
+    wave_part_17 = W17_PANELIST,
+    wave_part_23 = W23_PANELIST,
+    wave_part_28 = W28_PANELIST
   )</code></pre>
 <p>Make new documentation with selected variables.</p>
-<pre class="r"><code>doc_selected &lt;- filter(doc, Variable %in% c(
+<pre class="r"><code>doc_selected &lt;- filter(doc_raw, Variable %in% c(
   &quot;RESPID&quot;,
   &quot;SD_GENDER&quot;,
   &quot;SD_ACCESS_BALCONY&quot;,
@@ -924,7 +970,7 @@ corona_pos &lt;- c(
   trst_army,
   corona_pos
 ))
-write.csv(doc_selected, &quot;data/documentation.csv&quot;)</code></pre>
+write.csv(doc_selected, &quot;data/used_variables.csv&quot;)</code></pre>
 </div>
 <div id="recode-variables" class="section level2">
 <h2>Recode variables</h2>
@@ -967,7 +1013,7 @@ write.csv(doc_selected, &quot;data/documentation.csv&quot;)</code></pre>
 <pre class="r"><code>d_long &lt;-
   d_wide %&gt;% 
   pivot_longer(
-    cols = health...W1:corona_pos...W32,
+    cols = health...W1:corona_pos...W34,
     names_to = &quot;item&quot;,
     values_to = &quot;value&quot;
   ) %&gt;% 
@@ -978,12 +1024,23 @@ write.csv(doc_selected, &quot;data/documentation.csv&quot;)</code></pre>
 <h2>Recode values</h2>
 <pre class="r"><code># recode such that higher values imply more strength / align with wording
 d_long %&lt;&gt;% 
-  mutate_at(vars(med_txt_kro:med_vid_pri, health, sat_dem, soc_med_fb:soc_med_post), 
-            funs(recode(., `1` = 5L, `2` = 4L, `3` = 3L, `4` = 2L, `5` = 1L))) %&gt;% 
-  mutate_at(vars(loc_cntrl_int_1:loc_cntrl_int_4), 
-            funs(recode(., `1` = 4L, `2` = 3L, `3` = 2L, `4` = 1L))) %&gt;% 
-  mutate_at(vars(born_aus_prnts), 
-            funs(recode(., `3` = 0L, `2` = 2L, `1` = 1L)))
+  mutate_at(
+    vars(
+      med_txt_kro:med_vid_pri, 
+      health, 
+      sat_dem, 
+      soc_med_fb:soc_med_post
+      ), 
+    funs(recode(., `1` = 5L, `2` = 4L, `3` = 3L, `4` = 2L, `5` = 1L))) %&gt;% 
+  mutate_at(
+    vars(
+      loc_cntrl_int_1:loc_cntrl_int_4
+      ), 
+    funs(recode(., `1` = 4L, `2` = 3L, `3` = 2L, `4` = 1L))) %&gt;% 
+  mutate_at(
+    vars(born_aus_prnts), 
+    funs(recode(., `3` = 0L, `2` = 2L, `1` = 1L))
+    )
 
 # recode inverted items
 d_long %&lt;&gt;%
@@ -1033,7 +1090,8 @@ incl_ma_50[vars_excl] &lt;- FALSE</code></pre>
 <div id="single-imputation" class="section level2">
 <h2>Single imputation</h2>
 <p>For analyses as originally preregistered (see additional analyses),
-hence only participants who provided more than 50% of all data.</p>
+hence using only participants who provided more than 50% of all
+data.</p>
 <pre class="r"><code>d_long_50_imp &lt;- mice(d_long_50, 
                       method = &quot;pmm&quot;, # use predictive mean matching
                       m = 1, maxit = 30, # only 1 imputation
@@ -1045,7 +1103,8 @@ write_csv(d_long_50_imp, &quot;data/data_50_imputed.csv&quot;)</code></pre>
 data-set. Missing data was imputed for everyone.</p>
 <pre class="r"><code>d_long_100_imp &lt;- mice(d_long, 
                    method = &quot;pmm&quot;, # use predictive mean matching
-                   m = 1, maxit = 30, # only 1 imputation
+                   m = 1, # only 1 imputation
+                   maxit = 30, 
                    # where = incl_ma,
                    seed = 180719, print = FALSE)
 d_long_100_imp &lt;- mice::complete(d_long_100_imp)
@@ -1053,12 +1112,13 @@ write_csv(d_long_100_imp, &quot;data/data_100_imputed.csv&quot;)</code></pre>
 </div>
 <div id="multiple-imputation" class="section level2">
 <h2>Multiple Imputation</h2>
-<p>Now, multiple imputation of data-sets (5 data sets, 5 iterations),
+<p>Now, multiple imputation of data-sets (5 data sets, 20 iterations),
 used for the final analyses.</p>
 <pre class="r"><code># impute missing data with multiple imputation
 d_long_100_mim_mice &lt;- mice(d_long, 
                    method = &quot;pmm&quot;, # use predictive mean matching
-                   m = 5, maxit = 5, # 5 imputations, 5 iterations
+                   m = 20, # 5 imputations, 
+                   maxit = 5, # 5 iterations
                    # where = incl_ma,
                    seed = 180719, print = FALSE)
 d_long_100_mim &lt;- mice::complete(d_long_100_mim_mice, action = &quot;long&quot;, include = TRUE)
@@ -1099,6 +1159,24 @@ d_long_100_imp %&lt;&gt;%
   group_by(id) %&gt;% 
   mutate_at(vars(health:corona_pos, loc_cntrl_int_m), funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %&gt;% 
   ungroup()</code></pre>
+<p>And now the same for the standardized data set.</p>
+<pre class="r"><code>d_long_100_mim_std &lt;-
+  d_long_100_mim %&gt;% 
+  group_by(.imp) %&gt;% 
+  mutate_at(vars(gender:corona_pos, -id, -wave, -gender, -male, -born_aus, -born_aus_prnts, -edu_fac, -employment_fac, -res_vienna, -acc_bal, -acc_gar), ~ c(scale(.))) %&gt;% 
+  ungroup()
+
+d_long_100_mim_std %&lt;&gt;%
+  mutate(aff_pos_m = rowMeans(select(., aff_pos_1 : aff_pos_3)),
+         aff_neg_m = rowMeans(select(., aff_neg_1 : aff_neg_6)),
+         loc_cntrl_int_m = rowMeans(select(., loc_cntrl_int_1 : loc_cntrl_int_4)))
+
+d_long_100_mim_std %&lt;&gt;%
+  group_by(id) %&gt;%
+  mutate_at(vars(health:corona_pos, loc_cntrl_int_m), funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %&gt;%
+  ungroup()
+
+d_long_100_mim_mice_std &lt;- as.mids(d_long_100_mim_std)</code></pre>
 <p>And because later we want to rerun the results as originally
 preregistered, we’ll now do the same for analyses without filtered
 data.</p>
@@ -1124,24 +1202,6 @@ d_long_50 %&lt;&gt;%
   group_by(id) %&gt;% 
   mutate_at(vars(health:corona_pos, loc_cntrl_int_m), funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %&gt;% 
   ungroup()</code></pre>
-<p>And now the same for the standardized data set.</p>
-<pre class="r"><code>d_long_100_mim_std &lt;-
-  d_long_100_mim %&gt;% 
-  group_by(.imp) %&gt;% 
-  mutate_at(vars(gender:corona_pos, -id, -wave, -gender, -male, -born_aus, -born_aus_prnts, -edu_fac, -employment_fac, -res_vienna, -acc_bal, -acc_gar), ~ c(scale(.))) %&gt;% 
-  ungroup()
-
-d_long_100_mim_std %&lt;&gt;%
-  mutate(aff_pos_m = rowMeans(select(., aff_pos_1 : aff_pos_3)),
-         aff_neg_m = rowMeans(select(., aff_neg_1 : aff_neg_6)),
-         loc_cntrl_int_m = rowMeans(select(., loc_cntrl_int_1 : loc_cntrl_int_4)))
-
-d_long_100_mim_std %&lt;&gt;%
-  group_by(id) %&gt;%
-  mutate_at(vars(health:corona_pos, loc_cntrl_int_m), funs(b = mean(., na.rm = TRUE), w = . - mean(., na.rm = TRUE))) %&gt;%
-  ungroup()
-
-d_long_100_mim_mice_std &lt;- as.mids(d_long_100_mim_std)</code></pre>
 </div>
 <div id="save-workspace" class="section level1">
 <h1>Save workspace</h1>
