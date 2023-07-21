@@ -191,8 +191,8 @@ Precisely because social media have so many positive consequences in the short r
 <!-- In other words, social media might not problematic because they are inherently bad, but rather because they are too good. -->
 As with many other things, there can be too much of a good thing.
 It is therefore often asked whether social media can become addictive, and users sometimes express this fear themselves [@yangCanWatchingOnline2021].
-However, a recently published meta-analysis found that the two most prominent measures of addiction, the Bergen Facebook Addiction Scale and the Bergen Social Media Addiction Scale, have only small relations to well-being [@duradoniWellbeingSocialMedia2020].
-In addition, the general idea of labeling excessive social and new media use as addiction was criticized, arguing that social media use represent a new regular behavior that should not be pathologized [@galerHowMuchToo2018; @vanrooijWeakScientificBasis2018].
+<!-- However, a recently published meta-analysis found that the two most prominent measures of addiction, the Bergen Facebook Addiction Scale and the Bergen Social Media Addiction Scale, have only small relations to well-being [@duradoniWellbeingSocialMedia2020]. -->
+<!-- In addition, the general idea of labeling excessive social and new media use as addiction was criticized, arguing that social media use represent a new regular behavior that should not be pathologized [@galerHowMuchToo2018; @vanrooijWeakScientificBasis2018]. -->
 <!-- In conclusion, there are several plausible theoretical mechanisms as to why effects might be negative or positive, explaining why on average effects might not be particularly negative or positive. -->
 
 Second, while mood management theory considers media use mainly driven by implicit learning experiences, uses and gratifications theory upholds that the process is more explicit and rational [@katzUsesGratificationsResearch1973].
@@ -208,24 +208,24 @@ If we look at COVID-19 related use more specifically, how could the various type
 Several uses and gratifications exist, which help explain why people used social media frequently during the pandemic.
 <!-- , outlining mechanisms of potential positive effects.  -->
 <!-- At the same time, there are also several plausible reasons as to why COVID-19 related social media use is beneficial for well-being. -->
-Access to information and resources: 
-Despite incorrect information, social media provide a vast platform for disseminating accurate and timely information about COVID-19 [@johnhopkinsuniversityCOVID19Map2023]. 
-It allows individuals to stay informed about the latest updates, guidelines, and recommendations from reputable health organizations and experts. 
+<!-- Access to information and resources:  -->
+Despite incorrect information, social media provide a vast platform for disseminating _accurate and timely information_ about COVID-19 [@johnhopkinsuniversityCOVID19Map2023]. 
+<!-- It allows individuals to stay informed about the latest updates, guidelines, and recommendations from reputable health organizations and experts.  -->
 Access to reliable information can help people make informed decisions, alleviate uncertainties, and feel empowered during the pandemic.
-Educational opportunities: 
-Social media can be a valuable educational tool, with various organizations and experts sharing informative content about COVID-19 [@worldhealthorganizationCoronavirusDiseaseCOVID192023]. 
-This can include explanatory videos, infographics, and articles that help individuals understand the virus, its transmission, prevention strategies, and vaccination information. 
+<!-- Educational opportunities:  -->
+Social media can be a valuable _educational tool_, with various organizations and experts sharing informative content about COVID-19 [@worldhealthorganizationCoronavirusDiseaseCOVID192023]. 
+<!-- This can include explanatory videos, infographics, and articles that help individuals understand the virus, its transmission, prevention strategies, and vaccination information.  -->
 Access to educational resources on social media can empower individuals to make informed decisions regarding their health.
-Community support and solidarity: 
-Social media platforms enable individuals to connect with others who are experiencing similar challenges during the pandemic [@guazziniSecondWaveAnalysis2022]. 
-Sharing experiences, offering support, and expressing solidarity can foster a sense of community and reduce feelings of isolation. 
+<!-- Community support and solidarity:  -->
+Social media platforms enable individuals to _connect with others_ who are experiencing similar challenges during the pandemic [@guazziniSecondWaveAnalysis2022]. 
+<!-- Sharing experiences, offering support, and expressing solidarity can foster a sense of community and reduce feelings of isolation.  -->
 Engaging in online communities and support groups can provide emotional support and create a network of like-minded individuals.
-Promoting mental health and well-being: 
-Many mental health organizations and professionals utilize social media to share tips, strategies, and resources for maintaining mental well-being during the pandemic [@twitterTalkingMentalHealthAwarenessTwitter2020]. 
-They provide guidance on coping mechanisms, stress reduction techniques, and self-care practices. 
+<!-- Promoting mental health and well-being:  -->
+Many mental health organizations and professionals utilize social media to share tips, strategies, and resources for _maintaining mental well-being_ during the pandemic [@twitterTalkingMentalHealthAwarenessTwitter2020]. 
+<!-- They provide guidance on coping mechanisms, stress reduction techniques, and self-care practices.  -->
 Engaging with such content might help individuals prioritize their mental health and develop resilience during challenging times.
-Encouraging positive behaviors: 
-Social media campaigns and initiatives can promote positive behaviors related to COVID-19, such as mask-wearing, physical distancing, hand hygiene, and vaccination [@atheyDigitalPublicHealth2023; @huntSocialMediaBased2022]. 
+<!-- Encouraging positive behaviors:  -->
+Social media campaigns and initiatives can promote _positive COVID-19 behaviors_, such as mask-wearing, physical distancing, hand hygiene, and vaccination [@atheyDigitalPublicHealth2023; @huntSocialMediaBased2022]. 
 Public health organizations and influencers leverage the power of social media to spread awareness and encourage responsible actions, contributing to public health efforts and fostering a sense of collective responsibility.
 <!-- Amplifying diverse voices and perspectives:  -->
 <!-- Social media platforms provide a space for diverse voices and perspectives to be heard [@brunsAreFilterBubbles2019].  -->
@@ -233,26 +233,26 @@ Public health organizations and influencers leverage the power of social media t
 <!-- Exposure to diverse perspectives might promote empathy, understanding, and a more comprehensive understanding of the pandemic's impact on different communities. -->
 
 On the other hand, the effects might be negative, perhaps best explained by the following five mechanisms.
-Misinformation and rumors: 
-Social media platforms can easily spread false or misleading information about COVID-19 [@liYouTubeSourceInformation2020]. 
+<!-- Misinformation and rumors:  -->
+Social media platforms can easily spread _false or misleading information_ about COVID-19 [@liYouTubeSourceInformation2020]. 
 Due to the ease of sharing and the lack of fact-checking, inaccurate information can go viral and might cause confusion, anxiety, and panic among users.
-Overwhelm and anxiety: 
-Constant exposure to COVID-19-related content on social media can lead to information overload and contribute to heightened anxiety levels [@fanInformationOverloadWellbeing2021]. 
+<!-- Overwhelm and anxiety:  -->
+Constant exposure to COVID-19-related content on social media can lead to _information overload_ and contribute to heightened anxiety levels [@fanInformationOverloadWellbeing2021]. 
 The rapid spread of news, updates, and opinions can be overwhelming and might exacerbate existing stress or fears about the pandemic [@sharmaDarkEndTunnel2022].
-Confirmation bias and echo chambers: 
-Social media algorithms are designed to show users content that aligns with their interests and beliefs, potentially contributing to echo chambers [@cinelliEchoChamberEffect2021]. 
-This might lead to confirmation bias, where individuals are more likely to be exposed to information that confirms their preexisting beliefs. 
+<!-- Confirmation bias and echo chambers:  -->
+Social media algorithms are designed to show users content that aligns with their interests and beliefs, potentially contributing to _echo chambers_ [@cinelliEchoChamberEffect2021]. 
+<!-- This might lead to confirmation bias, where individuals are more likely to be exposed to information that confirms their preexisting beliefs.  -->
 In the context of COVID-19, this might reinforce false or misleading information and prevent individuals from considering alternative perspectives.
-Cyberbullying and harassment: 
-Social media platforms are known for fostering negativity, with users sometimes engaging in cyberbullying and harassment [@giumettiCyberbullyingSocialMedia2022]. 
+<!-- Cyberbullying and harassment:  -->
+Social media platforms are known for fostering negativity, with users sometimes engaging in _cyberbullying and harassment_ [@giumettiCyberbullyingSocialMedia2022]. 
 Discussions around COVID-19 can become heated and polarized, leading to personal attacks and online conflicts. 
 Such experiences threaten mental well-being and might contribute to feelings of distress and isolation.
-Social comparison and fear of missing out (FOMO): 
-Social media often showcase the highlights and accomplishments of others, encouraging social comparison [@przybylskiMotivationalEmotionalBehavioral2013]. 
+<!-- Social comparison and fear of missing out (FOMO):  -->
+Social media often showcase the highlights and accomplishments of others, encouraging _social comparison_ [@przybylskiMotivationalEmotionalBehavioral2013]. 
 During a pandemic, seeing posts about others' successes or seemingly perfect lives might intensify feelings of inadequacy or FOMO, especially when individuals are unable to participate in similar activities due to restrictions or personal circumstances [@sharmaDarkEndTunnel2022].
 <!-- Reduced face-to-face interaction:  -->
 <!-- Spending excessive time on social media to learn about COVID-19 can lead to a decrease in face-to-face interactions and real-life connections [but see @hallSocialMediaUse2022].  -->
-This might impact mental health, as most humans have an innate need for social support and physical presence, which online interactions might not fully replicate.
+<!-- This might impact mental health, as most humans have an innate need for social support and physical presence, which online interactions might not fully replicate. -->
 
 <!-- Using Social media is ambivalent. -->
 <!-- It can impair well-being when causing embarrassment, stress, or disinformation, and it can improve well-being when providing connectedness, information, or entertainment [@buchiDigitalWellbeingTheory2021]. -->
@@ -273,7 +273,7 @@ On the other hand, some studies reported positive outcomes.
 Certain individuals experienced increased virtual community and social connectedness during the pandemic through social media, which contributed to their well-being [@guazziniSecondWaveAnalysis2022]. 
 Additionally, engaging more on social media was associated with reduced feelings of loneliness [@latikkaLonelinessPsychologicalDistress2022].
 A couple of studies reported mostly neutral effects of social media use on well-being indicators [@bradleyStressMoodSmartphone2021; @edenMediaCopingCOVID192020; @sewallObjectivelyMeasuredDigital2021].
-Overall, the literature demonstrates a mixed picture, highlighting both positive and negative effects of social media use focused on or during COVID-19 on well-being [see also @bradleyStressMoodSmartphone2021; @dornemannHowGoodBad2021; @liuRelationOfficialWhatsAppdistributed2020; @riehmAssociationsMediaExposure2020; @sewallObjectivelyMeasuredDigital2021].
+Overall, the literature demonstrates a mixed picture, highlighting both positive and negative effects of social media use focused on or during COVID-19 on well-being.
 
 <!-- It is important to consider individual differences, usage patterns, and other factors that may influence the impact of social media on well-being during this challenging period. -->
 
@@ -366,7 +366,7 @@ The most relevant deviations are reported below, and a complete list of all chan
 
 ## Sample
 
-The data come from the Austrian Corona Panel Project [@kittelAustrianCoronaPanel2021], which is a large-scale standalone panel study. 
+The data come from the Austrian Corona Panel Project [@kittelAustrianCoronaPanel2020], which is a large-scale standalone panel study. 
 The data are hosted on AUSSDA, are publicly available here (https://doi.org/10.11587/28KQNS), and consist of 34 waves.
 Participants were sampled from a pre-existing online access panel provided by the company Marketagent, Austria.
 Panel members were incentivized with 180 credit points for each wave of the study.
