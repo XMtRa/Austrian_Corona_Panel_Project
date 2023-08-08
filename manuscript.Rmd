@@ -105,7 +105,7 @@ How is it transmitted? What are the current safety regulations?
 To obtain relevant information, many people heavily relied on social media, with use being at an all time high [@statistaAverageDailyTime2021].
 Some actually could not stop using social media to learn about COVID-19 related news.
 A new phenomenon termed "doomscrolling" emerged [@sharmaDarkEndTunnel2022].
-Many users were glued to their screens and found it hard to pursue other relevant activities such as working, taking a break, or even looking after their children [@kleinDarklySoothingCompulsion2021].
+Many users were glued to their screens and found it hard to pursue other relevant activities such as working, taking a break, or even looking after their children.
 In the media it was hence increasingly asked whether using social media for COVID-19 related reasons would, next to all other stressors, create an additional burden on mental health [@sandstromDoomscrollingCOVIDNews2021].
 Although research has begun addressing this question
 [e.g., @bendauAssociationsCOVID19Related2021; @edenMediaCopingCOVID192020; @sewallObjectivelyMeasuredDigital2021],
@@ -160,8 +160,8 @@ The five channels to be investigated are Facebook, Twitter, Instagram, WhatsApp,
 <!-- In what follows, I outline potential arguments as to why the effect might be positive or negative, direct or indirect, or nonexistent. -->
 How easily can well-being be affected by external influences?
 In general, according to the set-point theory, well-being is surprisingly stable [@lykkenHappinessWhatStudies1999].
-Although specific events such as marriage or salary increase can have significant impacts on well-being, in most cases effects are only short-term, with well-being after some time returning to prior levels [@sheldonStabilityHappinessTheories2014].
-Only very specific factors such as unemployment, disability, or death can cause long-term changes in well-being [@lucasAdaptationSetpointModel2007].
+Although specific events such as marriage or salary increase can have significant impacts on well-being, in most cases effects are short-term, with well-being after some time returning to prior levels [@dienerAdvancesOpenQuestions2018].
+Specific factors such as unemployment, disability, or death, however, can cause long-term changes in well-being [@lucasAdaptationSetpointModel2007].
 So although well-being can be affected by external events and factors, this does not happen easily.
 <!-- Although the set-point theory has been criticized lately because events such as marriage, unemployment, or death can indeed lead to long-term changes, it is still widely maintained that well-being is very stable and hence hard to be influenced  -->
 
@@ -184,13 +184,15 @@ After some time, users implicitly learn which media help them balance their mood
 Those media that eventually become part of one's media repertoire hence, on average, tend to be beneficial for users to regulate their mood [@marcianoDynamicsAdolescentsSmartphone2022]. 
 In conclusion, if a certain medium is used frequently, mood-management theory argues that it is likely not detrimental for well-being.
 <!-- For example, using experience sampling of well-being and logs of social media use, a study with 82 participants from Italy found that after episodes of social media use, levels of positive affect increased significantly [@marcianoDynamicsAdolescentsSmartphone2022]. -->
-On the other hand, although mood management theory suggests that effects should not be overly negative, it could be that although short-term effects are positive, long-term effects are negative. 
+<!-- INCLUDE IF SPACE -->
+<!-- On the other hand, although mood management theory suggests that effects should not be overly negative, it could be that although short-term effects are positive, long-term effects are negative.  -->
+<!-- Precisely because social media have so many positive consequences in the short run, this might cause problem in the long run---for example, because social media use displaces other potentially more meaningful and/or relaxing activities [@hallSocialMediaUse2022]. -->
+<!-- As with many other things, there can be too much of a good thing. -->
+<!-- It is therefore often asked whether social media can become addictive, with users sometimes expressing this fear themselves. -->
+<!-- END -->
 <!-- it is still possible that people misjudge media effects. -->
 <!-- Users are often overly optimistic [@metzgerComparativeOptimismPrivacy2017], focusing on short term benefits while ignoring long-term costs.  -->
-Precisely because social media have so many positive consequences in the short run, this might cause problem in the long run---for example, because social media use displaces other potentially more meaningful and/or relaxing activities [@hallSocialMediaUse2022].
 <!-- In other words, social media might not problematic because they are inherently bad, but rather because they are too good. -->
-As with many other things, there can be too much of a good thing.
-It is therefore often asked whether social media can become addictive, and users sometimes express this fear themselves [@yangCanWatchingOnline2021].
 <!-- However, a recently published meta-analysis found that the two most prominent measures of addiction, the Bergen Facebook Addiction Scale and the Bergen Social Media Addiction Scale, have only small relations to well-being [@duradoniWellbeingSocialMedia2020]. -->
 <!-- In addition, the general idea of labeling excessive social and new media use as addiction was criticized, arguing that social media use represent a new regular behavior that should not be pathologized [@galerHowMuchToo2018; @vanrooijWeakScientificBasis2018]. -->
 <!-- In conclusion, there are several plausible theoretical mechanisms as to why effects might be negative or positive, explaining why on average effects might not be particularly negative or positive. -->
@@ -213,9 +215,9 @@ Despite incorrect information, social media provide a vast platform for dissemin
 <!-- It allows individuals to stay informed about the latest updates, guidelines, and recommendations from reputable health organizations and experts.  -->
 Access to reliable information can help people make informed decisions, alleviate uncertainties, and feel empowered during the pandemic.
 <!-- Educational opportunities:  -->
-Social media can be a valuable _educational tool_, with various organizations and experts sharing informative content about COVID-19 [@worldhealthorganizationCoronavirusDiseaseCOVID192023]. 
-<!-- This can include explanatory videos, infographics, and articles that help individuals understand the virus, its transmission, prevention strategies, and vaccination information.  -->
-Access to educational resources on social media can empower individuals to make informed decisions regarding their health.
+<!-- Social media can be a valuable _educational tool_, with various organizations and experts sharing informative content about COVID-19 [@worldhealthorganizationCoronavirusDiseaseCOVID192023].  -->
+<!-- <!-- This can include explanatory videos, infographics, and articles that help individuals understand the virus, its transmission, prevention strategies, and vaccination information.  -->
+<!-- Access to educational resources on social media can empower individuals to make informed decisions regarding their health. -->
 <!-- Community support and solidarity:  -->
 Social media platforms enable individuals to _connect with others_ who are experiencing similar challenges during the pandemic [@guazziniSecondWaveAnalysis2022]. 
 <!-- Sharing experiences, offering support, and expressing solidarity can foster a sense of community and reduce feelings of isolation.  -->
@@ -240,11 +242,11 @@ Due to the ease of sharing and the lack of fact-checking, inaccurate information
 Constant exposure to COVID-19-related content on social media can lead to _information overload_ and contribute to heightened anxiety levels [@fanInformationOverloadWellbeing2021]. 
 The rapid spread of news, updates, and opinions can be overwhelming and might exacerbate existing stress or fears about the pandemic [@sharmaDarkEndTunnel2022].
 <!-- Confirmation bias and echo chambers:  -->
-Social media algorithms are designed to show users content that aligns with their interests and beliefs, potentially contributing to _echo chambers_ [@cinelliEchoChamberEffect2021]. 
-<!-- This might lead to confirmation bias, where individuals are more likely to be exposed to information that confirms their preexisting beliefs.  -->
-In the context of COVID-19, this might reinforce false or misleading information and prevent individuals from considering alternative perspectives.
+<!-- Social media algorithms are designed to show users content that aligns with their interests and beliefs, potentially contributing to _echo chambers_ [@cinelliEchoChamberEffect2021].  -->
+<!-- <!-- This might lead to confirmation bias, where individuals are more likely to be exposed to information that confirms their preexisting beliefs.  --> -->
+<!-- In the context of COVID-19, this might reinforce false or misleading information and prevent individuals from considering alternative perspectives. -->
 <!-- Cyberbullying and harassment:  -->
-Social media platforms are known for fostering negativity, with users sometimes engaging in _cyberbullying and harassment_ [@giumettiCyberbullyingSocialMedia2022]. 
+Social media platforms are known for fostering negativity, with users sometimes engaging in _cyberbullying and harassment_. 
 Discussions around COVID-19 can become heated and polarized, leading to personal attacks and online conflicts. 
 Such experiences threaten mental well-being and might contribute to feelings of distress and isolation.
 <!-- Social comparison and fear of missing out (FOMO):  -->
@@ -266,13 +268,13 @@ During a pandemic, seeing posts about others' successes or seemingly perfect liv
 <!-- As outline above,   -->
 There is still little empirical research on how well-being is affected by social media use that is focused on COVID-19 specifically.
 Echoing the theoretical rationales outlines above, studies have yielded mixed results.
-Some studies found negative effects, indicating that excessive social media use for COVID-19 news led to compulsive behavior and increased stress levels, particularly due to upward social comparison [@kleinDarklySoothingCompulsion2021; @stainbackCOVID1924News2020; @yuePassiveSocialMedia2022]. 
+Some studies found negative effects, indicating that excessive social media use for COVID-19 news led to compulsive behavior and increased stress levels, particularly due to upward social comparison [@stainbackCOVID1924News2020; @yuePassiveSocialMedia2022]. 
 Individuals who relied on social media as their primary information source reported higher levels of anxiety and depression symptoms [@bendauAssociationsCOVID19Related2021]. 
 Similarly, increased COVID-19-related media consumption was associated with higher psychological distress.
 On the other hand, some studies reported positive outcomes. 
 Certain individuals experienced increased virtual community and social connectedness during the pandemic through social media, which contributed to their well-being [@guazziniSecondWaveAnalysis2022]. 
 Additionally, engaging more on social media was associated with reduced feelings of loneliness [@latikkaLonelinessPsychologicalDistress2022].
-A couple of studies reported mostly neutral effects of social media use on well-being indicators [@bradleyStressMoodSmartphone2021; @edenMediaCopingCOVID192020; @sewallObjectivelyMeasuredDigital2021].
+Several studies reported mostly neutral effects of social media use on well-being indicators [@edenMediaCopingCOVID192020; @sewallObjectivelyMeasuredDigital2021].
 Overall, the literature demonstrates a mixed picture, highlighting both positive and negative effects of social media use focused on or during COVID-19 on well-being.
 
 <!-- It is important to consider individual differences, usage patterns, and other factors that may influence the impact of social media on well-being during this challenging period. -->
@@ -481,7 +483,7 @@ plot
 
 <!-- The hypothesis explicitly states a causal effect. -->
 <!-- In non-experimental studies, longitudinal designs can help investigate causality. -->
-When using longitudinal designs to analyze causality, it is important to (a) focus on within-person effects [@hamakerWhyResearchersShould2014]; to (b) control for confounders [@rohrerTheseAreNot2021]; and to (c) test a plausible interval between measures [@dormannOptimalTimeLags2015].
+When using longitudinal designs to analyze causality, it is important to (a) focus on within-person effects [@hamakerWhyResearchersShould2014]; to (b) control for confounders [@rohrerTheseAreNot2023]; and to (c) test a plausible interval between measures [@dormannOptimalTimeLags2015].
 <!-- To illustrate, consider the following example. -->
 <!-- Imagine that a person suddenly starts using social media much more than usual, and then after some time  becomes less satisfied with their life. -->
 <!-- Eventually, use and life satisfaction return to prior levels. -->
@@ -492,11 +494,11 @@ When using longitudinal designs to analyze causality, it is important to (a) foc
 <!-- Obviously, we can never be entirely sure to have included all confounders, which makes absolute statements regarding causality virtually impossible. -->
 First, in non-experimental designs it makes much sense to analyze causal effects from an internal, within-person perspective [@hamakerWhyResearchersShould2014].
 If a specific person changes their media diet, we need to measure how this behavior affects their well-being.
-Between-person comparisons from longitudinal data cannot provide such insights [@lucasWhyCrossLaggedPanel2022].
+Between-person comparisons from longitudinal data cannot provide such insights [@hamakerWhyResearchersShould2014].
 To test the hypothesis, I thus consider only the within-person effects.
 
 Second, to identify confounders we should control for variables that affect both media use and well-being, which helps isolate the actual effect [@rohrerThinkingClearlyCorrelations2018].
-Because we are adopting a within-person perspective, we need to implement _time-varying_ confounders [@rohrerTheseAreNot2021]. 
+Because we are adopting a within-person perspective, we need to implement _time-varying_ confounders [@rohrerTheseAreNot2023]. 
 And because we are determining the _overall_ causal effect, we need to make sure _not_ to control for mediating variables [@rohrerThinkingClearlyCorrelations2018], for doing so would bias our assessment of the causal effect.
 <!-- Complicating matters further, it is often unclear if a variable is a mediator or a confounder.[^collider] -->
 <!-- However, despite all these caveats, when controlling for relevant variables (that aren't mediators), we can be much more certain that we measured causality correctly. -->
@@ -506,7 +508,7 @@ And because we are determining the _overall_ causal effect, we need to make sure
 <!-- However, in doing so not much is gained, because the effects of social media use would remain virtually the same [@klinePrinciplesPracticeStructural2016; but see @mcelreathYesterdayClass2021]. -->
 In this study, I hence preregistered to control for the following variables, which either have already been shown or are likely to affect both social media use and well-being, and which also are not mediators:
 <!-- (I'll additionally include variables that likely affect only well-being, also to obtain a comparison benchmark for social media effects): -->
-gender, age, education, Austria country of birth, Austria country of birth of parents, residency Vienna, text-based news consumption, video-based news consumption, household size, health, living space, access to garden, access to balcony, employment, work hours per week, being in home-office, household income, outdoor activities, disposition to take risks, and locus of control [@egerStatisticalMetaanalysisWellbeing2015; @wardOriginsHappinessEvidence2016].
+gender, age, education, Austria country of birth, Austria country of birth of parents, residency Vienna, text-based news consumption, video-based news consumption, household size, health, living space, access to garden, access to balcony, employment, work hours per week, being in home-office, household income, outdoor activities, disposition to take risks, and locus of control [@egerStatisticalMetaanalysisWellbeing2015].
 <!-- [^explore] -->
 <!-- I will not control for variables such as trust in institutions or trust in media, because these variables might be influenced by social media use to a meaningful extent. -->
 
@@ -577,7 +579,7 @@ For a complete list of all items and item characteristics, see [companion websit
 
 ### Well-being
 
-Life satisfaction was measured with the item "All things considered, how satisfied are you with your life as a whole nowadays?", which comes from the European Social Survey [@europeansocialsurveyESS9Edition20182021].
+Life satisfaction was measured with the item "All things considered, how satisfied are you with your life as a whole nowadays?", which comes from the European Social Survey.
 The response options ranged from 0 (_extremely dissatisfied_) to 10 (_extremely satisfied_).
 
 To capture positive affect, respondents were asked how often in the last week they felt (a) calm and relaxed, (b) happy, and (c) full of energy [@worldhealthorganizationWellbeingMeasuresPrimary1998].
@@ -777,15 +779,15 @@ These specific observations notwithstanding, several general trends can be obser
 First, overall the results do suggest that effects of COVID-19 related social media use on well-being tend to take place in the negative as opposed to the positive spectrum.
 Although very small, five statistically significant negative results of COVID-19 related social media use on well-being were found.
 Only one positive effect emerged.
-Also note that in the analyses several control variables were included, ruling out plausible alternative explanations for the negative results.
-For example, it was controlled for as to whether or not participants contracted a COVID-19 infection during a specific wave.
-Hence, we can rule out the alternative explanation that having an infection was the root cause of increased communication and reduced well-being.
+<!-- Also note that in the analyses several control variables were included, ruling out plausible alternative explanations for the negative results. -->
+<!-- For example, it was controlled for as to whether or not participants contracted a COVID-19 infection during a specific wave. -->
+<!-- Hence, we can rule out the alternative explanation that having an infection was the root cause of increased communication and reduced well-being. -->
 
 Second, six significant outcomes emerged for positive or negative affect, but only one for life satisfaction. 
 Life satisfaction is more stable and not that easily affected by any type or channel of social media communication.
 The more fluctuating positive and negative affect, however, were affected (albeit only slightly).
 Liking, sharing, and posting COVID-19 related content, and spending more time on Twitter and YouTube to browse COVID-19 related content, all slightly negatively influenced affect. 
-This is aligned with prior findings which showed that social media use can trigger negative affect, but that it is less likely to determine life satisfaction [@huangTimeSpentSocial2017].
+This is aligned with prior findings which showed that social media use is associated with increased negative affect but not with life satisfaction [@meierComputermediatedCommunicationSocial2020a].
 <!-- Writing posts implies more substantial engagement, and perhaps also negative exchanges with other users, which could explain the results. -->
 <!-- For example, people who wrote more COVID-19 related posts than usual reported slightly lower levels of life satisfaction than usual. -->
 <!-- Similarly, people who wrote more COVID-19 related posts than usual also reported slightly more negative affect. -->
@@ -793,7 +795,7 @@ This is aligned with prior findings which showed that social media use can trigg
 Conversations about COVID-19 on social media are often extreme, negative, or aggressive [@fanStigmatizationSocialMedia2020].
 More deeply engaging with this type of content could negatively affect active authors.
 The hypothesis that tonality could explain the negative effects is especially supported by the observation that spending more time on Twitter and YouTube than usual increased negative affect.
-Communication on both channels is often found to be negative and impolite [e.g., @muellerTwitterMadeMe2022], also when compared to other SNSs [@halpernSocialMediaCatalyst2013].
+Communication on both channels is often found to be negative and impolite [e.g., @muellerTwitterMadeMe2022].
 Consuming more negative and misleading information could hence explain the (slightly) increased levels of negative affect.
 
 Third, the results show that it makes sense to analyze different communication types and communication channels.
@@ -804,9 +806,9 @@ Overall, though, posting led to slightly reduced levels of life satisfaction.
 In conclusion, whereas it was often stated that passive use is bad and active use good [@verduynPassiveFacebookUsage2015], this pattern was only partially found here.
 <!-- Instead, all three types were negative. -->
 The results are aligned with the findings from @valkenburgAssociationsActivePassive2022, who could not confirm that active use is good and that passive use is bad.
-Focusing on communication channels, Twitter and YouTube seem to be more negative, as has often been observed [@halpernSocialMediaCatalyst2013], while Instagram, WhatsApp, and Facebook were neutral.
+Focusing on communication channels, Twitter and YouTube seem to be more negative, while Instagram, WhatsApp, and Facebook were neutral.
 But, again, all of these effects are very small.
-Future research might elaborate on these specific relations to probe their stability and relevance.
+<!-- Future research might elaborate on these specific relations to probe their stability and relevance. -->
 
 Taken together, the results are hence aligned with the underlying theoretical models and prior empirical results.
 The findings support the differential susceptibility of media effects model [@valkenburgDifferentialSusceptibilityMedia2013], such that effects are generally small and that they depend on the type and channel of communication.
@@ -815,8 +817,9 @@ Age also large did not play a significant moderation role, but effects of postin
 Indeed, it has often been argued that effects of social media use are more negative for Gen Z than for prior generations, and this finding can be seen a further tentative support for this hypothesis. 
 From a broader perspective, the results are well-aligned with mood management theory [@zillmannMoodManagementCommunication1988] and the uses and gratifications approach [@katzUsesGratificationsResearch1973], whose premises preclude particularly negative effects of routine and widespread media consumption. 
 Both theories posit that if the effects of social media were indeed profoundly negative on average, then people likely would not spend so much time on social media engaging with COVID-19 content.
-Finally, recent empirical studies and meta-analyses reported rather small negative effects, too.
-Several studies found that the effects of various types of social media use on well-being are small, often too small to matter [@bendauAssociationsCOVID19Related2021; @meierComputermediatedCommunicationSocial2020a; @orbenTeenagersScreensSocial2020; @fergusonThisMetaanalysisScreen2021], echoing the results obtained here.
+Finally, recent empirical studies and meta-analyses reported rather small negative effects, too [@meierComputermediatedCommunicationSocial2020a], 
+<!-- Several studies found that the effects of various types of social media use on well-being are small, often too small to matter [@meierComputermediatedCommunicationSocial2020a],  -->
+echoing the results obtained here.
 
 <!-- The results allow us to reject a positive effect: Writing more posts on social media will likely not increase well-being. -->
 
@@ -851,7 +854,7 @@ Although this study included are large list of confounders, it could still be th
 <!-- The results reported here are hence contingent on the design I used. -->
 <!-- To document how effects unfold, future research needs to employ different study designs probing different intervals. -->
 More thought needs to be invested in which factors to control for and, equally important, for which factors not to control for.
-I hope this study provides a first step into this direction.
+<!-- I hope this study provides a first step into this direction. -->
 
 Although I had already reduced the predefined SESOIs to be less conservative, one could argue they were still too large.
 Media use is only one aspect of several factors that simultaneously affect well-being.
@@ -865,14 +868,14 @@ I encourage future research to elaborate on what effect sizes are considered mea
 
 Both media use and well-being were measured using self-reports.
 Because assessing well-being necessarily requires introspection, using self-reports for affect and life satisfaction is adequate.
-However, for social media use objective measures are clearly preferable, as people often cannot reliably estimate their use [@scharkowAccuracySelfreportedInternet2016].
-At the same time, most objective measures cannot capture the content or the motivation of use.
-Hence, for the type of research question analyzed here, it still seems necessary to use self-reported measures.
-In many cases they can still be informative [@verbeijSelfreportedMeasuresSocial2021].
+However, for social media use objective measures are preferable, as people often cannot reliably estimate their use [@scharkowAccuracySelfreportedInternet2016].
+<!-- At the same time, most objective measures cannot capture the content or the motivation of use. -->
+<!-- Hence, for the type of research question analyzed here, it still seems necessary to use self-reported measures. -->
+<!-- In many cases they can still be informative [@verbeijSelfreportedMeasuresSocial2021]. -->
 
 Being collected in a single country, the generalizability of the results is limited.
-The results apply primarily to the more Western sphere.
-They might not hold true in other cultures, especially cultures with a different media landscape or alternative social media channels.
+<!-- The results apply primarily to the more Western sphere. -->
+They might not hold true in other cultures, especially non-Western cultures with a different media landscape or alternative social media channels.
 <!-- That said, being a comparatively large study largely representative of one country, with several waves collected across a large time span, the results should be at least as generalizable as other typical empirical studies collected in the social sciences. -->
 <!-- Social media use was measured with an ordinal variable, however in the analyses it was treated as a numerical one. -->
 <!-- If treated as an ordinal one, it would have been necessary to analyze four different contrasts for each media measure, which plus the differentiation between between and within factor would have produced eight different measures, we would have made the model exceedingly complex. -->
@@ -886,7 +889,7 @@ In this study, COVID-19 related social media use did not meaningfully affect wel
 Very small negative effects were found for writing COVID-19 related posts, sharing COVID-19 related content, and spending more time than usual on Twitter.
 Factors other than social media use, however, were meaningfully related to well-being, including physical health, exercise, satisfaction with democracy, or believing that one is in control of one's life.
 In light of the overall very small effects, engaging in COVID 19-related social media use should not be considered a major concern for one's well-being.
-Hence, when trying to improve well-being during a pandemic, instead of focusing on social media it seems more fruitful to address other, more pertinent societal problems related to health care, regular exercise, or psychological resilience.
+<!-- Hence, when trying to improve well-being during a pandemic, instead of focusing on social media it seems more fruitful to address other, more pertinent societal problems related to health care, regular exercise, or psychological resilience. -->
 
 \newpage
 

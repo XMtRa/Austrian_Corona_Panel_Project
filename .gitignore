@@ -3,6 +3,7 @@
 .RData
 .Ruserdata
 .RDataTmp
+.RDataTmp1
 .DS_Store
 analyses_additional_cache/*
 analyses_additional_cache/html/*
