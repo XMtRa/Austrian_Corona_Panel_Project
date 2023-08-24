@@ -71,6 +71,19 @@ library(td)
 load("data/workspace_1.RData")
 ```
 
+# SESOI
+
+In what follows, more information on how the SESOI was defined exactly.
+
+If people can reliably differentiate 7 levels, this corresponds to 11 / 7 = `r round(11/7, 2)` unit change on an 11-point scale.
+Hence, a four-point change in media use (e.g., a complete stop) should result in a `r round(11/7, 2)`-point change in life satisfaction.
+In a statistical regression analysis, _b_ estimates the change in the dependent variable if the independent variable increases by one point.
+For life satisfaction, we would therefore define a SESOI of _b_ = `r round(11/7, 2)` / 4 = `r round(11/7*.25, 2)`.
+For positive or negative affect, which was measured on a 5-point scale, our SESOI would be _b_ = `r round(5 / 7, 2)` / 4 = `r round(5 / 7 * .25, 2)`.
+Because we are agnostic as to whether the effects are positive or negative, the null region includes both negative and positive effects.
+Finally, in order not to exaggerate precision and to be less conservative, these numbers are reduced to nearby thresholds.
+Note that other researchers also decreased or recommended decreasing thresholds for effect sizes when analyzing within-person or cumulative effects [@beyensSocialMediaUse2021; @funderEvaluatingEffectSize2019].
+
 # Measures
 
 Let's first inspect the individual measures, how they develop over time. For positive and negative affect, we also look at their factor structure, as they're measured with multiple items.

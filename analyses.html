@@ -65,6 +65,28 @@ if (window.hljs) {
 
 
 
+<style type="text/css">
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 
 
@@ -432,6 +454,27 @@ library(td)
 
 # load workspace
 load(&quot;data/workspace_1.RData&quot;)</code></pre>
+</div>
+<div id="sesoi" class="section level1">
+<h1>SESOI</h1>
+<p>In what follows, more information on how the SESOI was defined
+exactly.</p>
+<p>If people can reliably differentiate 7 levels, this corresponds to 11
+/ 7 = 1.57 unit change on an 11-point scale. Hence, a four-point change
+in media use (e.g., a complete stop) should result in a 1.57-point
+change in life satisfaction. In a statistical regression analysis,
+<em>b</em> estimates the change in the dependent variable if the
+independent variable increases by one point. For life satisfaction, we
+would therefore define a SESOI of <em>b</em> = 1.57 / 4 = 0.39. For
+positive or negative affect, which was measured on a 5-point scale, our
+SESOI would be <em>b</em> = 0.71 / 4 = 0.18. Because we are agnostic as
+to whether the effects are positive or negative, the null region
+includes both negative and positive effects. Finally, in order not to
+exaggerate precision and to be less conservative, these numbers are
+reduced to nearby thresholds. Note that other researchers also decreased
+or recommended decreasing thresholds for effect sizes when analyzing
+within-person or cumulative effects <span class="citation">(Beyens et
+al. 2021; Funder and Ozer 2019)</span>.</p>
 </div>
 <div id="measures" class="section level1">
 <h1>Measures</h1>
@@ -1711,6 +1754,22 @@ tab_within</code></pre>
 <p>First remove large objects</p>
 <pre class="r"><code>rm(fig_cor)</code></pre>
 <pre class="r"><code>save.image(&quot;data/workspace_2.RData&quot;)</code></pre>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-beyensSocialMediaUse2021" class="csl-entry">
+Beyens, Ine, J. Loes Pouwels, Irene Ingeborg van Driel, Loes Keijsers,
+and Patti M. Valkenburg. 2021. <span>“Social Media Use and Adolescents’
+Well-Being: <span>Developing</span> a Typology of Person-Specific Effect
+Patterns.”</span> <em>Communication Research</em>. <a
+href="https://doi.org/10.1177/00936502211038196">https://doi.org/10.1177/00936502211038196</a>.
+</div>
+<div id="ref-funderEvaluatingEffectSize2019" class="csl-entry">
+Funder, David C., and Daniel J. Ozer. 2019. <span>“Evaluating Effect
+Size in Psychological Research: <span>Sense</span> and Nonsense.”</span>
+<em>Advances in Methods and Practices in Psychological Science</em> 2
+(2): 156–68. <a
+href="https://doi.org/10.1177/2515245919847202">https://doi.org/10.1177/2515245919847202</a>.
+</div>
+</div>
 </div>
 
 
