@@ -29,37 +29,37 @@ linenumbers       : no
 mask              : yes
 draft             : no
 
-# header-includes:
-#   - |
-#     \makeatletter
-#     \renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
-#       {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
-#       {-1em}%
-#       {\normalfont\normalsize\bfseries\typesectitle}}
-# 
-#     \renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{1em}%
-#       {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
-#       {-\z@\relax}%
-#       {\normalfont\normalsize\bfseries\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
-#     \makeatother
-#     \usepackage{endnotes}
-#     \setlength{\parskip}{0em}
-#     \raggedbottom
-#     \note{\clearpage}
-#     \usepackage{setspace}
-#     \AtBeginEnvironment{tabular}{\singlespacing}
-#     \AtBeginEnvironment{lltable}{\singlespacing}
-#     \AtBeginEnvironment{tablenotes}{\doublespacing}
-#     \captionsetup[table]{font={stretch=1.5}}
-#     \captionsetup[figure]{font={stretch=1.5}}
-# 
-# csl               : "`r system.file('rmd', 'apa7.csl', package = 'papaja')`"
-# documentclass     : "apa7"
-# output            :
-#   papaja::apa6_pdf:
-#     latex_engine  : xelatex
+header-includes:
+  - |
+    \makeatletter
+    \renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
+      {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+      {-1em}%
+      {\normalfont\normalsize\bfseries\typesectitle}}
+
+    \renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{1em}%
+      {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+      {-\z@\relax}%
+      {\normalfont\normalsize\bfseries\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
+    \makeatother
+    \usepackage{endnotes}
+    \setlength{\parskip}{0em}
+    \raggedbottom
+    \note{\clearpage}
+    \usepackage{setspace}
+    \AtBeginEnvironment{tabular}{\singlespacing}
+    \AtBeginEnvironment{lltable}{\singlespacing}
+    \AtBeginEnvironment{tablenotes}{\doublespacing}
+    \captionsetup[table]{font={stretch=1.5}}
+    \captionsetup[figure]{font={stretch=1.5}}
+
+csl               : "`r system.file('rmd', 'apa7.csl', package = 'papaja')`"
+documentclass     : "apa7"
+output            :
+  papaja::apa6_pdf:
+    latex_engine  : xelatex
 # output            : papaja::apa6_docx
-output            : html_document
+# output            : html_document
 ---
 
 ```{r set-up, include=F, cache=F}
@@ -201,7 +201,7 @@ It seems most likely that both positive and negative coexist, but that on averag
 ## Smallest Effect Size of Interest
 
 Exploring the hypothesis entails establishing the criteria for discerning a 'trivial effect size.' 
-To achieve this, it is necessary to define the smallest effect size of interest (SESOI) [@anvariUsingAnchorbasedMethods2021a]. 
+To achieve this, it is necessary to define the smallest effect size of interest (SESOI) [@anvariUsingAnchorbasedMethods2021]. 
 In this context, a trivial effect should fall below the threshold set by the SESOI (detailed below).
 Determining what constitutes a minimally intriguing, nontrivial effect is a matter with normative implications, making it challenging to arrive at a definitive, singular consensus. 
 Nonetheless, it remains both essential and beneficial to strive for a reasonable benchmark. 
@@ -476,23 +476,24 @@ Compared to the middle age category Generation X, results showed that if users f
 
 # Discussion
 
-This study, based on a representative panel study spanning 34 waves within the Austrian population, investigated the impact of COVID-19-related social media usage on well-being. The between-person correlations revealed that increased engagement with COVID-19 content on social media was associated with decreased well-being. For instance, individuals consuming more COVID-19-related content reported slightly lower life satisfaction, somewhat reduced positive affect, and notably elevated negative affect compared to others.
+This study, based on a representative panel study spanning 34 waves within the Austrian population, investigated the impact of COVID-19-related social media usage on well-being. The between-person correlations revealed that increased engagement with COVID-19 content on social media was associated with decreased well-being. For instance, individuals consuming more COVID-19-related content reported slightly lower life satisfaction, somewhat reduced positive affect, and notably elevated negative affect compared to others. However, to explore if these between-person correlations translated into within-person effects, it was examined whether within-person changes in media consumption corresponded with within-person changes in well-being. 
 
-To explore if these between-person correlations translated into within-person effects, it was examined whether changes in media consumption corresponded with changes in well-being. Contrary to expectations, increased consumption of COVID-19 content did not significantly decrease well-being at a meaningful level. While several statistically significant effects emerged, their magnitudes were notably small. For instance, reading more COVID-19 posts than usual slightly decreased positive affect. Liking and sharing more COVID-19 content than usual were associated with slightly higher negative affect. Posting more COVID-19 content reduced life satisfaction slightly while elevating both positive and negative affect. The effects, although statistically significant, fell within a predefined range considered insignificant.
+Contrary to expectations, increased consumption of COVID-19 content did not significantly decrease well-being at a meaningful level. While several statistically significant effects emerged, their magnitudes were notably small. For instance, reading more COVID-19 posts than usual slightly decreased positive affect. Liking and sharing more COVID-19 content than usual were associated with slightly higher negative affect. Posting more COVID-19 content reduced life satisfaction slightly while elevating both positive and negative affect. The effects, although statistically significant, fell within a predefined range considered insignificant.
 
 Further analysis demonstrated that factors such as health and physical activity, which would be expected to have substantial impacts on well-being, indeed showed significant influences. Additionally, extended assessments covering one and four months did not yield meaningful effects. In summary, the influence of COVID-19-related social media activity on well-being was not substantial. This counters popular concerns over excessive social media use during crises causing substantial well-being risks.
 
-There is no consensus among scholars as to when effects become practically relevant and meaningful. If we adopt a more liberal and in cautious perspective, some general trends emerged. The study indicates a tendency for COVID-19-related social media usage to impact well-being negatively more frequently than positively. Notably several small yet statistically significant negative effects were observed, contrasting with a single positive effect. Furthermore, several significant associations were found between social media use and affect but only one with life satisfaction, a more stable measure.
+That said, there is no consensus among scholars as to when effects become practically relevant and meaningful. If we adopt a more liberal and cautious perspective, the study indicates a tendency for COVID-19-related social media usage to impact well-being negatively more frequently than positively. Notably several statistically significant negative effects were observed, contrasting with a single positive effect. Hence, although effects were overall very small, the trend was for effects to be negative.
 
-These results align with prior research highlighting that social media usage is associated with elevated negative affect but not reduced life satisfaction [meierComputermediatedCommunicationSocial2020a]. The often extreme, negative, or aggressive tone of COVID-19 discussions on social media [@fanStigmatizationSocialMedia2020] could adversely impact active authors. The negative effects may be explained by the consumption of negative and misleading information.
+These results align with prior research highlighting that social media usage is rather associated with elevated negative affect but not reduced life satisfaction [@meierComputermediatedCommunicationSocial2020a]. The often extreme, negative, or aggressive tone of COVID-19 discussions on social media [@fanStigmatizationSocialMedia2020] could adversely impact more active authors. The negative effects may be explained by the consumption of negative and misleading information [@liYouTubeSourceInformation2020].
 
-Moreover, the study suggest that varying communication types and channels warrant separate analyses. For instance, reading content slightly reduced positive affect, while liking, sharing, and posting increased negative affect slightly. Posting COVID-19-related comments increased both negative and positive affect slightly, while reducing life satisfaction. This suggests that posting generates stronger reactions, both positive and negative. Together, this challenges the assumption that active use is inherently beneficial and passive use detrimental [@valkenburgAssociationsActivePassive2022]. Notably, communication channels exhibited differences. Twitter and YouTube appeared more negative, whereas Instagram, WhatsApp, and Facebook maintained neutrality. Despite these nuanced findings, the effects remained small.
+Moreover, the study suggest that varying communication types and channels warrant separate analyses. Reading COVID-19 related content slightly reduced positive affect, while liking, sharing, and posting increased negative affect slightly. Posting COVID-19-related comments increased both negative and positive affect slightly, while it reduced life satisfaction. This suggests that posting generates stronger reactions, both positive and negative. Together, this challenges the assumption that active use is inherently beneficial and passive use detrimental [@valkenburgAssociationsActivePassive2022]. Notably, communication channels exhibited differences. Twitter and YouTube appeared more negative, whereas Instagram, WhatsApp, and Facebook were neutral.
 
-In conclusion, the study aligns with theoretical models and past research. It supports the notion of small media effects influenced by communication type and channel [@meierComputermediatedCommunicationSocial2020a]. The differential susceptibility model [@valkenburgDifferentialSusceptibilityMedia2013] was supported, indicating that effects are small and dependent on communication factors. Age did not significantly moderate the effects, yet posting COVID-19 content was more negative for Generation Z, potentially reflecting broader negative effects of social media on this generation. The study also echoes mood management theory [@zillmannMoodManagementCommunication1988] and the uses and gratifications approach [@katzUsesGratificationsResearch1973], implying that if the effects were highly negative, people would not engage with COVID-19 content as extensively.
+In conclusion, the study aligns with theoretical models and past research. It supports the notion of social media effects being small and contingent on communication type and channel [@meierComputermediatedCommunicationSocial2020a; @valkenburgDifferentialSusceptibilityMedia2013]. Posting COVID-19 content was more negative for Generation Z, potentially reflecting broader negative effects of social media on this generation. Effects not being strongly negative also help explain why people spent so much time engaging with COVID-19 content on social media [@katzUsesGratificationsResearch1973; @zillmannMoodManagementCommunication1988].
 
-Despite these insights, limitations exist. While the study's focus on within-person effects enhances causal understanding, challenges related to additional confounding variables [@rohrerThinkingClearlyCorrelations2018], best definition of the SESOI [@anvariUsingAnchorbasedMethods2021a], and exact measurement of media use [@scharkowAccuracySelfreportedInternet2016]. The study's results are applicable primarily to Western societies and may not hold true in different cultural contexts. 
+Several limitations exist. While the study's focus on within-person effects enhances causal understanding, challenges exist related to additional relevant confounding variables not included here [@rohrerThinkingClearlyCorrelations2018], correct definition of the SESOI [@anvariUsingAnchorbasedMethods2021], and exact measurement of media use [@scharkowAccuracySelfreportedInternet2016]. The study's results are applicable primarily to Western societies and may not hold true in different cultural contexts. 
 
 The study's findings conclude that COVID-19-related social media activity minimally affects well-being, with other factors playing more substantial roles. In light of these minimal effects, concerns over COVID-19-related social media engagement on well-being appear to be unwarranted.
+When trying to improve well-being during a pandemic, instead of focusing on social media it seems more fruitful to address other, more pertinent societal problems related to health care, regular exercise, or psychological resilience.
 
 \newpage
 
