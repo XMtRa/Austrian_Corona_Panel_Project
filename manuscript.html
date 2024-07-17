@@ -13,7 +13,7 @@
 
 <title>Effects of COVID-19 related social media use on well-being</title>
 
-<script src="site_libs/header-attrs-2.26/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.27/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
@@ -350,44 +350,6 @@ meaningful effects.
 </div>
 
 
-<div id="research-transparency-statement" class="section level1">
-<h1>Research Transparency Statement</h1>
-<p>Conflicts of interest: The author declares no conflicts of interest.
-Funding: This research did not receive external funding. Artificial
-intelligence: Chat GPT was used for language polishing. Ethics: This
-research complies with the Declaration of Helsinki (2023), aside from
-the requirement to preregister human subjects research. Ethical review
-and approval was not required for the study in accordance with the local
-legislation and institutional requirements. The participants provided
-their written informed consent to participate in this study.
-Computational reproducibility: All analyses and the manuscript itself
-are completely reproducible (<a
-href="https://XMtRA.github.io/Austrian_Corona_Panel_Project"
-class="uri">https://XMtRA.github.io/Austrian_Corona_Panel_Project</a>).</p>
-<p>Preregistration: The hypotheses, the sample, the measures, the
-analyses, and the inference criteria (SESOI, <em>p</em>-value) were
-preregistered on the Open Science Framework (<a
-href="https://osf.io/87b24/?view_only=b2289b6fec214fa88ee75a18d45c18f3"
-class="uri">https://osf.io/87b24/?view_only=b2289b6fec214fa88ee75a18d45c18f3</a>).
-Because in this study data from an already existing data set was
-analyzed, the preregistration was done prior to accessing the data. In
-some cases, it was impossible to execute the analyses as originally
-planned, for example because some properties of the variables only
-became apparent when seeing the actual data. All changes are reported
-online (<a
-href="https://xmtra.github.io/Austrian_Corona_Panel_Project/preregistration_changes.html"
-class="uri">https://xmtra.github.io/Austrian_Corona_Panel_Project/preregistration_changes.html</a>).
-Materials: All study materials are publicly available (<a
-href="https://xmtra.github.io/Austrian_Corona_Panel_Project/items_english.html"
-class="uri">https://xmtra.github.io/Austrian_Corona_Panel_Project/items_english.html</a>).
-Data: All primary data are publicly available (<a
-href="https://doi.org/10.11587/28KQNS"
-class="uri">https://doi.org/10.11587/28KQNS</a>). Analysis scripts: All
-analysis scripts are publicly available (<a
-href="https://XMtRA.github.io/Austrian_Corona_Panel_Project"
-class="uri">https://XMtRA.github.io/Austrian_Corona_Panel_Project</a>).</p>
-<div style="page-break-after: always;"></div>
-</div>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
 <p>Amidst the COVID-19 pandemic, staying informed became paramount,
@@ -399,7 +361,7 @@ al., 2021; Sharma et al., 2022)</span>, sparking concerns about its
 impact on mental health <span class="citation">(Sandstrom et al.,
 2021)</span>. While initial research began exploring this question <span
 class="citation">(e.g., Bendau et al., 2021; Eden et al., 2020; Sewall
-et al., 2021)</span>, the extent of social media’s influence on
+et al., 2021)</span>, the impact of COVID-19 related social media use on
 well-being remains largely unknown. This study aims to assess the
 effects of different social media usage patterns on individual
 well-being using a comprehensive longitudinal dataset spanning 34 waves,
@@ -436,15 +398,27 @@ messengers (e.g., WhatsApp or Signal), or interactive video-platforms
 purposeful, active, social use is generally related to positive
 outcomes, passive, non-purposeful and asocial use is related to negative
 outcomes <span class="citation">(Frison &amp; Eggermont, 2015; Verduyn
-et al., 2022)</span>. In this study, I hence distinguish three types of
-use and five popular channels. The types of use include posting (active
-use), reading (passive use), and liking and sharing (low-threshold
-active use) COVID-19 related content.
+et al., 2022)</span>. However, note that these general distinctions have
+been challenged recently <span class="citation">Valkenburg et al.
+(2022)</span>. In this study, I hence distinguish three types of use and
+five popular channels. The types of use include posting (active use),
+reading (passive use), and liking and sharing (low-threshold active use)
+COVID-19 related content.
 <!-- In doing so, this study analyzes social media use focused on COVID-19 related content. -->
 <!-- , which includes posting thoughts about the pandemic, reading posts and comments , or liking and sharing COVID-19 related content. -->
 The five channels to be investigated are Facebook, Twitter, Instagram,
 WhatsApp, and YouTube, which at the time ranked among the most popular
 social media services in Austria.</p>
+<p>This study aims to provide a nuanced analysis of how a specific type
+of social media use influences various well-being outcomes. A general
+measure of time spent on social media would be insufficient to address
+how engagement with COVID-19-related content affects users. Conversely,
+using overly specific measures might be less broadly relevant or
+insightful. For example, demonstrating that receiving uplifting messages
+boosts social support or that encountering hate speech causes distress
+might yield limited insights. That said, ultimately, the specificity of
+a measure is not inherently right or wrong but reflects different
+approaches to answering different questions.</p>
 </div>
 <div id="social-media-effects-on-well-being" class="section level2">
 <h2>Social Media Effects on Well-Being</h2>
@@ -454,15 +428,19 @@ social media services in Austria.</p>
 <!-- Specific factors such as unemployment, disability, or death, however, can cause long-term changes in well-being [@lucasAdaptationSetpointModel2007]. -->
 <!-- So although well-being can be affected by external events and factors, it seems this does not happen easily. -->
 <!-- Can social media use be such a factor? -->
-<p>Current literature overviews suggest that social media use on average
-does seem to decrease well-being <span class="citation">(Meier &amp;
-Reinecke, 2020)</span>. However, for most well-being outcomes, such as
-life satisfaction, general well-being, or loneliness, the effects are
-small <span class="citation">(Meier &amp; Reinecke, 2020)</span>. These
-small findings can be explained with the differential susceptibility of
-media effects model <span class="citation">(Valkenburg &amp; Peter,
-2013)</span>, which states that there is substantial <em>variation</em>
-of media effects for individual users.
+<p>Current literature overviews suggest that more active social media
+users report on average lower well-being <span class="citation">(Meier
+&amp; Reinecke, 2020)</span>. However, for most well-being outcomes,
+such as life satisfaction, general well-being, or loneliness, the
+effects are small <span class="citation">(Meier &amp; Reinecke,
+2020)</span>. In addition, these results are based mostly on
+correlational research, and a recent meta study based on experimental
+studies did not find significant causal effects <span
+class="citation">(Ferguson, 2024)</span>. These small or even
+non-existent findings can be explained with the differential
+susceptibility of media effects model <span class="citation">(Valkenburg
+&amp; Peter, 2013)</span>, which states that there is substantial
+<em>variation</em> of media effects for individual users.
 <!-- Whereas for some users social media are more beneficial, for others they are more harmful. -->
 <!-- On average, however, effects tend to be small [@valkenburgDifferentialSusceptibilityMedia2013]. -->
 For example, in one study it was estimated that roughly one quarter of
@@ -472,10 +450,12 @@ class="citation">(Beyens et al., 2021)</span>.
 <!-- Whether or not effects are positive or negative depend on (a) dispositional factors (e.g., personality, temperament, gender), (b) developmental factors (e.g., age, developmental tasks), (c) and social factors (e.g., environment, norms, upbringing) [@valkenburgDifferentialSusceptibilityMedia2013]. -->
 <!-- Effects depend also on the content that is consumed---if the content is aligned with dispositions, developmental capacities, and converging contexts, effects tend to be stronger [@valkenburgDifferentialSusceptibilityMedia2013]. --></p>
 <p>Why are the effects of social media use on well-being small on
-average? Two prominent media effect theories argue implicitly against
-strong average negative effects. First, according to mood management
-theory <span class="citation">(Zillmann, 1988)</span>, using media can
-affect people’s moods.
+average, especially given that several scholars theorize strong negative
+effects <span class="citation">Twenge (2017)</span>? Two prominent media
+effect theories argue implicitly against strong average negative
+effects. First, according to mood management theory <span
+class="citation">(Zillmann, 1988)</span>, using media can affect
+people’s moods.
 <!-- Use can be stimulating or overwhelming, relaxing or boring. -->
 After some time, users implicitly learn which media help them balance
 their mood and affect according to their own situational needs <span
@@ -547,12 +527,13 @@ users sometimes engaging in <em>cyberbullying and harassment</em>.
 <!-- Such experiences threaten mental well-being and might contribute to feelings of distress and isolation. -->
 Social media often showcase the highlights and accomplishments of
 others, encouraging <em>social comparison</em> <span
-class="citation">(Przybylski et al., 2013)</span>. During a pandemic,
-seeing posts about others’ successes or seemingly perfect lives might
-intensify feelings of inadequacy or FOMO, especially when individuals
-are unable to participate in similar activities due to restrictions or
-personal circumstances <span class="citation">(Sharma et al.,
-2022)</span>.</p>
+class="citation">(Przybylski et al., 2013)</span>. Especially during a
+pandemic, seeing how others successfully cope with every-day
+challenges—for example, by baking banana bread, inventing creative games
+with kids, or exercising at home—might intensify feelings of inadequacy
+or FOMO, especially when individuals are unable to participate in
+similar activities due to restrictions or personal circumstances <span
+class="citation">(Sharma et al., 2022)</span>.</p>
 <!-- There is still limited empirical research on how well-being is affected by social media use that is focused on COVID-19 specifically. -->
 <p>Echoing the theoretical rationales outlines above, empirical studies
 have yielded mixed results. Some studies found negative effects,
@@ -1066,7 +1047,9 @@ satisfaction.
 <!-- This suggests that posting generates stronger reactions, both positive and negative.  -->
 Posting COVID-19 content was more negative for Generation Z, potentially
 reflecting broader negative effects of social media on this generation.
-<!-- Together, this finding is aligned with recent work challenging the assumption that active use is inherently beneficial and passive use detrimental [@valkenburgAssociationsActivePassive2022].  -->
+Together, this finding is aligned with recent work challenging the
+assumption that active use is inherently beneficial and passive use
+detrimental <span class="citation">(Valkenburg et al., 2022)</span>.
 Notably, communication channels exhibited differences. Twitter and
 YouTube appeared more negative, whereas Instagram, WhatsApp, and
 Facebook were neutral.</p>
@@ -1079,18 +1062,61 @@ additional relevant confounding exogenous variables not included here
 <span class="citation">(Rohrer, 2018)</span>, correct definition of the
 SESOI <span class="citation">(Anvari &amp; Lakens, 2021)</span>, and
 exact measurement of media use <span class="citation">(Scharkow,
-2016)</span>. The measures of social media use did not include
-interpersonal communication about COVID-19 related content, which might
-result in more positive outcomes <span class="citation">(Frison &amp;
-Eggermont, 2015)</span>. The study’s results are applicable primarily to
-Western societies and may not hold true in different cultural
-contexts.</p>
+2016)</span>. As noted above, different operationalizations of COVID-19
+related social media use might lead to different results. For example,
+the measures of social media use did not include interpersonal
+communication about COVID-19 related content, which might result in more
+positive outcomes <span class="citation">(Frison &amp; Eggermont,
+2015)</span>. While this study did not find meaningful within-person
+effects of social media use on well-being, between person analyses
+revealed strong negative correlations. Alternative causal processes not
+explored in this paper might explain these correlations. The study’s
+results are applicable primarily to Western societies and may not hold
+true in different cultural contexts.</p>
 <p>The study’s findings conclude that COVID-19-related social media
 activity minimally affects well-being, with other factors such as health
 and physical activity playing more substantial roles. In light of these
 minimal effects, concerns over COVID-19-related social media engagement
 on well-being could not be substantiated.
 <!-- When trying to improve well-being during a pandemic, instead of focusing on social media it seems more fruitful to address other, more pertinent societal problems related to health care, regular exercise, or psychological resilience. --></p>
+<div style="page-break-after: always;"></div>
+</div>
+<div id="research-transparency-statement" class="section level1">
+<h1>Research Transparency Statement</h1>
+<p>Conflicts of interest: The author declares no conflicts of interest.
+Funding: This research did not receive external funding. Artificial
+intelligence: Chat GPT was used for language polishing. Ethics: This
+research complies with the Declaration of Helsinki (2023), aside from
+the requirement to preregister human subjects research. Ethical review
+and approval was not required for the study in accordance with the local
+legislation and institutional requirements. The participants provided
+their written informed consent to participate in this study.
+Computational reproducibility: All analyses and the manuscript itself
+are completely reproducible (<a
+href="https://XMtRA.github.io/Austrian_Corona_Panel_Project"
+class="uri">https://XMtRA.github.io/Austrian_Corona_Panel_Project</a>).</p>
+<p>Preregistration: The hypotheses, the sample, the measures, the
+analyses, and the inference criteria (SESOI, <em>p</em>-value) were
+preregistered on the Open Science Framework (<a
+href="https://osf.io/87b24/?view_only=b2289b6fec214fa88ee75a18d45c18f3"
+class="uri">https://osf.io/87b24/?view_only=b2289b6fec214fa88ee75a18d45c18f3</a>).
+Because in this study data from an already existing data set was
+analyzed, the preregistration was done prior to accessing the data. In
+some cases, it was impossible to execute the analyses as originally
+planned, for example because some properties of the variables only
+became apparent when seeing the actual data. All changes are reported
+online (<a
+href="https://xmtra.github.io/Austrian_Corona_Panel_Project/preregistration_changes.html"
+class="uri">https://xmtra.github.io/Austrian_Corona_Panel_Project/preregistration_changes.html</a>).
+Materials: All study materials are publicly available (<a
+href="https://xmtra.github.io/Austrian_Corona_Panel_Project/items_english.html"
+class="uri">https://xmtra.github.io/Austrian_Corona_Panel_Project/items_english.html</a>).
+Data: All primary data are publicly available (<a
+href="https://doi.org/10.11587/28KQNS"
+class="uri">https://doi.org/10.11587/28KQNS</a>). Analysis scripts: All
+analysis scripts are publicly available (<a
+href="https://XMtRA.github.io/Austrian_Corona_Panel_Project"
+class="uri">https://XMtRA.github.io/Austrian_Corona_Panel_Project</a>).</p>
 <div style="page-break-after: always;"></div>
 </div>
 <div id="references" class="section level1">
@@ -1193,6 +1219,12 @@ Fan, J., &amp; Smith, A. P. (2021). Information overload, wellbeing and
 <em>Behavioral Sciences</em>, <em>11</em>(5), 62. <a
 href="https://doi.org/10.3390/bs11050062">https://doi.org/10.3390/bs11050062</a>
 </div>
+<div id="ref-fergusonSocialMediaExperiments2024" class="csl-entry">
+Ferguson, C. J. (2024). Do social media experiments prove a link with
+mental health: <span>A</span> methodological and meta-analytic review.
+<em>Psychology of Popular Media</em>. <a
+href="https://doi.org/10.1037/ppm0000541">https://doi.org/10.1037/ppm0000541</a>
+</div>
 <div id="ref-frisonExploringRelationshipsDifferent2015"
 class="csl-entry">
 Frison, E., &amp; Eggermont, S. (2015). Exploring the relationships
@@ -1208,6 +1240,10 @@ perceptive changes in the <span>Italian</span> population during the
 <span>COVID-19</span> pandemic. <em>International Journal of
 Environmental Research and Public Health</em>, <em>19</em>(3), 1635. <a
 href="https://doi.org/10.3390/ijerph19031635">https://doi.org/10.3390/ijerph19031635</a>
+</div>
+<div id="ref-haidtAnxiousGenerationHow2024" class="csl-entry">
+Haidt, J. (2024). <em>The anxious generation: How the great rewiring of
+childhood is causing an epidemic of mental illness</em>. Penguin Press.
 </div>
 <div id="ref-hallSocialMediaUse2022" class="csl-entry">
 Hall, J. A., &amp; Liu, D. (2022). Social media use, social
@@ -1270,6 +1306,12 @@ Marciano, L., Driver, C. C., Schulz, P. J., &amp; Camerini, A.-L.
 positive but ephemeral. <em>Scientific Reports</em>, <em>12</em>(1),
 1316. <a
 href="https://doi.org/10.1038/s41598-022-05291-y">https://doi.org/10.1038/s41598-022-05291-y</a>
+</div>
+<div id="ref-meierDoesPassiveSocial2022" class="csl-entry">
+Meier, A., &amp; Krause, H.-V. (2022). <em>Does passive social media use
+harm well-being? <span>An</span> adversarial review</em> [Preprint].
+PsyArXiv. <a
+href="https://doi.org/10.31234/osf.io/nvbwh">https://doi.org/10.31234/osf.io/nvbwh</a>
 </div>
 <div id="ref-meierComputermediatedCommunicationSocial2020a"
 class="csl-entry">
@@ -1362,12 +1404,25 @@ Statista. (2021). <em>Average daily time spent on social networks by
 users in the <span>United States</span> from 2018 to 2022</em>.
 https://www.statista.com/statistics/1018324/us-users-daily-social-media-minutes/.
 </div>
+<div id="ref-twengeIGENWhyToday2017" class="csl-entry">
+Twenge, J. M. (2017). <em><span class="nocase">iGEN</span>:
+<span>Why</span> today’s super-connected kids are growing up less
+rebellious, more tolerant, less happy-and completely unprepared for
+adulthood</em>. Atria Books.
+</div>
 <div id="ref-valkenburgDifferentialSusceptibilityMedia2013"
 class="csl-entry">
 Valkenburg, P. M., &amp; Peter, J. (2013). The differential
 susceptibility to media effects model. <em>Journal of
 Communication</em>, <em>63</em>(2), 221–243. <a
 href="https://doi.org/10.1111/jcom.12024">https://doi.org/10.1111/jcom.12024</a>
+</div>
+<div id="ref-valkenburgAssociationsActivePassive2022" class="csl-entry">
+Valkenburg, P. M., van Driel, I. I., &amp; Beyens, I. (2022). The
+associations of active and passive social media use with well-being:
+<span>A</span> critical scoping review. <em>New Media &amp;
+Society</em>, <em>24</em>(2), 530–549. <a
+href="https://doi.org/10.1177/14614448211065425">https://doi.org/10.1177/14614448211065425</a>
 </div>
 <div id="ref-vandenabeeleDigitalWellbeingDynamic2021" class="csl-entry">
 Vanden Abeele, M. M. P. (2021). Digital <span>Wellbeing</span> as a

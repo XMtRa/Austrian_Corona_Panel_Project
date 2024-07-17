@@ -1,11 +1,13 @@
 ---
 title: "Preregistration"
 output:
-  html_document:
-    toc: TRUE
-    toc_float:
-      collapsed: FALSE
-      toc_depth: 3
+  pdf_document:
+    latex_engine: xelatex
+  # html_document:
+  #   toc: TRUE
+  #   toc_float:
+  #     collapsed: FALSE
+  #     toc_depth: 3
 ---
 
 The actual preregistration can be found [here](https://osf.io/87b24/?view_only=b2289b6fec214fa88ee75a18d45c18f3). I have also pasted it below.
